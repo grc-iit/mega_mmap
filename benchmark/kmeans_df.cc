@@ -20,8 +20,10 @@ int main(int argc, char **argv) {
   size_t window_count = window_size / sizeof(float);
   size_t rep = df_size / window_size / nprocs;
 
+  HILOG(kInfo, "Creating dataset {} of size {} with {} windows of size {} each", data_path, argv[2], rep, window_size);
+
   MPI_File file_handle;
-  int ierr = MPI_File_open(MPI_COMM_WORLD, data_path.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &file_handle);
+  int ierr = MPI_File_open(MPI_COMM_WORLD, data_path.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &file_handle);
 
   std::vector<std::pair<float, float>> ks = {
       {0, 0},
@@ -37,16 +39,17 @@ int main(int argc, char **argv) {
   // Each process creates a dataset which contains k clusters
   std::vector<float> window(window_count);
   for (size_t i = 0; i < rep; ++i) {
+    HILOG(kInfo, "Creating window {}/{}", i, rep)
     for (size_t j = 0; j < window_count; j += 2) {
       int k_idx = rand() % ks.size();
       float kx = ks[k_idx].first;
       float ky = ks[k_idx].second;
       float x = 2.0 / (1 + (rand() % 8));
       float y = 2.0 / (1 + (rand() % 8));
-      window[2 * j + 0] = kx + x;
-      window[2 * j + 1] = ky + y;
+      window[j + 0] = kx + x;
+      window[j + 1] = ky + y;
     }
-    MPI_File_write(file_handle, window.data(), window_count, MPI_FLOAT, MPI_STATUS_IGNORE);
+    MPI_File_write_shared(file_handle, window.data(), window_count, MPI_FLOAT, MPI_STATUS_IGNORE);
   }
 
   MPI_File_close(&file_handle);

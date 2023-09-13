@@ -64,7 +64,7 @@ void sort_mmap(const std::string &path, int rank, int nprocs, size_t window_size
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
   if (argc < 4) {
-    HILOG(kFatal, "USAGE: ./parallel_sort [algo] [path] [window_size]");
+    HILOG(kFatal, "USAGE: ./kmeans [algo] [path] [window_size]");
   }
   int rank, nprocs;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
