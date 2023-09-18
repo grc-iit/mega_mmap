@@ -12,15 +12,17 @@ spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
 # sc = SparkContext(conf=conf)
 
 # Define the path to your binary file directory
-#binary_files_path = "/home/lukemartinlogan/hermes_data/kmeans.bin"
-#binary_files_rdd = sc.binaryFiles(binary_files_path)
-rdd_path = "/home/lukemartinlogan/Documents/Projects/PhD/mega_mmap/benchmark/iris.csv"
-rdd = spark.read.csv(rdd_path, header=True, inferSchema=True)
-feature_cols = ["sepal_length", "sepal_width", "petal_length", "petal_width"]
-assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
-print(rdd)
-iris_feature_df = assembler.transform(rdd)
+def make_binary_rdd():
+    binary_files_path = "/home/lukemartinlogan/hermes_data/kmeans.bin"
+    binary_files_rdd = spark.binaryFiles(binary_files_path)
 
+def make_iris_rdd():
+    rdd_path = "/home/lukemartinlogan/Documents/Projects/PhD/mega_mmap/benchmark/iris.csv"
+    rdd = spark.read.csv(rdd_path, header=True, inferSchema=True)
+    feature_cols = ["sepal_length", "sepal_width", "petal_length", "petal_width"]
+    assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
+    iris_rdd = assembler.transform(rdd)
+    return iris_rdd
 
 # Read binary files as an RDD of (String, bytes)
 kmeans = KMeans(k=3, seed=1)

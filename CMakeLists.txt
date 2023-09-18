@@ -25,9 +25,13 @@ add_compile_options(-march=native -fomit-frame-pointer)
 #find_package(Hermes CONFIG REQUIRED)
 #message(STATUS "found Hermes at ${Hermes_DIR}")
 
+# Apache Arrow
+find_package(Arrow REQUIRED)
+
 # HermesShm
 find_package(HermesShm CONFIG REQUIRED)
 message(STATUS "found hermes_shm.h at ${HermesShm_INCLUDE_DIRS}")
+include_directories(${HermesShm_INCLUDE_DIRS})
 
 # YAML-CPP
 find_package(yaml-cpp REQUIRED)

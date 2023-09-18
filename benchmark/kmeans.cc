@@ -13,7 +13,7 @@
 
 namespace stdfs = std::filesystem;
 
-bool sort_windows(int *data, int rank, size_t off, size_t shift, size_t proc_size, size_t window_size, size_t data_size) {
+bool kmeans_windows(float *data, int rank, size_t off, size_t shift, size_t proc_size, size_t window_size, size_t data_size) {
   bool is_sorted = true;
   size_t cur_size = 0;
   data += off;
@@ -36,7 +36,7 @@ bool sort_windows(int *data, int rank, size_t off, size_t shift, size_t proc_siz
   return is_sorted;
 }
 
-void sort_proc(int *data, int rank, int nprocs, size_t window_size, size_t data_size) {
+void kmeans_proc(float *data, int rank, int nprocs, size_t window_size, size_t data_size) {
   size_t shift = window_size / 2;
   size_t proc_size = data_size / nprocs;
   size_t proc_off = rank * proc_size;
@@ -53,18 +53,18 @@ void sort_proc(int *data, int rank, int nprocs, size_t window_size, size_t data_
   }
 }
 
-void sort_mmap(const std::string &path, int rank, int nprocs, size_t window_size) {
+void kmeans_mmap(const std::string &path, int rank, int nprocs, size_t window_size) {
   // Map the dataset
   size_t data_size = stdfs::file_size(path);
   int fd = open(path.c_str(), O_RDWR | O_CREAT, 0666);
-  int *data = (int *) mmap(NULL, data_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  float *data = (float *) mmap(NULL, data_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   sort_proc(data, rank, nprocs, window_size, data_size);
 }
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
-  if (argc < 4) {
-    HILOG(kFatal, "USAGE: ./kmeans [algo] [path] [window_size]");
+  if (argc < 5) {
+    HILOG(kFatal, "USAGE: ./kmeans [algo] [path] [window_size] [max_iter]");
   }
   int rank, nprocs;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -72,10 +72,11 @@ int main(int argc, char **argv) {
   std::string algo = argv[1];
   std::string path = argv[2];
   size_t window_size = hshm::ConfigParse::ParseSize(argv[3]);
+  int max_iter = std::stoi(argv[4]);
   HILOG(kInfo, "Running {} on {} with window size {}", algo, path, window_size);
 
   if (algo == "mmap") {
-    sort_mmap(path, rank, nprocs, window_size);
+    kmeans_mmap(path, rank, nprocs, window_size);
   } else if (algo == "mega") {
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
