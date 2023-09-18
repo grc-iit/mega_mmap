@@ -10,8 +10,11 @@
 #include <arrow/builder.h>
 #include <arrow/table.h>
 #include <arrow/ipc/writer.h>
+#include <parquet/arrow/reader.h>
 #include "arrow/ipc/feather.h"
 #include "arrow/io/file.h"
+#include "parquet/arrow/writer.h"
+#include "arrow/util/type_fwd.h"
 
 class KmeansDf {
  public:
@@ -74,22 +77,23 @@ class KmeansDf {
         window_y.Append(ky + y);
       }
 
-      // Finish building the arrays
+      // Finish building the parquet table
       std::shared_ptr<arrow::Array> x_array;
       std::shared_ptr<arrow::Array> y_array;
       window_x.Finish(&x_array);
       window_y.Finish(&y_array);
-
-      // Create a schema with two columns: x and y
       std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("x", arrow::float32()),
                                                              arrow::field("y", arrow::float32())});
       std::shared_ptr<arrow::Table> table = arrow::Table::Make(schema, {x_array, y_array});
-      std::shared_ptr<arrow::io::FileOutputStream> file;
-      file = arrow::io::FileOutputStream::Open(
-          hshm::Formatter::format("{}_{}_{}", data_path_, rank_, rep_),
-          false).ValueOrDie();
-      arrow::ipc::feather::WriteTable(*table, file.get());
-      file->Close();
+
+      // Create a schema with two columns: x and y
+      std::shared_ptr<arrow::io::FileOutputStream> outfile = arrow::io::FileOutputStream::Open(
+          hshm::Formatter::format("{}_{}_{}", data_path_, rank_, rep_)).ValueOrDie();
+      std::shared_ptr<parquet::arrow::FileWriter> writer = parquet::arrow::FileWriter::Open(
+          *schema, arrow::default_memory_pool(), outfile).ValueOrDie();
+      writer->WriteTable(*table);
+      writer->Close();
+      outfile->Close();
     }
   }
 

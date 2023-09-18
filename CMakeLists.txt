@@ -27,6 +27,7 @@ add_compile_options(-march=native -fomit-frame-pointer)
 
 # Apache Arrow
 find_package(Arrow REQUIRED)
+find_package(Parquet REQUIRED)
 
 # HermesShm
 find_package(HermesShm CONFIG REQUIRED)
