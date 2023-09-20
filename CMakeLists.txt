@@ -19,6 +19,33 @@ endif()
 add_compile_options(-march=native -fomit-frame-pointer)
 
 #------------------------------------------------------------------------------
+# Setup CMake Environment
+#------------------------------------------------------------------------------
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Executables.")
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all Libraries")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+        ${PROJECT_BINARY_DIR}/bin CACHE PATH "Single Directory for all static libraries.")
+
+#------------------------------------------------------------------------------
+# Setup install and output Directories
+#------------------------------------------------------------------------------
+if(NOT MEGAMMAP_INSTALL_BIN_DIR)
+  set(MEGAMMAP_INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin)
+endif()
+if(NOT MEGAMMAP_INSTALL_LIB_DIR)
+  set(MEGAMMAP_INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+endif()
+if(NOT MEGAMMAP_INSTALL_INCLUDE_DIR)
+  set(MEGAMMAP_INSTALL_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+endif()
+if(NOT MEGAMMAP_INSTALL_DATA_DIR)
+  set(MEGAMMAP_INSTALL_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share)
+endif()
+
+#------------------------------------------------------------------------------
 # Find packages
 #------------------------------------------------------------------------------
 # Hermes

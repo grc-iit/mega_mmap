@@ -20,15 +20,13 @@ class KmeansDf {
  public:
   int rank_;
   std::string data_path_;
-  size_t df_size_;
-  size_t window_size_;
   size_t window_count_;
   size_t rep_;
   std::vector<std::pair<float, float>> ks_;
 
  public:
-  KmeansDf(int rank, const std::string &data_path, size_t df_size, size_t window_size, size_t window_count, size_t rep) :
-  rank_(rank), data_path_(data_path), df_size_(df_size), window_size_(window_size), window_count_(window_count), rep_(rep) {
+  KmeansDf(int rank, const std::string &data_path, size_t window_count, size_t rep) :
+  rank_(rank), data_path_(data_path), window_count_(window_count), rep_(rep) {
     ks_.reserve(30);
     for (int i = 0; i < 30; ++i) {
       ks_.emplace_back((float) i * 10, (float) i * 10);
@@ -66,7 +64,7 @@ class KmeansDf {
     arrow::FloatBuilder window_x;
     arrow::FloatBuilder window_y;
     for (size_t i = 0; i < rep_; ++i) {
-      HILOG(kInfo, "Creating window {}/{}", i, rep_);
+      HILOG(kInfo, "(rank {}) Creating window {}/{}", rank_, i + 1, rep_);
       for (size_t j = 0; j < window_count_; ++j) {
         int k_idx = rand() % ks_.size();
         float kx = ks_[k_idx].first;
@@ -87,10 +85,13 @@ class KmeansDf {
       std::shared_ptr<arrow::Table> table = arrow::Table::Make(schema, {x_array, y_array});
 
       // Create a schema with two columns: x and y
-      std::shared_ptr<arrow::io::FileOutputStream> outfile = arrow::io::FileOutputStream::Open(
-          hshm::Formatter::format("{}_{}_{}", data_path_, rank_, rep_)).ValueOrDie();
-      std::shared_ptr<parquet::arrow::FileWriter> writer = parquet::arrow::FileWriter::Open(
-          *schema, arrow::default_memory_pool(), outfile).ValueOrDie();
+      std::string outfile_name = hshm::Formatter::format("{}_{}_{}_{}", data_path_, rank_, i, rep_);
+      HILOG(kInfo, "(rank {}) Persisting window {}/{} to {}", rank_, i + 1, rep_, outfile_name);
+      std::shared_ptr<arrow::io::FileOutputStream> outfile =
+          arrow::io::FileOutputStream::Open(outfile_name).ValueOrDie();
+      std::shared_ptr<parquet::arrow::FileWriter> writer =
+          parquet::arrow::FileWriter::Open(
+              *schema, arrow::default_memory_pool(), outfile).ValueOrDie();
       writer->WriteTable(*table);
       writer->Close();
       outfile->Close();
@@ -137,7 +138,12 @@ int main(int argc, char **argv) {
   size_t window_size = hshm::ConfigParse::ParseSize(argv[3]);
   size_t window_count = window_size / (2 * sizeof(float));
   size_t rep = df_size / window_size / nprocs;
-  KmeansDf kmeans_df(rank, data_path, df_size, window_size, window_count, rep);
+  if (rep == 0) {
+    HILOG(kFatal, "Reduce number of processes");
+  }
+  HILOG(kInfo, "This process is rank {} with {} procs", rank, nprocs);
+  HILOG(kInfo, "(rank {}) Will create {} bytes of data", rank, rep * window_size);
+  KmeansDf kmeans_df(rank, data_path, window_count, rep);
 
   HILOG(kInfo, "Creating dataset {} of size {} with {} windows of size {} each", data_path, argv[2], rep, window_size);
 

@@ -1,20 +1,22 @@
-from pyspark.sql import SparkSession
+"""
+USAGE: spark-submit --driver-memory <size> kmeans.py <path>
+"""
 
 from pyspark.sql import SparkSession
 from pyspark import SparkConf, SparkContext
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.feature import VectorAssembler
 import struct
-
 import pandas as pd
+import sys
+
+# Get cmd
+path = sys.argv[1]
 
 # Initialize Spark
 spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
-def make_parquest_rdd():
-    parquet_path = "/home/lukemartinlogan/hermes_data/*"
-    df = pd.read_parquet('/home/lukemartinlogan/hermes_data/kmeans.bin_0_1')
-    print(df.columns)
-    exit(1)
+def make_parquet_rdd():
+    parquet_path = f"{path}*"
     rdd = spark.read.parquet(parquet_path)
     feature_cols = ["x", "y"]
     assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
@@ -30,8 +32,8 @@ def make_iris_rdd():
     return iris_rdd
 
 # Read binary files as an RDD of (String, bytes)
-rdd = make_parquest_rdd()
-kmeans = KMeans(k=3, seed=1)
+rdd = make_parquet_rdd()
+kmeans = KMeans(k=30, seed=1)
 model = kmeans.fit(rdd)
 print(model.clusterCenters())
 

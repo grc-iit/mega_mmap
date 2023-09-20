@@ -1,10 +1,12 @@
 from pyspark.sql import SparkSession
-
-from pyspark.sql import SparkSession
 from pyspark import SparkConf, SparkContext
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.feature import VectorAssembler
 import struct
+import sys
+
+# Get cmd
+path = sys.argv[1]
 
 # Initialize Spark
 spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
@@ -12,8 +14,8 @@ spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
 # sc = SparkContext(conf=conf)
 
 # Define the path to your binary file directory
-def make_parquest_rdd():
-    parquet_path = "/home/lukemartinlogan/hermes_data/*"
+def make_parquet_rdd():
+    parquet_path = f"{path}*"
     rdd = spark.read.parquet(parquet_path)
     feature_cols = ["x", "y"]
     assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
@@ -28,23 +30,10 @@ def make_iris_rdd():
     iris_rdd = assembler.transform(rdd)
     return iris_rdd
 
-# Read binary files as an RDD of (String, bytes)
-rdd = make_iris_rdd()
-kmeans = KMeans(k=3, seed=1)
-model = kmeans.fit(rdd)
-print(model.clusterCenters())
+rdd = make_parquet_rdd()
+sorted_df = rdd.orderBy('x')
 
-# # Convert binary data to RDD of floats
-# def bytes_to_floats(byte_data):
-#     float_size = 4  # Assuming each float is 4 bytes
-#     float_count = len(byte_data) // float_size
-#     return struct.unpack("f" * float_count, byte_data)
-#
-# float_data_rdd = binary_files_rdd.flatMap(lambda x: bytes_to_floats(x[1]))
-# binary_files_rdd.sortByKey(ascending=True)
-
-# Now you have an RDD of floats (float_data_rdd)
-# float_data_rdd.take(10)  # Print the first 10 floats
+sorted_df.show(10)
 
 # Stop Spark
 spark.stop()
