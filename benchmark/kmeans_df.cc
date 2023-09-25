@@ -127,8 +127,8 @@ class KmeansDf {
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
-  if (argc < 4) {
-    HILOG(kFatal, "Usage: ./kmeans_df <data_path> <df_size> <window_size>");
+  if (argc < 5) {
+    HILOG(kFatal, "Usage: ./kmeans_df <data_path> <df_size> <window_size> <type>");
   }
   int nprocs = 0, rank = 0;
   MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
@@ -136,6 +136,7 @@ int main(int argc, char **argv) {
   std::string data_path = argv[1];
   size_t df_size = hshm::ConfigParse::ParseSize(argv[2]);
   size_t window_size = hshm::ConfigParse::ParseSize(argv[3]);
+  std::string type = argv[4];
   size_t window_count = window_size / (2 * sizeof(float));
   size_t rep = df_size / window_size / nprocs;
   if (rep == 0) {
@@ -151,7 +152,11 @@ int main(int argc, char **argv) {
   srand(rank * 250);
 
   // Each process creates a dataset which contains k clusters
-  kmeans_df.to_parquet();
+  if (type == "parquet") {
+    kmeans_df.to_parquet();
+  } else if (type == "shared") {
+    kmeans_df.to_shared_file();
+  }
 
   MPI_Finalize();
 }
