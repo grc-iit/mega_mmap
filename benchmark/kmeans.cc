@@ -51,13 +51,20 @@ class KMeans {
                      RowData<1> &dist,          // The distance each chunk is from its nearest center
                      RowData<1, int> &cluster,  // The chosen cluster for each data point
                      RowData<cdim> &centers) {
-    // Compute the new centers
+    // Randomly subset data pointer from the chunk
+    std::uniform_int_distribution<size_t> idx_gen(0, chunk.count_);
+    std::mt19937 gen(SEED);
+    std::vector<size_t> idxs;
+    for (size_t i = 0; i < 500; ++i) {
+      idxs[i] = idx_gen(gen);
+    }
+
+    // Build probability distribution based on distance from selected center
     std::uniform_real_distribution<float> idx_gen(0, chunk.count_);
     std::mt19937 gen(SEED);
-    for (size_t i = 0; i < centers.count_; ++i) {
-      size_t idx = idx_gen(gen);
-      centers.Get(i, 0) = chunk.Get(idx, 0);
-      centers.Get(i, 1) = chunk.Get(idx, 1);
+    for (size_t &idx : idxs) {
+      centers.Get(i, 0) = chunk.Get(idxs[idx], 0);
+      centers.Get(i, 1) = chunk.Get(idxs[idx], 1);
     }
   }
 
