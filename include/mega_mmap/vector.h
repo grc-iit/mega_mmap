@@ -8,8 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "hermes.h"
-#include "bucket.h"
+#include "hermes/hermes.h"
 
 namespace mm {
 
@@ -22,7 +21,7 @@ struct CacheLine {
 template<typename T>
 class Array {
  public:
-  hapi::Bucket bkt_;
+  hermes::Bucket bkt_;
   std::vector<CacheLine<T>> cache_;
   std::unordered_map<int, CacheLine<T>*> map_;
   size_t page_size_;
@@ -48,7 +47,7 @@ class Array {
       std::string blob_name = std::to_string(idx);
       hermes::BlobId blob_id = bkt_.GetBlobId(blob_name);
       if (!blob_id.IsNull()) {
-        hapi::Blob blob();
+        hermes::Blob blob();
         hermes::Context ctx;
         bkt_.Get(blob_id, blob, ctx);
       } else {
@@ -56,7 +55,6 @@ class Array {
     } else {
       CacheLine<T> *data = it->second;
       size_t off = idx % page_size_;
-      return ()
     }
   }
 };
