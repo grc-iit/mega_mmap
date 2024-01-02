@@ -33,7 +33,7 @@ def make_iris_rdd():
 
 # Read binary files as an RDD of (String, bytes)
 rdd = make_parquet_rdd()
-kmeans = KMeans(k=30, seed=1)
+kmeans = KMeans(k=8, seed=1)
 model = kmeans.fit(rdd)
 print(model.clusterCenters())
 

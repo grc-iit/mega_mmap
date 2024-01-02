@@ -24,8 +24,8 @@ class VectorMmapMpiIterator;
 template<typename T>
 class VectorMmapMpi {
  public:
-  T *data_;
-  size_t size_;
+  T *data_ = nullptr;
+  size_t size_ = 0;
 
  public:
   VectorMmapMpi() = default;
@@ -57,14 +57,19 @@ class VectorMmapMpi {
 
   /** Explicit initializer */
   void Init(const std::string &path, size_t size) {
-    int fd = open(path.c_str(), O_RDWR | O_CREAT, 0666);
+    if (data_ != nullptr) {
+      return;
+    }
+    int fd = open64(path.c_str(), O_RDWR | O_CREAT, 0666);
     if (fd < 0) {
       HELOG(kFatal, "Failed to open file {}: {}",
             path.c_str(), strerror(errno));
     }
-    data_ = (T*)mmap(NULL, size * sizeof(T), PROT_READ | PROT_WRITE,
-                     MAP_SHARED, fd, 0);
-    if (data_ == nullptr) {
+    ftruncate64(fd, size * sizeof(T));
+    data_ = (T*)mmap64(NULL, size * sizeof(T), PROT_READ | PROT_WRITE,
+                       MAP_SHARED, fd, 0);
+    if (data_ == MAP_FAILED || data_ == nullptr) {
+      data_ = nullptr;
       HELOG(kFatal, "Failed to mmap file {}: {}",
             path.c_str(), strerror(errno));
     }
@@ -138,6 +143,11 @@ class VectorMmapMpi {
   /** End iterator */
   VectorMmapMpiIterator<T> end() {
     return VectorMmapMpiIterator<T>(data_ + size());
+  }
+
+  /** Close region */
+  void Close() {
+    munmap(data_, size_ * sizeof(T));
   }
 };
 

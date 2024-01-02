@@ -61,9 +61,15 @@ struct LocalMax {
 };
 
 struct RowSum {
-  Row row_ = Row(0);
-  size_t count_ = 0;
-  float entropy_ = 0;
+  Row row_;
+  size_t count_;
+  float inertia_;
+
+  void Zero() {
+    row_ = Row(0);
+    count_ = 0;
+    inertia_ = 0;
+  }
 };
 
 template<typename DataT,
@@ -83,14 +89,16 @@ class KmeansMpi {
   int max_iter_;
   size_t off_;
   size_t last_;
-  float entropy_diff_;
-  float min_entropy_;
+  size_t iter_;
+  double inertia_;
+  float inertia_diff_;
+  float min_inertia_;
 
  public:
   void Init(const std::string &path,
             int rank, int nprocs,
-            size_t window_size, int k, int max_iter = 0,
-            float entropy_diff = .05, float min_entropy = .1){
+            size_t window_size, int k, int max_iter = 300,
+            float tol = .0001, float min_inertia = .1){
     dir_ = stdfs::path(path).parent_path();
     data_.Init(path);
     rank_ = rank;
@@ -105,8 +113,8 @@ class KmeansMpi {
     if (last_ > data_.size()) {
       last_ = data_.size();
     }
-    entropy_diff_ = entropy_diff;
-    min_entropy_ = min_entropy;
+    inertia_diff_ = tol;
+    min_inertia_ = min_inertia;
   }
 
   void Run() {
@@ -122,6 +130,16 @@ class KmeansMpi {
     }
     // Run kmeans
     KMeans();
+    // Print results
+    Print();
+  }
+
+  void Print() {
+    HILOG(kInfo, "Intertia: {}", inertia_);
+    HILOG(kInfo, "Iterations: {}", iter_);
+    for (int i = 0; i < k_; ++i) {
+      HILOG(kInfo, "Center {}: ({}, {})", i, ks_[i].x_, ks_[i].y_);
+    }
   }
 
   void FindMax(std::vector<size_t> &ks) {
@@ -168,10 +186,13 @@ class KmeansMpi {
                      size_t off, size_t last,
                      double &max_dist,
                      size_t &max_idx) {
-    Row &pt = data_[ks[ks.size() - 1]];
     for (size_t i = off; i < last; ++i) {
       Row &cur_pt = data_[i];
-      double dist = pt.Distance(cur_pt);
+      double dist = 1;
+      for (size_t j = 0; j < ks.size(); ++j) {
+        Row &center = data_[ks[j]];
+        dist *= center.Distance(cur_pt);
+      }
       if (dist > max_dist) {
         if (std::find(ks.begin(), ks.end(), i) != ks.end()) {
           continue;
@@ -191,16 +212,16 @@ class KmeansMpi {
   }
 
   void KMeans() {
-    float entropy = 1;
-    for (int i = 0; i < max_iter_; ++i) {
-      float cur_entropy = Assignment();
-      if (cur_entropy <= min_entropy_) {
+    inertia_ = 1;
+    for (iter_ = 0; iter_ < max_iter_; ++iter_) {
+      float cur_inertia = Assignment();
+      if (cur_inertia <= min_inertia_) {
         break;
       }
-      if ((cur_entropy - entropy) / entropy < entropy_diff_) {
+      if (abs(cur_inertia - inertia_) / inertia_ < inertia_diff_) {
         break;
       }
-      entropy = cur_entropy;
+      inertia_ = cur_inertia;
     }
   }
 
@@ -211,30 +232,30 @@ class KmeansMpi {
     sum.Init(dir_ + "/" + "sum", nprocs_ * k_);
     size_t off = off_, last = last_;
     for (size_t i = rank_ * k_; i < (rank_ + 1) * k_; ++i) {
-      sum[i] = 0;
+      sum[i].Zero();
     }
     for (size_t i = off; i < last; ++i) {
       Row row = data_[i];
       assign[i] = FindClosestCenter(row);
       sum[rank_ * k_ + assign[i]].row_ += row;
       sum[rank_ * k_ + assign[i]].count_ += 1;
-      sum[rank_ * k_ + assign[i]].entropy_ += row.Distance(ks_[i]);
+      sum[rank_ * k_ + assign[i]].inertia_ += row.Distance(ks_[assign[i]]);
     }
     sum.Barrier();
-    float entropy = 0;
+    float inertia = 0;
     for (int i = 0; i < ks_.size(); ++i) {
       Row avg(0);
       size_t count = 0;
       for (int j = 0; j < nprocs_; ++j) {
         avg += sum[j * k_ + i].row_;
         count += sum[j * k_ + i].count_;
-        entropy += sum[j * k_ + i].entropy_;
+        inertia += sum[j * k_ + i].inertia_;
       }
       avg /= count;
       ks_[i] = avg;
     }
     sum.Barrier();
-    return entropy;
+    return inertia;
   }
   
   size_t FindClosestCenter(Row &row) {
@@ -262,8 +283,8 @@ int main(int argc, char **argv) {
   MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
   std::string algo = argv[1];
   std::string path = argv[2];
-  int k = hshm::ConfigParse::ParseSize(argv[3]);
-  size_t window_size = hshm::ConfigParse::ParseSize(argv[4]);
+  size_t window_size = hshm::ConfigParse::ParseSize(argv[3]);
+  int k = hshm::ConfigParse::ParseSize(argv[4]);
   int max_iter = std::stoi(argv[4]);
   HILOG(kInfo, "Running {} on {} with window size {} with {} centers", algo, path, window_size, k);
 
@@ -275,6 +296,7 @@ int main(int argc, char **argv) {
         mm::VectorMmapMpi<RowSum>,
         Row> kmeans;
     kmeans.Init(path, rank, nprocs, window_size, k, max_iter);
+    kmeans.Run();
   } else if (algo == "mega") {
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
