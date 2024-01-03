@@ -13,47 +13,9 @@
 #include <algorithm>
 
 #include "mega_mmap/vector_mmap_mpi.h"
+#include "test_types.h"
 
 namespace stdfs = std::filesystem;
-
-struct Row {
-  float x_;
-  float y_;
-
-  Row() = default;
-
-  Row(float x, float y) : x_(x), y_(y) {}
-
-  Row(float x) : x_(x), y_(x) {}
-
-  Row(const Row &other) {
-    x_ = other.x_;
-    y_ = other.y_;
-  }
-
-  Row &operator=(const Row &other) {
-    x_ = other.x_;
-    y_ = other.y_;
-    return *this;
-  }
-
-  Row &operator+=(const Row &other) {
-    x_ += other.x_;
-    y_ += other.y_;
-    return *this;
-  }
-
-  Row &operator/=(const size_t &other) {
-    x_ /= other;
-    y_ /= other;
-    return *this;
-  }
-
-  double Distance(const Row &other) {
-    return (x_ - other.x_) * (x_ - other.x_) +
-        (y_ - other.y_) * (y_ - other.y_);
-  }
-};
 
 struct LocalMax {
   size_t idx_ = 0;
