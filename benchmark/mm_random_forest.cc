@@ -331,9 +331,9 @@ class RandomForestClassifierMpi {
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
-  if (argc < 5) {
+  if (argc != 6) {
     HILOG(kFatal, "USAGE: ./rand_forest [algo] [train_path] [test_path] "
-                  "[nfeature] [ncol] [window_size]");
+                  "[nfeature] [window_size]");
   }
   int rank, nprocs;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -342,8 +342,8 @@ int main(int argc, char **argv) {
   std::string train_path = argv[2];
   std::string test_path = argv[3];
   int nfeature = std::stoi(argv[4]);
-  int ncol = std::stoi(argv[5]);
-  size_t window_size = hshm::ConfigParse::ParseSize(argv[6]);
+  int ncol = nfeature + 1;
+  size_t window_size = hshm::ConfigParse::ParseSize(argv[5]);
   HILOG(kInfo, "Running random forest");
 
   if (algo == "mmap") {
