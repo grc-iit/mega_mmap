@@ -109,34 +109,24 @@ struct ClassRow {
     return *this;
   }
 
-  float& operator[](size_t idx) {
-    if (idx == 0) {
-      return x_;
-    } else if (idx == 1) {
-      return y_;
-    } else if (idx == 2) {
-      return class_;
+  bool LessThan(const ClassRow &other, int feature) const {
+    if (feature == 0) {
+      return x_ < other.x_;
+    } else if (feature == 1) {
+      return y_ < other.y_;
     } else {
-      HILOG(kFatal, "Invalid index");
-      exit(1);
-    }
-  }
-
-  const float& operator[](size_t idx) const {
-    if (idx == 0) {
-      return x_;
-    } else if (idx == 1) {
-      return y_;
-    } else if (idx == 2) {
-      return class_;
-    } else {
-      HILOG(kFatal, "Invalid index");
+      HILOG(kFatal, "Invalid feature");
       exit(1);
     }
   }
 
   const float &last() const {
     return class_;
+  }
+
+  template<typename Ar>
+  void serialize(Ar &ar) {
+    ar(x_, y_, class_);
   }
 };
 

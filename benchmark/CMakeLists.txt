@@ -12,5 +12,5 @@ target_link_libraries(mm_kmeans_df ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_sha
 add_executable(mm_random_forest mm_random_forest.cc)
 target_link_libraries(mm_random_forest ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
-add_executable(mm_random_forest_df mm_random_forest.cc)
+add_executable(mm_random_forest_df mm_random_forest_df.cc)
 target_link_libraries(mm_random_forest_df ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)

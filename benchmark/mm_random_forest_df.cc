@@ -83,6 +83,7 @@ class RandomForestDf {
     // Each process creates a dataset which contains k clusters
     arrow::FloatBuilder window_x;
     arrow::FloatBuilder window_y;
+    arrow::FloatBuilder class_xy;
     arrow::Status status;
     for (size_t i = 0; i < rep_; ++i) {
       HILOG(kInfo, "(rank {}) Creating window {}/{}", rank_, i + 1, rep_);
@@ -100,11 +101,17 @@ class RandomForestDf {
           HILOG(kFatal, "Failed to append to window_y: {}",
                 status.ToString());
         }
+        status = class_xy.Append(k_idx);
+        if (!status.ok()) {
+          HILOG(kFatal, "Failed to append to class_xy: {}",
+                status.ToString());
+        }
       }
 
       // Finish building the parquet table
       std::shared_ptr<arrow::Array> x_array;
       std::shared_ptr<arrow::Array> y_array;
+      std::shared_ptr<arrow::Array> class_array;
       status = window_x.Finish(&x_array);
       if (!status.ok()) {
         HILOG(kFatal, "Failed to finish window_x: {}",
@@ -115,9 +122,15 @@ class RandomForestDf {
         HILOG(kFatal, "Failed to finish window_y: {}",
               status.ToString());
       }
+      status = class_xy.Finish(&class_array);
+      if (!status.ok()) {
+        HILOG(kFatal, "Failed to finish class_xy: {}",
+              status.ToString());
+      }
       std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("x", arrow::float32()),
-                                                             arrow::field("y", arrow::float32())});
-      std::shared_ptr<arrow::Table> table = arrow::Table::Make(schema, {x_array, y_array});
+                                                             arrow::field("y", arrow::float32()),
+                                                             arrow::field("class", arrow::float32())});
+      std::shared_ptr<arrow::Table> table = arrow::Table::Make(schema, {x_array, y_array, class_array});
 
       // Create a schema with two columns: x and y
       std::string outfile_name = hshm::Formatter::format("{}_{}_{}_{}", data_path_, rank_, i, rep_);
@@ -151,7 +164,7 @@ class RandomForestDf {
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
-  if (argc < 5) {
+  if (argc != 6) {
     HILOG(kFatal, "Usage: ./random_forest_df <k> <data_path> <df_size> <window_size> <type>");
   }
   int nprocs = 0, rank = 0;

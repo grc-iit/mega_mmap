@@ -36,6 +36,7 @@ struct Node {
     feature_ = -1;
     entropy_ = 0;
     count_ = 0;
+    depth_ = 0;
     left_ = nullptr;
     right_ = nullptr;
   }
@@ -60,16 +61,11 @@ struct Node {
   template<typename Ar>
   void serialize(Ar &ar) {
     ar(feature_, joint_, entropy_, count_, depth_);
-    if (left_) {
-      ar << (*left_);
-    }
-    if (right_) {
-      ar << (*right_);
-    }
+    ar(left_, right_);
   }
 
   T Predict(const T &row) {
-    if (row[feature_] < joint_[feature_]) {
+    if (row.LessThan(joint_, feature_)) {
       if (left_) {
         return left_->Predict(row);
       }
@@ -117,22 +113,24 @@ class RandomForestClassifierMpi {
             int rank, int nprocs,
             int trees_per_proc = 4,
             float tol = .0001,
-            int max_depth = 20){
+            int max_depth = 5){
     dir_ = stdfs::path(train_path).parent_path();
     data_.Init(train_path);
     test_data_.Init(test_path);
     rank_ = rank;
     nprocs_ = nprocs;
-    window_size_ = window_size;
+    window_size_ = window_size / sizeof(T);
     num_features_ = num_features;
     max_features_ = sqrt(num_features);
     num_cols_ = num_cols;
-    num_windows_ = data_.size() / (window_size_ * sizeof(T));
+    num_windows_ = data_.size() / window_size_;
     windows_per_proc_ = num_windows_ / nprocs_;
     tol_ = tol;
     max_depth_ = max_depth;
     trees_per_proc_ = trees_per_proc;
-    trees_.Init(dir_ + "/trees", trees_per_proc_ * nprocs_);
+    trees_.Init(dir_ + "/trees",
+                trees_per_proc_ * nprocs_,
+                KILOBYTES(32));
 
     shuffle_.Seed(2354235 * (rank_ + 1));
     shuffle_.Shape(0, num_windows_ - 1);
@@ -142,15 +140,14 @@ class RandomForestClassifierMpi {
 
   void Run() {
     for (int i = 0; i < trees_per_proc_; ++i) {
-      std::vector<int> features = SubsampleFeatures();
       std::vector<size_t> sample = SubsampleDataset();
       std::unique_ptr<Node<T>> root = std::make_unique<Node<T>>();
-      CreateDecisionTree(root, nullptr, sample, features);
+      CreateDecisionTree(root, nullptr, sample);
       trees_[rank_ * trees_per_proc_ + i] = std::move(root);
     }
     trees_.Barrier();
     float error = Predict(test_data_);
-    HILOG(kInfo, "Prediction Accuracy: {}", error);
+    HILOG(kInfo, "Prediction Accuracy: {}", 1 - error);
   }
 
   float Predict(DataT &data) {
@@ -171,8 +168,7 @@ class RandomForestClassifierMpi {
     for (int i = 0; i < nprocs_; ++i) {
       err += preds[i];
     }
-    err /= data.size();
-    return err;
+    return err / data.size();
   }
 
   void PredictLocal(DataT &data, size_t off, size_t size,
@@ -213,7 +209,8 @@ class RandomForestClassifierMpi {
     size_t sample_size = 0;
     std::vector<Window> windows(windows_per_proc_);
     for (size_t i = 0; i < windows_per_proc_; ++i) {
-      windows[i].off_ = shuffle_.GetSize() * window_size_;
+      size_t idx = shuffle_.GetSize();
+      windows[i].off_ = idx * window_size_;
       windows[i].size_ = window_size_;
       if (windows[i].off_ + windows[i].size_ > data_.size()) {
         windows[i].size_ = data_.size() - windows[i].off_;
@@ -232,28 +229,54 @@ class RandomForestClassifierMpi {
     return sample;
   }
 
+  std::vector<size_t> SubsubsampleDataset(const std::vector<size_t> &sample,
+                                          size_t divisor) {
+    if (divisor > sample.size()) {
+      size_t i = 5;
+      while (true) {
+        divisor = sample.size() / i;
+        if (divisor > 0) {
+          break;
+        }
+        --i;
+      }
+    }
+    size_t new_size = sample.size() / divisor;
+    std::vector<size_t> new_sample(new_size);
+    hshm::UniformDistribution dist;
+    dist.Seed(2354235 * (rank_ + 1));
+    dist.Shape(0, sample.size() - 1);
+    for (size_t i = 0; i < new_sample.size(); ++i) {
+      size_t idx = dist.GetSize();
+      new_sample[i] = sample[idx];
+    }
+    return new_sample;
+  }
+
   void CreateDecisionTree(std::unique_ptr<Node<T>> &node,
                           const std::unique_ptr<Node<T>> &parent,
-                          const std::vector<size_t> &sample,
-                          const std::vector<int> &features) {
-    if (node->depth_ >= max_depth_) {
-      return;
-    }
+                          const std::vector<size_t> &sample) {
     // Decide the feature to split on
-    std::vector<size_t> assign(sample.size());
-    std::vector<Node<T>> stats(features.size() * 10);
+    size_t num_bootstrap_samples = 30;
+    std::vector<size_t> assign;
+    std::vector<Node<T>> stats(max_features_ * num_bootstrap_samples);
     hshm::UniformDistribution sample_dist;
     sample_dist.Seed(2354235 * (rank_ + 1));
-    sample_dist.Shape(0, sample.size() - 1);
     size_t stat_idx = 0;
-    for (int feature : features) {
-      for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < num_bootstrap_samples; ++i) {
+      std::vector<int> features = SubsampleFeatures();
+      std::vector<size_t> subsample = SubsubsampleDataset(
+          sample, num_bootstrap_samples);
+      sample_dist.Shape(0, subsample.size() - 1);
+      assign.resize(subsample.size());
+      for (int feature : features) {
         stats[stat_idx] = *node;
         stats[stat_idx].feature_ = feature;
-        stats[stat_idx].joint_ = data_[sample_dist.GetSize()];
+        size_t sample_idx = sample_dist.GetSize();
+        stats[stat_idx].joint_ = data_[subsample[sample_idx]];
         stats[stat_idx].left_ = std::make_unique<Node<T>>();
         stats[stat_idx].right_ = std::make_unique<Node<T>>();
-        Split(stats[stat_idx], sample, feature,
+        Split(stats[stat_idx], subsample, feature,
               stats[stat_idx].joint_, assign);
         ++stat_idx;
       }
@@ -269,31 +292,32 @@ class RandomForestClassifierMpi {
     node->entropy_ = min_stat.entropy_;
     node->left_->depth_ = node->depth_ + 1;
     node->right_->depth_ = node->depth_ + 1;
-    if (parent && abs(parent->entropy_ - node->entropy_) < tol_) {
+    bool low_entropy = node->entropy_ <= tol_;
+    bool is_max_depth = node->depth_ >= max_depth_;
+    if (low_entropy || is_max_depth) {
       node->left_ = nullptr;
       node->right_ = nullptr;
       return;
     }
     // Calculate decision tree for subsamples
     std::vector<size_t> left_sample, right_sample;
-    DivideSample(*node, sample, assign,
+    DivideSample(*node, sample,
                  left_sample, right_sample);
     CreateDecisionTree(node->left_, node,
-                       left_sample, features);
+                       left_sample);
     CreateDecisionTree(node->right_, node,
-                       right_sample, features);
+                       right_sample);
   }
 
   void DivideSample(Node<T> &node,
                     const std::vector<size_t> &sample,
-                    std::vector<size_t> &assign,
                     std::vector<size_t> &left,
                     std::vector<size_t> &right) {
     left.reserve(node.left_->count_);
     right.reserve(node.right_->count_);
     for (size_t i = 0; i < sample.size(); ++i) {
       size_t off = sample[i];
-      if (assign[off] == 0) {
+      if (data_[off].LessThan(node.joint_, node.feature_)) {
         left.emplace_back(off);
       } else {
         right.emplace_back(off);
@@ -301,7 +325,7 @@ class RandomForestClassifierMpi {
     }
   }
 
-  float Split(Node<T> &node,
+  void Split(Node<T> &node,
               const std::vector<size_t> &sample,
               int feature,
               T &joint,
@@ -311,21 +335,22 @@ class RandomForestClassifierMpi {
 
     // Assign points to left or right using joint
     size_t count[2] = {0};
-    for (size_t off : sample) {
+    for (size_t i = 0 ; i < sample.size(); ++i) {
+      size_t off = sample[i];
       T &row = data_[off];
-      if (row[feature] < joint[feature]) {
-        assign[off] = 0;
+      if (row.LessThan(joint, feature)) {
+        assign[i] = 0;
         count[0] += 1;
         gini.Induct(row, 0);
       } else {
-        assign[off] = 1;
+        assign[i] = 1;
         count[1] += 1;
         gini.Induct(row, 1);
       }
     }
     node.left_->count_ = count[0];
     node.right_->count_ = count[1];
-    return gini.Get();
+    node.entropy_ = gini.Get();
   }
 };
 
@@ -349,7 +374,7 @@ int main(int argc, char **argv) {
   if (algo == "mmap") {
     RandomForestClassifierMpi<
         mm::VectorMmapMpi<ClassRow>,
-        mm::VectorMmapMpi<std::unique_ptr<Node<ClassRow>>>,
+        mm::VectorMmapMpi<std::unique_ptr<Node<ClassRow>>, true>,
         Gini<ClassRow>,
         mm::VectorMmapMpi<size_t>,
         ClassRow> rf;
