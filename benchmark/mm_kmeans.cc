@@ -128,7 +128,7 @@ class KmeansMpi {
 
   void Run() {
     // Select initial centroids
-    size_t first_k = SelectFirstK();
+    size_t first_k = SelectFirstCenter();
     std::vector<size_t> ks;
     ks.emplace_back(first_k);
     for (int i = 1; i < k_; ++i) {
@@ -153,6 +153,9 @@ class KmeansMpi {
     }
   }
 
+  /** 
+   * Find the point that is furthest from all current centers.
+   * */
   void FindMax(std::vector<size_t> &ks) {
     MaxT local_maxes;
     local_maxes.Init(dir_ + "/" + "max", nprocs_);
@@ -167,6 +170,11 @@ class KmeansMpi {
     local_maxes.Barrier();
   }
 
+  /**
+   * Find the point that is furthest from all current centers.
+   * This aggregates the local maximums discovered by all
+   * other procecsses.
+   * */
   LocalMax FindGlobalMax(MaxT &local_maxes) {
     LocalMax max;
     for (int i = 0; i < nprocs_; ++i) {
@@ -178,6 +186,11 @@ class KmeansMpi {
     return max;
   }
 
+  /**
+   * The distance measure. Returns the smallest distance between the current
+   * point and all center points. This way points that are near an existing
+   * center are not selected.
+   * */
   double MinOfCenterDists(T &cur_pt, std::vector<size_t> &ks) {
     double min_dist = std::numeric_limits<double>::max();
     for (size_t j = 0; j < ks.size(); ++j) {
@@ -190,6 +203,10 @@ class KmeansMpi {
     return min_dist;
   }
 
+  /**
+   * Find the point furthest away from the current set of centers in the local
+   * branch of the dataset.
+   * */
   LocalMax FindLocalMax(std::vector<size_t> &ks) {
     LocalMax local_max;
     for (size_t i = off_; i < last_; ++i) {
@@ -206,7 +223,10 @@ class KmeansMpi {
     return local_max;
   }
 
-  size_t SelectFirstK() {
+  /**
+   * Select the first center to initialize kmeans++.
+   * */
+  size_t SelectFirstCenter() {
     hshm::UniformDistribution dist;
     dist.Seed(23582);
     dist.Shape(0, data_.size_ - 1);
@@ -214,6 +234,11 @@ class KmeansMpi {
     return first_k;
   }
 
+  /**
+   * Runs the traditional KMeans algorithm. Assigns each point to a
+   * center and then updates the center to be the average of all points
+   * assigned to it.
+   * */
   void KMeans() {
     inertia_ = 1;
     for (iter_ = 0; iter_ < max_iter_; ++iter_) {
@@ -228,17 +253,22 @@ class KmeansMpi {
     }
   }
 
+  /**
+   * Assigns points to each current center and calculates the global
+   * inertia and average of the assignment.
+   * */
   float Assignment() {
     AssignT assign;
     SumT sum;
     assign.Init(dir_ + "/" + "assign", data_.size());
     sum.Init(dir_ + "/" + "sum", nprocs_ * k_);
+    // Calculate local assignment
     size_t off = off_, last = last_;
     for (size_t i = rank_ * k_; i < (rank_ + 1) * k_; ++i) {
       sum[i].Zero();
     }
     for (size_t i = off; i < last; ++i) {
-      Row row = data_[i];
+      T row = data_[i];
       assign[i] = FindClosestCenter(row);
       sum[rank_ * k_ + assign[i]].row_ += row;
       sum[rank_ * k_ + assign[i]].count_ += 1;
@@ -246,9 +276,10 @@ class KmeansMpi {
           pow(row.Distance(ks_[assign[i]].center_), 2);
     }
     sum.Barrier();
+    // Calculate global statistics from each local assignment
     float inertia = 0;
     for (int i = 0; i < ks_.size(); ++i) {
-      Row avg(0);
+      T avg(0);
       size_t count = 0;
       float k_inertia = 0;
       for (int j = 0; j < nprocs_; ++j) {
@@ -265,8 +296,11 @@ class KmeansMpi {
     sum.Barrier();
     return inertia;
   }
-  
-  size_t FindClosestCenter(Row &row) {
+
+  /**
+   * Find the center closes to the row.
+   * */
+  size_t FindClosestCenter(T &row) {
     double min_dist = std::numeric_limits<double>::max();
     size_t min_idx = 0;
     for (size_t i = 0; i < ks_.size(); ++i) {
