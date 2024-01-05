@@ -39,8 +39,8 @@ struct Row {
   }
 
   double Distance(const Row &other) {
-    return (x_ - other.x_) * (x_ - other.x_) +
-        (y_ - other.y_) * (y_ - other.y_);
+    return sqrt((x_ - other.x_) * (x_ - other.x_) +
+        (y_ - other.y_) * (y_ - other.y_));
   }
 
   void Zero() {

@@ -369,7 +369,7 @@ int main(int argc, char **argv) {
   int nfeature = std::stoi(argv[4]);
   int ncol = nfeature + 1;
   size_t window_size = hshm::ConfigParse::ParseSize(argv[5]);
-  HILOG(kInfo, "Running random forest");
+  HILOG(kInfo, "Running random forest on rank {}", rank);
 
   if (algo == "mmap") {
     RandomForestClassifierMpi<

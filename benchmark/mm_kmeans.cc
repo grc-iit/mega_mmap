@@ -18,8 +18,32 @@
 namespace stdfs = std::filesystem;
 
 struct LocalMax {
-  size_t idx_ = 0;
-  double dist_ = 0;
+  size_t idx_;
+  double dist_;
+
+  LocalMax() : idx_(0), dist_(0) {}
+
+  LocalMax(size_t idx, double dist) : idx_(idx), dist_(dist) {}
+
+  LocalMax(const LocalMax &other) : idx_(other.idx_), dist_(other.dist_) {}
+
+  LocalMax &operator=(const LocalMax &other) {
+    idx_ = other.idx_;
+    dist_ = other.dist_;
+    return *this;
+  }
+
+  LocalMax &operator+=(const LocalMax &other) {
+    idx_ += other.idx_;
+    dist_ += other.dist_;
+    return *this;
+  }
+
+  LocalMax &operator/=(const size_t &other) {
+    idx_ /= other;
+    dist_ /= other;
+    return *this;
+  }
 };
 
 struct RowSum {
@@ -31,6 +55,29 @@ struct RowSum {
     row_ = Row(0);
     count_ = 0;
     inertia_ = 0;
+  }
+};
+
+template<typename T>
+struct Center {
+  T center_;
+  size_t count_;
+  float inertia_;
+
+  Center() : center_(0), count_(0), inertia_(0) {}
+
+  Center(const T &center) : center_(center), count_(0), inertia_(0) {}
+
+  void Zero() {
+    center_ = T(0);
+    count_ = 0;
+    inertia_ = 0;
+  }
+
+  void Print() {
+    HILOG(kInfo, "Center: ({}, {}, count={}, inertia={})",
+          center_.x_, center_.y_,
+          count_, inertia_);
   }
 };
 
@@ -47,7 +94,7 @@ class KmeansMpi {
   int nprocs_;
   size_t window_size_;
   int k_;
-  std::vector<Row> ks_;
+  std::vector<Center<T>> ks_;
   int max_iter_;
   size_t off_;
   size_t last_;
@@ -88,8 +135,10 @@ class KmeansMpi {
       FindMax(ks);
     }
     for (int i = 0; i < k_; ++i) {
+      HILOG(kInfo, "Center {}: ({}, {})", i, data_[ks[i]].x_, data_[ks[i]].y_)
       ks_.emplace_back(data_[ks[i]]);
     }
+    HILOG(kInfo, "");
     // Run kmeans
     KMeans();
     // Print results
@@ -100,19 +149,19 @@ class KmeansMpi {
     HILOG(kInfo, "Intertia: {}", inertia_);
     HILOG(kInfo, "Iterations: {}", iter_);
     for (int i = 0; i < k_; ++i) {
-      HILOG(kInfo, "Center {}: ({}, {})", i, ks_[i].x_, ks_[i].y_);
+      ks_[i].Print();
     }
   }
 
   void FindMax(std::vector<size_t> &ks) {
     MaxT local_maxes;
     local_maxes.Init(dir_ + "/" + "max", nprocs_);
-    // Get maximum of all proc windows
+    // Find point furthest away from all existing Ks
     LocalMax local_max = FindLocalMax(ks);
-    // Wait for all windows to finish
+    // Wait for all processes to complete
     local_maxes[rank_] = local_max;
     local_maxes.Barrier();
-    // Find global max
+    // Find global max across processes
     LocalMax global_max = FindGlobalMax(local_maxes);
     ks.emplace_back(global_max.idx_);
     local_maxes.Barrier();
@@ -129,40 +178,32 @@ class KmeansMpi {
     return max;
   }
 
-  LocalMax FindLocalMax(std::vector<size_t> &ks) {
-    size_t window_size = window_size_;
-    LocalMax local_max;
-    size_t off = off_, last = last_;
-    while (off < last) {
-      if (off + window_size > last) {
-        window_size = last - off;
+  double MinOfCenterDists(T &cur_pt, std::vector<size_t> &ks) {
+    double min_dist = std::numeric_limits<double>::max();
+    for (size_t j = 0; j < ks.size(); ++j) {
+      T &center = data_[ks[j]];
+      double dist = (center.Distance(cur_pt));
+      if (dist < min_dist) {
+        min_dist = dist;
       }
-      FindWindowMax(ks, off, off + window_size,
-                    local_max.dist_, local_max.idx_);
-      off += window_size;
     }
-    return local_max;
+    return min_dist;
   }
 
-  void FindWindowMax(std::vector<size_t> &ks,
-                     size_t off, size_t last,
-                     double &max_dist,
-                     size_t &max_idx) {
-    for (size_t i = off; i < last; ++i) {
-      Row &cur_pt = data_[i];
-      double dist = 1;
-      for (size_t j = 0; j < ks.size(); ++j) {
-        Row &center = data_[ks[j]];
-        dist *= center.Distance(cur_pt);
-      }
-      if (dist > max_dist) {
+  LocalMax FindLocalMax(std::vector<size_t> &ks) {
+    LocalMax local_max;
+    for (size_t i = off_; i < last_; ++i) {
+      T &cur_pt = data_[i];
+      double dist = MinOfCenterDists(cur_pt, ks);
+      if (dist > local_max.dist_) {
         if (std::find(ks.begin(), ks.end(), i) != ks.end()) {
           continue;
         }
-        max_dist = dist;
-        max_idx = i;
+        local_max.dist_ = dist;
+        local_max.idx_ = i;
       }
     }
+    return local_max;
   }
 
   size_t SelectFirstK() {
@@ -201,20 +242,25 @@ class KmeansMpi {
       assign[i] = FindClosestCenter(row);
       sum[rank_ * k_ + assign[i]].row_ += row;
       sum[rank_ * k_ + assign[i]].count_ += 1;
-      sum[rank_ * k_ + assign[i]].inertia_ += row.Distance(ks_[assign[i]]);
+      sum[rank_ * k_ + assign[i]].inertia_ +=
+          pow(row.Distance(ks_[assign[i]].center_), 2);
     }
     sum.Barrier();
     float inertia = 0;
     for (int i = 0; i < ks_.size(); ++i) {
       Row avg(0);
       size_t count = 0;
+      float k_inertia = 0;
       for (int j = 0; j < nprocs_; ++j) {
         avg += sum[j * k_ + i].row_;
         count += sum[j * k_ + i].count_;
-        inertia += sum[j * k_ + i].inertia_;
+        k_inertia += sum[j * k_ + i].inertia_;
       }
+      inertia += k_inertia;
       avg /= count;
-      ks_[i] = avg;
+      ks_[i].count_ = count;
+      ks_[i].inertia_ = k_inertia;
+      ks_[i].center_ = avg;
     }
     sum.Barrier();
     return inertia;
@@ -224,8 +270,7 @@ class KmeansMpi {
     double min_dist = std::numeric_limits<double>::max();
     size_t min_idx = 0;
     for (size_t i = 0; i < ks_.size(); ++i) {
-      Row &center = ks_[i];
-      double dist = row.Distance(center);
+      double dist = row.Distance(ks_[i].center_);
       if (dist < min_dist) {
         min_dist = dist;
         min_idx = i;

@@ -1,0 +1,13 @@
+name: mm_kmeans_mmap
+env: mega_mmap
+pkgs:
+  - pkg_type: mm_kmeans
+    pkg_name: mm_kmeans
+    path: ${HOME}/mm_data/kmeans.bin_0_0_1
+    window_size: 1m
+    df_size: 16m
+    nprocs: 1
+    ppn: 16
+    api: pandas
+    max_iter: 30
+    k: 8
