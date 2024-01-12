@@ -316,8 +316,8 @@ class KmeansMpi {
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
-  if (argc < 5) {
-    HILOG(kFatal, "USAGE: ./kmeans [algo] [path] [window_size] [k] [max_iter]");
+  if (argc != 6) {
+    HILOG(kFatal, "USAGE: ./mm_kmeans [algo] [path] [window_size] [k] [max_iter]");
   }
   int rank, nprocs;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);

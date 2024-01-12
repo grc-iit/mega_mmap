@@ -357,7 +357,7 @@ class RandomForestClassifierMpi {
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
   if (argc != 6) {
-    HILOG(kFatal, "USAGE: ./rand_forest [algo] [train_path] [test_path] "
+    HILOG(kFatal, "USAGE: ./mm_random_forest [algo] [train_path] [test_path] "
                   "[nfeature] [window_size]");
   }
   int rank, nprocs;

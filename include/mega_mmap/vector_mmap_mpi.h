@@ -14,6 +14,8 @@
 #include "hermes_shm/data_structures/data_structure.h"
 #include <filesystem>
 #include <cereal/types/memory.hpp>
+#include <sys/resource.h>
+
 
 namespace stdfs = std::filesystem;
 
@@ -26,7 +28,7 @@ struct VectorMmapEntry {
 };
 
 /** Forward declaration */
-template<typename T>
+template<typename T, bool USE_REAL_CACHE=false>
 class VectorMmapMpiIterator;
 
 /** A wrapper for mmap-based vectors */
@@ -37,14 +39,18 @@ class VectorMmapMpi {
   size_t size_ = 0;
   size_t elmt_size_ = 0;
   std::vector<VectorMmapEntry<T>> real_data_;
+  std::vector<T> back_data_;
+  std::string path_;
+  std::string dir_;
+  int rank_;
 
  public:
   VectorMmapMpi() = default;
   ~VectorMmapMpi() = default;
 
   /** Constructor */
-  VectorMmapMpi(const std::string &path, size_t data_size) {
-    Init(path, data_size);
+  VectorMmapMpi(const std::string &path, size_t count) {
+    Init(path, count);
   }
 
   /** Construct from pointer */
@@ -78,13 +84,20 @@ class VectorMmapMpi {
     if (data_ != nullptr) {
       return;
     }
+    path_ = path;
+    dir_ = stdfs::path(path).parent_path();
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
     int fd = open64(path.c_str(), O_RDWR | O_CREAT, 0666);
     if (fd < 0) {
       HELOG(kFatal, "Failed to open file {}: {}",
             path.c_str(), strerror(errno));
     }
-    ftruncate64(fd, count * elmt_size);
-    data_ = (T*)mmap64(NULL, count * elmt_size, PROT_READ | PROT_WRITE,
+    size_t file_size = count * elmt_size;
+    if (ftruncate64(fd, (ssize_t)(file_size)) < 0) {
+      HELOG(kFatal, "Failed to truncate file {}: {}",
+              path.c_str(), strerror(errno));
+    }
+    data_ = (T*)mmap64(NULL, file_size, PROT_READ | PROT_WRITE,
                        MAP_SHARED, fd, 0);
     if (data_ == MAP_FAILED || data_ == nullptr) {
       data_ = nullptr;
@@ -96,10 +109,43 @@ class VectorMmapMpi {
     }
     size_ = count;
     elmt_size_ = elmt_size;
+    MaximizeFds();
   }
 
-  /** Lock a region */
-  void Barrier() {
+  void MaximizeFds() {
+    struct rlimit rlim;
+    if (getrlimit(RLIMIT_NOFILE, &rlim) == 0) {
+      rlim.rlim_cur = rlim.rlim_max;
+    }
+    if (setrlimit(RLIMIT_NOFILE, &rlim) != 0) {
+      HILOG(kInfo, "Cannot set maximum fd limit to {}", rlim.rlim_max);
+    }
+  }
+
+  void PrintNumOpenFds() {
+    struct rlimit rlim;
+    if (getrlimit(RLIMIT_NOFILE, &rlim) == 0) {
+      HILOG(kInfo, "Number of open files: {} / {}",
+            CountFds(), (long)rlim.rlim_cur)
+    }
+  }
+
+  int CountFds() {
+    int count = 0;
+
+    // Iterate through file descriptors
+    for (int fd = 0; fd < getdtablesize(); ++fd) {
+      if (fcntl(fd, F_GETFD) != -1) {
+        // Descriptor is valid
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  /** Serialize the in-memory cache back to backend */
+  void _SerializeToBackend() {
     if constexpr (USE_REAL_CACHE) {
       for (size_t i = 0; i < size_; ++i) {
         const VectorMmapEntry<T> &elmt = real_data_[i];
@@ -117,7 +163,10 @@ class VectorMmapMpi {
         }
       }
     }
-    MPI_Barrier(MPI_COMM_WORLD);
+  }
+
+  /** Deserialize in-memory cache from backend */
+  void _DeserializeFromBackend() {
     if constexpr (USE_REAL_CACHE) {
       for (size_t i = 0; i < size_; ++i) {
         char *elmt_data = (char*)data_ + i * elmt_size_;
@@ -128,6 +177,24 @@ class VectorMmapMpi {
         elmt.modified_ = false;
       }
     }
+  }
+
+  /** Lock a region */
+  void Barrier() {
+    _SerializeToBackend();
+    MPI_Barrier(MPI_COMM_WORLD);
+    _DeserializeFromBackend();
+  }
+
+  /** Lock a region for subset of nodes */
+  void Barrier(int proc_off, int nprocs) {
+    MPI_Comm subset_comm;
+    bool color = proc_off <= rank_ && rank_ < proc_off + nprocs;
+    MPI_Comm_split(MPI_COMM_WORLD, color, rank_ - proc_off, &subset_comm);
+    _SerializeToBackend();
+    MPI_Barrier(subset_comm);
+    _DeserializeFromBackend();
+    MPI_Comm_free(&subset_comm);
   }
 
   /** Index operator */
@@ -191,118 +258,146 @@ class VectorMmapMpi {
   }
 
   /** Begin iterator */
-  VectorMmapMpiIterator<T> begin() {
-    return VectorMmapMpiIterator<T>(data_);
+  VectorMmapMpiIterator<T, USE_REAL_CACHE> begin() {
+    return VectorMmapMpiIterator<T, USE_REAL_CACHE>(this, 0);
   }
 
   /** End iterator */
-  VectorMmapMpiIterator<T> end() {
-    return VectorMmapMpiIterator<T>(data_ + size());
+  VectorMmapMpiIterator<T, USE_REAL_CACHE> end() {
+    return VectorMmapMpiIterator<T, USE_REAL_CACHE>(this, size());
   }
 
   /** Close region */
   void Close() {
     munmap(data_, size_ * sizeof(T));
   }
+
+  /** Destroy region */
+  void Destroy() {
+    Close();
+    remove(path_.c_str());
+  }
+
+  /** Emplace back */
+  void emplace_back(const T &elmt) {
+    back_data_.reserve(MEGABYTES(1));
+    back_data_.emplace_back(elmt);
+  }
+
+  /** Flush emplace */
+  void flush_emplace(int proc_off, int nprocs) {
+    VectorMmapMpi<size_t, false> back(
+        hshm::Formatter::format("{}_flusher_{}_{}", path_, proc_off, nprocs),
+        nprocs);
+    back[rank_ - proc_off] = back_data_.size();
+    back.Barrier(proc_off, nprocs);
+    size_t my_off = 0, new_size = 0;
+    for (size_t i = 0; i < rank_ - proc_off; ++i) {
+      my_off += back[i];
+    }
+    for (size_t i = 0; i < nprocs; ++i) {
+      new_size += back[i];
+    }
+    for (size_t i = 0; i < back_data_.size(); ++i) {
+      data_[my_off + i] = back_data_[i];
+    }
+    back.Barrier(proc_off, nprocs);
+    back.Destroy();
+    back_data_.clear();
+    size_ = new_size;
+  }
 };
 
 /** Iterator for VectorMmapMpi */
-template<typename T>
+template<typename T, bool USE_REAL_CACHE>
 class VectorMmapMpiIterator {
  public:
-  T *data_;
+  VectorMmapMpi<T, USE_REAL_CACHE> *ptr_;
+  size_t idx_;
 
  public:
-  VectorMmapMpiIterator() = default;
+  VectorMmapMpiIterator() : idx_(0) {}
   ~VectorMmapMpiIterator() = default;
 
   /** Constructor */
-  VectorMmapMpiIterator(T *data) {
-    data_ = data;
+  VectorMmapMpiIterator(VectorMmapMpi<T, USE_REAL_CACHE> *ptr, size_t idx) {
+    ptr_ = ptr;
+    idx_ = idx;
   }
 
   /** Copy constructor */
-  VectorMmapMpiIterator(const VectorMmapMpiIterator<T> &other) {
-    data_ = other.data_;
+  VectorMmapMpiIterator(const VectorMmapMpiIterator &other) {
+    ptr_ = other.ptr_;
+    idx_ = other.idx_;
   }
 
-  /** Addition operator */
-  VectorMmapMpiIterator<T> operator+(int idx) {
-    return VectorMmapMpiIterator<T>(data_ + idx);
-  }
-
-  /** Addition assign operator */
-  VectorMmapMpiIterator<T> &operator+=(int idx) {
-    data_ += idx;
+  /** Assignment operator */
+  VectorMmapMpiIterator& operator=(const VectorMmapMpiIterator &other) {
+    ptr_ = other.ptr_;
+    idx_ = other.idx_;
     return *this;
   }
 
-  /** Subtraction operator */
-  VectorMmapMpiIterator<T> operator-(int idx) {
-    return VectorMmapMpiIterator<T>(data_ - idx);
+  /** Equality operator */
+  bool operator==(const VectorMmapMpiIterator &other) const {
+    return ptr_ == other.ptr_ && idx_ == other.idx_;
   }
 
-  /** Subtraction assign operator */
-  VectorMmapMpiIterator<T> &operator-=(int idx) {
-    data_ -= idx;
-    return *this;
-  }
-
-  /** Index operator */
-  T &operator[](int idx) {
-    return data_[idx];
+  /** Inequality operator */
+  bool operator!=(const VectorMmapMpiIterator &other) const {
+    return ptr_ != other.ptr_ || idx_ != other.idx_;
   }
 
   /** Dereference operator */
-  T &operator*() {
-    return *data_;
+  T& operator*() {
+    return (*ptr_)[idx_];
   }
 
   /** Prefix increment operator */
-  VectorMmapMpiIterator<T> &operator++() {
-    ++data_;
+  VectorMmapMpiIterator& operator++() {
+    ++idx_;
     return *this;
   }
 
   /** Postfix increment operator */
-  VectorMmapMpiIterator<T> operator++(int) {
-    VectorMmapMpiIterator<T> tmp(*this);
-    operator++();
+  VectorMmapMpiIterator operator++(int) {
+    VectorMmapMpiIterator tmp(*this);
+    ++idx_;
     return tmp;
   }
 
   /** Prefix decrement operator */
-  VectorMmapMpiIterator<T> &operator--() {
-    --data_;
+  VectorMmapMpiIterator& operator--() {
+    --idx_;
     return *this;
   }
 
   /** Postfix decrement operator */
-  VectorMmapMpiIterator<T> operator--(int) {
-    VectorMmapMpiIterator<T> tmp(*this);
-    operator--();
+  VectorMmapMpiIterator operator--(int) {
+    VectorMmapMpiIterator tmp(*this);
+    --idx_;
     return tmp;
   }
 
   /** Addition operator */
-  VectorMmapMpiIterator<T> operator+(const VectorMmapMpiIterator<T> &other) {
-    return VectorMmapMpiIterator<T>(data_ + other.data_);
+  VectorMmapMpiIterator operator+(int idx) {
+    return VectorMmapMpiIterator(ptr_, idx_ + idx);
   }
 
   /** Addition assign operator */
-  VectorMmapMpiIterator<T> &operator+=(const VectorMmapMpiIterator<T> &other) {
-    data_ += other.data_;
+  VectorMmapMpiIterator& operator+=(int idx) {
+    idx_ += idx;
     return *this;
   }
 
   /** Subtraction operator */
-  VectorMmapMpiIterator<T> operator-(const VectorMmapMpiIterator<T> &other) {
-    return VectorMmapMpiIterator<T>(data_ - other.data_);
+  VectorMmapMpiIterator operator-(int idx) {
+    return VectorMmapMpiIterator(ptr_, idx_ - idx);
   }
 
   /** Subtraction assign operator */
-  VectorMmapMpiIterator<T> &operator-=(const VectorMmapMpiIterator<T> &other) {
-    data_ -= other.data_;
+  VectorMmapMpiIterator& operator-=(int idx) {
+    idx_ -= idx;
     return *this;
   }
 };

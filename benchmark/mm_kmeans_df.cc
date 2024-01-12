@@ -146,7 +146,7 @@ class KmeansDf {
 
 int main(int argc, char **argv) {
   MPI_Init(&argc, &argv);
-  if (argc < 5) {
+  if (argc != 6) {
     HILOG(kFatal, "Usage: ./kmeans_df <k> <data_path> <df_size> <window_size> <type>");
   }
   int nprocs = 0, rank = 0;

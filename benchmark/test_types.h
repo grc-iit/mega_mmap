@@ -38,7 +38,7 @@ struct Row {
     return *this;
   }
 
-  double Distance(const Row &other) {
+  double Distance(const Row &other) const {
     return sqrt((x_ - other.x_) * (x_ - other.x_) +
         (y_ - other.y_) * (y_ - other.y_));
   }
@@ -70,6 +70,34 @@ struct Row {
 
   const float &last() const {
     return y_;
+  }
+
+  template<typename Ar>
+  void serialize(Ar &ar) {
+    ar(x_, y_);
+  }
+
+  bool LessThan(const Row &other, int feature) const {
+    if (feature == 0) {
+      return x_ < other.x_;
+    } else if (feature == 1) {
+      return y_ < other.y_;
+    } else {
+      HILOG(kFatal, "Invalid feature");
+      exit(1);
+    }
+  }
+
+  size_t GetNumFeatures() {
+    return 2;
+  }
+
+  size_t operator()(const Row &row) const {
+    return (size_t) (row.x_ + row.y_);
+  }
+
+  bool operator==(const Row &other) const {
+    return x_ == other.x_ && y_ == other.y_;
   }
 };
 
