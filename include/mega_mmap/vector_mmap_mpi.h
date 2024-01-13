@@ -36,13 +36,15 @@ template<typename T, bool USE_REAL_CACHE=false>
 class VectorMmapMpi {
  public:
   T* data_ = nullptr;
+  size_t off_ = 0;
   size_t size_ = 0;
+  size_t max_size_ = 0;
   size_t elmt_size_ = 0;
   std::vector<VectorMmapEntry<T>> real_data_;
   std::vector<T> back_data_;
   std::string path_;
   std::string dir_;
-  int rank_;
+  int rank_, nprocs_;
 
  public:
   VectorMmapMpi() = default;
@@ -53,18 +55,18 @@ class VectorMmapMpi {
     Init(path, count);
   }
 
-  /** Construct from pointer */
-  VectorMmapMpi(T *data, size_t size) {
-    data_ = data;
-    size_ = size;
-    elmt_size_ = sizeof(T);
-  }
-
   /** Copy constructor */
   VectorMmapMpi(const VectorMmapMpi<T> &other) {
     data_ = other.data_;
+    off_ = other.off_;
     size_ = other.size_;
+    max_size_ = other.max_size_;
     elmt_size_ = other.elmt_size_;
+    rank_ = other.rank_;
+    nprocs_ = other.nprocs_;
+    if constexpr (USE_REAL_CACHE) {
+      real_data_.resize(size_);
+    }
   }
 
   /** Explicit initializer */
@@ -87,6 +89,7 @@ class VectorMmapMpi {
     path_ = path;
     dir_ = stdfs::path(path).parent_path();
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
+    MPI_Comm_size(MPI_COMM_WORLD, &nprocs_);
     int fd = open64(path.c_str(), O_RDWR | O_CREAT, 0666);
     if (fd < 0) {
       HELOG(kFatal, "Failed to open file {}: {}",
@@ -107,9 +110,18 @@ class VectorMmapMpi {
     if constexpr (USE_REAL_CACHE) {
       real_data_.resize(count);
     }
+    off_ = 0;
     size_ = count;
+    max_size_ = count;
     elmt_size_ = elmt_size;
     MaximizeFds();
+  }
+
+  VectorMmapMpi Subset(size_t off, size_t size) {
+    VectorMmapMpi mmap(*this);
+    mmap.off_ = off;
+    mmap.size_ = size;
+    return mmap;
   }
 
   void MaximizeFds() {
@@ -159,7 +171,8 @@ class VectorMmapMpi {
             HELOG(kFatal, "Serialization size {} is larger than element size {}",
                   srl.size(), elmt_size_);
           }
-          memcpy((char*)data_ + off, srl.c_str(), srl.size());
+          memcpy((char*)data_ + off_ + off,
+                 srl.c_str(), srl.size());
         }
       }
     }
@@ -169,7 +182,7 @@ class VectorMmapMpi {
   void _DeserializeFromBackend() {
     if constexpr (USE_REAL_CACHE) {
       for (size_t i = 0; i < size_; ++i) {
-        char *elmt_data = (char*)data_ + i * elmt_size_;
+        char *elmt_data = (char*)data_ + (off_ + i) * elmt_size_;
         VectorMmapEntry<T> &elmt = real_data_[i];
         std::stringstream ss(std::string(elmt_data, elmt_size_));
         cereal::BinaryInputArchive ar(ss);
@@ -188,9 +201,13 @@ class VectorMmapMpi {
 
   /** Lock a region for subset of nodes */
   void Barrier(int proc_off, int nprocs) {
+    if (nprocs == nprocs_) {
+      Barrier();
+      return;
+    }
     MPI_Comm subset_comm;
     bool color = proc_off <= rank_ && rank_ < proc_off + nprocs;
-    MPI_Comm_split(MPI_COMM_WORLD, color, rank_ - proc_off, &subset_comm);
+    MPI_Comm_split(MPI_COMM_WORLD, color, rank_, &subset_comm);
     _SerializeToBackend();
     MPI_Barrier(subset_comm);
     _DeserializeFromBackend();
@@ -198,9 +215,9 @@ class VectorMmapMpi {
   }
 
   /** Index operator */
-  T& operator[](int idx) {
+  T& operator[](size_t idx) {
     if constexpr (!USE_REAL_CACHE) {
-      return data_[idx];
+      return data_[off_ + idx];
     } else {
       VectorMmapEntry<T> &entry = real_data_[idx];
       entry.modified_ = true;
@@ -209,47 +226,51 @@ class VectorMmapMpi {
   }
 
   /** Addition operator */
-  VectorMmapMpi<T> operator+(int idx) {
-    return VectorMmapMpi<T>(data_ + idx, size_ - idx);
+  VectorMmapMpi<T> operator+(size_t idx) {
+    return Subset(off_ + idx, size_ - idx);
   }
 
   /** Addition assign operator */
-  VectorMmapMpi<T>& operator+=(int idx) {
-    data_ += idx;
+  VectorMmapMpi<T>& operator+=(size_t idx) {
+    off_ += idx;
     size_ -= idx;
     return *this;
   }
 
   /** Subtraction operator */
-  VectorMmapMpi<T> operator-(int idx) {
-    return VectorMmapMpi<T>(data_ - idx, size_ + idx);
+  VectorMmapMpi<T> operator-(size_t idx) {
+    return Subset(off_ - idx, size_ + idx);
   }
 
   /** Subtraction assign operator */
-  VectorMmapMpi<T>& operator-=(int idx) {
-    data_ -= idx;
+  VectorMmapMpi<T>& operator-=(size_t idx) {
+    off_ -= idx;
     size_ += idx;
     return *this;
   }
 
   /** Memcpy operator */
   void Memcpy(T *src, size_t size, size_t off = 0) {
-    memcpy(data_ + off, src, size);
+    memcpy(data_ + off_ + off, src, size);
   }
 
   /** Memcpy operator (II) */
   void Memcpy(VectorMmapMpi<T> &src, size_t size, size_t off = 0) {
-    memcpy(data_ + off, src.data_, size);
+    memcpy(data_ + off_ + off,
+           src.data_ + src.off_,
+           size);
   }
 
   /** check if sorted */
   bool IsSorted(size_t off, size_t size) {
-    return std::is_sorted(data_ + off, data_ + off + size);
+    return std::is_sorted(data_ + off_ + off,
+                          data_ + off_ + off + size);
   }
 
   /** Sort a subset */
   void Sort(size_t off, size_t size) {
-      std::sort(data_ + off, data_ + off + size);
+      std::sort(data_ + off_ + off,
+                data_ + off_ + off + size);
   }
 
   /** Size */
@@ -269,7 +290,7 @@ class VectorMmapMpi {
 
   /** Close region */
   void Close() {
-    munmap(data_, size_ * sizeof(T));
+    munmap(data_, max_size_ * elmt_size_);
   }
 
   /** Destroy region */
@@ -286,8 +307,10 @@ class VectorMmapMpi {
 
   /** Flush emplace */
   void flush_emplace(int proc_off, int nprocs) {
+    std::string flush_map = hshm::Formatter::format(
+        "{}_flusher_{}_{}", path_, proc_off, nprocs);
     VectorMmapMpi<size_t, false> back(
-        hshm::Formatter::format("{}_flusher_{}_{}", path_, proc_off, nprocs),
+        flush_map,
         nprocs);
     back[rank_ - proc_off] = back_data_.size();
     back.Barrier(proc_off, nprocs);
@@ -380,23 +403,23 @@ class VectorMmapMpiIterator {
   }
 
   /** Addition operator */
-  VectorMmapMpiIterator operator+(int idx) {
+  VectorMmapMpiIterator operator+(size_t idx) {
     return VectorMmapMpiIterator(ptr_, idx_ + idx);
   }
 
   /** Addition assign operator */
-  VectorMmapMpiIterator& operator+=(int idx) {
+  VectorMmapMpiIterator& operator+=(size_t idx) {
     idx_ += idx;
     return *this;
   }
 
   /** Subtraction operator */
-  VectorMmapMpiIterator operator-(int idx) {
+  VectorMmapMpiIterator operator-(size_t idx) {
     return VectorMmapMpiIterator(ptr_, idx_ - idx);
   }
 
   /** Subtraction assign operator */
-  VectorMmapMpiIterator& operator-=(int idx) {
+  VectorMmapMpiIterator& operator-=(size_t idx) {
     idx_ -= idx;
     return *this;
   }

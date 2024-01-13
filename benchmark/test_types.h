@@ -5,6 +5,40 @@
 #ifndef MEGAMMAP_BENCHMARK_TEST_TYPES_H_
 #define MEGAMMAP_BENCHMARK_TEST_TYPES_H_
 
+class Bounds {
+ public:
+  size_t off_, size_;
+ public:
+  Bounds() = default;
+
+  Bounds(size_t off, size_t size) : off_(off), size_(size) {}
+
+  Bounds(const Bounds &other) {
+    off_ = other.off_;
+    size_ = other.size_;
+  }
+
+  Bounds &operator=(const Bounds &other) {
+    off_ = other.off_;
+    size_ = other.size_;
+    return *this;
+  }
+
+  explicit Bounds(int rank, int nprocs,
+                  size_t max_size) {
+    EvenSplit(rank, nprocs, max_size);
+  }
+
+  void EvenSplit(int rank, int nprocs,
+                 size_t max_size) {
+    size_ = max_size / nprocs;
+    if (rank == nprocs - 1) {
+      size_ += max_size % nprocs;
+    }
+    off_ = rank * (max_size / nprocs);
+  }
+};
+
 struct Row {
   float x_;
   float y_;
@@ -99,6 +133,10 @@ struct Row {
   bool operator==(const Row &other) const {
     return x_ == other.x_ && y_ == other.y_;
   }
+
+  std::string ToString() const {
+    return hshm::Formatter::format("({}, {})", x_, y_);
+  }
 };
 
 struct ClassRow {
@@ -166,31 +204,31 @@ struct GiniSum {
 
 template<typename T>
 struct Gini {
-    std::unordered_map<int, GiniSum> count_;
+  std::unordered_map<int, GiniSum> count_;
 
-    void Induct(T &row, int part) {
-      if (count_.find(row.last()) == count_.end()) {
-        count_[row.last()] = GiniSum();
-      }
-      if (part == 0) {
-        count_[row.last()].left_++;
-      } else {
-        count_[row.last()].right_++;
-      }
+  void Induct(T &row, int part) {
+    if (count_.find(row.last()) == count_.end()) {
+      count_[row.last()] = GiniSum();
     }
+    if (part == 0) {
+      count_[row.last()].left_++;
+    } else {
+      count_[row.last()].right_++;
+    }
+  }
 
-    float Get() {
-      float gini = 0;
-      for (const std::pair<int, GiniSum> &gpair : count_) {
-        GiniSum sum = gpair.second;
-        float total = sum.left_ + sum.right_;
-        float left_prob = sum.left_ / total;
-        float right_prob = sum.right_ / total;
-        gini += left_prob * (1 - left_prob) +
-            right_prob * (1 - right_prob);
-      }
-      return gini;
+  float Get() {
+    float gini = 0;
+    for (const std::pair<int, GiniSum> &gpair : count_) {
+      GiniSum sum = gpair.second;
+      float total = sum.left_ + sum.right_;
+      float left_prob = sum.left_ / total;
+      float right_prob = sum.right_ / total;
+      gini += left_prob * (1 - left_prob) +
+          right_prob * (1 - right_prob);
     }
+    return gini;
+  }
 };
 
 #endif //MEGAMMAP_BENCHMARK_TEST_TYPES_H_

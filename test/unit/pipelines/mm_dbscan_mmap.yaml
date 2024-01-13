@@ -5,7 +5,7 @@ pkgs:
     pkg_name: mm_dbscan
     path: ${HOME}/mm_data/kmeans.bin
     window_size: 1m
-    nprocs: 1
+    nprocs: 2
     ppn: 16
     api: mmap
     dist: 6
