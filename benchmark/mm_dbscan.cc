@@ -79,6 +79,7 @@ template<typename DataT,
     typename NodeT,
     typename AssignT,
     typename OutT,
+    typename BoolT,
     typename T>
 class DbscanMpi {
  public:
@@ -122,21 +123,6 @@ class DbscanMpi {
     max_depth_ = 16;
   }
 
-  void Run() {
-    std::unique_ptr<Node<T>> root = std::make_unique<Node<T>>();
-    AssignT sample = RootSample();
-    HILOG(kInfo, "HERE1");
-    CreateDecisionTree(root, sample,
-                       0, 0, nprocs_);
-    HILOG(kInfo, "HERE2");
-    trees_[rank_] = std::move(root);
-    trees_.Barrier();
-    HILOG(kInfo, "HERE3");
-    std::unordered_set<T, T> joints = CombineDecisionTrees();
-    Agglomerate(joints);
-    Predict();
-  }
-
   AssignT RootSample() {
     AssignT sample;
     Bounds bounds(rank_, nprocs_, data_.size());
@@ -151,24 +137,33 @@ class DbscanMpi {
     return sample;
   }
 
+  void Run() {
+    std::unique_ptr<Node<T>> root = std::make_unique<Node<T>>();
+    AssignT sample = RootSample();
+    CreateDecisionTree(root, sample, 0,
+                       MPI_COMM_WORLD, 0, nprocs_);
+    trees_[rank_] = std::move(root);
+    trees_.Barrier();
+    std::unordered_set<T, T> joints = CombineDecisionTrees();
+    Agglomerate(joints);
+    Predict();
+  }
+
   void CreateDecisionTree(std::unique_ptr<Node<T>> &node,
                           AssignT &sample,
                           uint64_t uuid,
-                          int proc_off, int nprocs) {
-    HILOG(kInfo, "Processing {} of size {} on rank {}",
-          uuid, sample.size(), rank_)
+                          MPI_Comm comm, int proc_off, int nprocs) {
+    HILOG(kInfo, "{}: Beginning tree {} {}", rank_, proc_off, nprocs);
     // Decide the feature to split on
     FindGlobalMedianAndFeature(*node, sample,
                                node->depth_, uuid,
-                               proc_off, nprocs);
-    HILOG(kInfo, "Discovered global median")
+                               comm, proc_off, nprocs);
     node->left_ = std::make_unique<Node<T>>();
     node->right_ = std::make_unique<Node<T>>();
     node->left_->depth_ = node->depth_ + 1;
     node->right_->depth_ = node->depth_ + 1;
-    bool low_entropy = node->entropy_ <= dist_ / 2;
-    bool is_max_depth = node->depth_ >= max_depth_;
-    if (low_entropy || is_max_depth) {
+    // Determine whether to continue splitting
+    if (!ShouldSplit(*node, comm, proc_off, nprocs, uuid)) {
       node->left_ = nullptr;
       node->right_ = nullptr;
       sample.Destroy();
@@ -178,18 +173,20 @@ class DbscanMpi {
     AssignT left_sample, right_sample;
     size_t left_uuid = uuid;
     size_t right_uuid = uuid | (1 << node->depth_);
-    std::string left_sample_name = hshm::Formatter::format("{}/sample_{}_{}",
-                                                           dir_, node->depth_ + 1,
-                                                           left_uuid);
-    std::string right_sample_name = hshm::Formatter::format("{}/sample_{}_{}",
-                                                            dir_, node->depth_ + 1,
-                                                            right_uuid);
+    std::string left_sample_name =
+        hshm::Formatter::format("{}/sample_{}_{}",
+                                dir_, node->depth_ + 1,
+                                left_uuid);
+    std::string right_sample_name =
+        hshm::Formatter::format("{}/sample_{}_{}",
+                                dir_, node->depth_ + 1,
+                                right_uuid);
     left_sample.Init(left_sample_name, sample.size() * 3 / 2);
     right_sample.Init(right_sample_name, sample.size() * 3 / 2);
     DivideSample(*node, sample,
                  left_sample, right_sample,
-                 proc_off, nprocs);
-    sample.Barrier(proc_off, nprocs);
+                 comm, proc_off, nprocs);
+    sample.Barrier(comm);
     sample.Destroy();
     // Decide which nodes git which part of the sample
     int left_off = proc_off;
@@ -204,6 +201,7 @@ class DbscanMpi {
       left_off = proc_off;
       left_proc = 1;
     }
+    HILOG(kInfo, "{}: Finished tree {} {}", rank_, proc_off, nprocs)
     if (left_sample.size() > window_size_ * nprocs) {
       if (left_off <= rank_ && rank_ < left_off + nprocs) {
         Bounds bounds(rank_ - proc_off, nprocs, left_sample.size());
@@ -211,16 +209,17 @@ class DbscanMpi {
         CreateDecisionTree(node->left_,
                            left_sample,
                            left_uuid,
-                           left_off, nprocs);
+                           comm, left_off, nprocs);
       }
     } else if (left_sample.size() > min_pts_) {
+      MpiComm subcomm(comm, left_off, left_proc);
       if (left_off <= rank_ && rank_ < left_off + left_proc) {
         Bounds bounds(rank_ - left_off, left_proc, left_sample.size());
         left_sample = left_sample.Subset(bounds.off_, bounds.size_);
         CreateDecisionTree(node->left_,
                            left_sample,
                            left_uuid,
-                           left_off, left_proc);
+                           subcomm.comm_, left_off, left_proc);
       }
     } else {
       node->left_ = nullptr;
@@ -233,16 +232,17 @@ class DbscanMpi {
         CreateDecisionTree(node->right_,
                            right_sample,
                            right_uuid,
-                           left_off, nprocs);
+                           comm, left_off, nprocs);
       }
     } else if (right_sample.size() > min_pts_) {
+      MpiComm subcomm(comm, right_off, right_proc);
       if (right_off <= rank_ && rank_ < right_off + right_proc) {
         Bounds bounds(rank_ - right_off, right_proc, right_sample.size());
         right_sample = right_sample.Subset(bounds.off_, bounds.size_);
         CreateDecisionTree(node->right_,
                            right_sample,
                            right_uuid,
-                           right_off, right_proc);
+                           subcomm.comm_, right_off, right_proc);
       }
     } else {
       node->right_ = nullptr;
@@ -250,18 +250,39 @@ class DbscanMpi {
     }
   }
 
+  bool ShouldSplit(Node<T> &node,
+                   MPI_Comm comm, int proc_off, int nprocs,
+                   uint64_t uuid) {
+    bool low_entropy = node.entropy_ <= dist_ / 2;
+    bool is_max_depth = node.depth_ >= max_depth_;
+    BoolT should_splits;
+    should_splits.Init(hshm::Formatter::format("{}/should_split_{}_{}",
+                                               dir_, node.depth_ + 1, uuid),
+                       nprocs);
+    should_splits[rank_ - proc_off] = !(low_entropy || is_max_depth);
+    should_splits.Barrier(comm);
+    bool ret = false;
+    for (int i = 0; i < nprocs; ++i) {
+      if (should_splits[i]) {
+        ret = true;
+        break;
+      }
+    }
+    should_splits.Barrier(comm);
+    should_splits.Destroy();
+    return ret;
+  }
+
   void FindGlobalMedianAndFeature(Node<T> &node, AssignT &sample,
                                   int depth, uint64_t uuid,
-                                  int proc_off, int nprocs) {
-    HILOG(kInfo, "{} Finding global median and feature: {} {}",
-          rank_, proc_off, nprocs)
+                                  MPI_Comm comm, int proc_off, int nprocs) {
     NodeT all_nodes;
     all_nodes.Init(hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid),
                    nprocs, 256);
     int subrank = rank_ - proc_off;
     all_nodes[subrank].resize(num_features_);
     FindLocalEntropy(all_nodes[subrank], sample);
-    all_nodes.Barrier(proc_off, nprocs);
+    all_nodes.Barrier(comm);
     // Determine the feature of interest by aggregating entropies
     std::vector<Node<T>> agg_fnodes;
     agg_fnodes.resize(num_features_);
@@ -293,9 +314,8 @@ class DbscanMpi {
                 return a.entropy_ < b.entropy_;
               });
     node.joint_ = agg_mnodes[agg_mnodes.size() / 2].joint_;
-    sample.Barrier(proc_off, nprocs);
+    sample.Barrier(comm);
     all_nodes.Destroy();
-    HILOG(kInfo, "{} Determined global median and feature", rank_)
   }
 
   void FindLocalEntropy(std::vector<Node<T>> &nodes, AssignT &sample) {
@@ -337,7 +357,7 @@ class DbscanMpi {
   void DivideSample(Node<T> &node,
                     AssignT &sample,
                     AssignT &left, AssignT &right,
-                    int proc_off, int nprocs) {
+                    MPI_Comm comm, int proc_off, int nprocs) {
     for (size_t i = 0; i < sample.size(); ++i) {
       size_t off = sample[i];
       if (data_[off].LessThan(node.joint_, node.feature_)) {
@@ -346,8 +366,8 @@ class DbscanMpi {
         right.emplace_back(off);
       }
     }
-    left.flush_emplace(proc_off, nprocs);
-    right.flush_emplace(proc_off, nprocs);
+    left.flush_emplace(comm, proc_off, nprocs);
+    right.flush_emplace(comm, proc_off, nprocs);
   }
 
   std::unordered_set<T, T> CombineDecisionTrees() {
@@ -362,13 +382,13 @@ class DbscanMpi {
   void CombineDecisionTree(std::unique_ptr<Node<T>> &root,
                            const Node<T> &node,
                            std::unordered_set<T, T> &joints) {
-    if (node.left_) {
+    if (node.left_ && node.left_->feature_ != -1) {
       if (!root->left_) {
         root->left_ = std::make_unique<Node<T>>(*node.left_);
       }
       CombineDecisionTree(root->left_, *node.left_, joints);
     }
-    if (node.right_) {
+    if (node.right_ && node.right_->feature_ != -1) {
       if (!root->right_) {
         root->right_ = std::make_unique<Node<T>>(*node.right_);
       }
@@ -469,6 +489,7 @@ int main(int argc, char **argv) {
         mm::VectorMmapMpi<std::vector<Node<Row>>, true>,
         mm::VectorMmapMpi<size_t>,
         mm::VectorMmapMpi<int>,
+        mm::VectorMmapMpi<bool>,
         Row> dbscan;
     dbscan.Init(path, window_size, rank, nprocs, dist);
     dbscan.Run();

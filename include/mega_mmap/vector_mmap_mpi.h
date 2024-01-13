@@ -193,25 +193,10 @@ class VectorMmapMpi {
   }
 
   /** Lock a region */
-  void Barrier() {
+  void Barrier(MPI_Comm comm = MPI_COMM_WORLD) {
     _SerializeToBackend();
-    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(comm);
     _DeserializeFromBackend();
-  }
-
-  /** Lock a region for subset of nodes */
-  void Barrier(int proc_off, int nprocs) {
-    if (nprocs == nprocs_) {
-      Barrier();
-      return;
-    }
-    MPI_Comm subset_comm;
-    bool color = proc_off <= rank_ && rank_ < proc_off + nprocs;
-    MPI_Comm_split(MPI_COMM_WORLD, color, rank_, &subset_comm);
-    _SerializeToBackend();
-    MPI_Barrier(subset_comm);
-    _DeserializeFromBackend();
-    MPI_Comm_free(&subset_comm);
   }
 
   /** Index operator */
@@ -306,14 +291,14 @@ class VectorMmapMpi {
   }
 
   /** Flush emplace */
-  void flush_emplace(int proc_off, int nprocs) {
+  void flush_emplace(MPI_Comm comm, int proc_off, int nprocs) {
     std::string flush_map = hshm::Formatter::format(
         "{}_flusher_{}_{}", path_, proc_off, nprocs);
     VectorMmapMpi<size_t, false> back(
         flush_map,
         nprocs);
     back[rank_ - proc_off] = back_data_.size();
-    back.Barrier(proc_off, nprocs);
+    back.Barrier(comm);
     size_t my_off = 0, new_size = 0;
     for (size_t i = 0; i < rank_ - proc_off; ++i) {
       my_off += back[i];
@@ -324,7 +309,7 @@ class VectorMmapMpi {
     for (size_t i = 0; i < back_data_.size(); ++i) {
       data_[my_off + i] = back_data_[i];
     }
-    back.Barrier(proc_off, nprocs);
+    back.Barrier(comm);
     back.Destroy();
     back_data_.clear();
     size_ = new_size;

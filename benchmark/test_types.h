@@ -39,6 +39,23 @@ class Bounds {
   }
 };
 
+class MpiComm {
+ public:
+  MPI_Comm comm_;
+
+ public:
+  MpiComm(MPI_Comm comm, int proc_off, int nprocs) {
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    bool color = rank >= proc_off && rank < proc_off + nprocs;
+    MPI_Comm_split(comm, color, rank, &comm_);
+  }
+
+  ~MpiComm() {
+    MPI_Comm_free(&comm_);
+  }
+};
+
 struct Row {
   float x_;
   float y_;
@@ -117,7 +134,7 @@ struct Row {
     } else if (feature == 1) {
       return y_ < other.y_;
     } else {
-      HILOG(kFatal, "Invalid feature");
+      HILOG(kFatal, "Invalid feature: {}", feature);
       exit(1);
     }
   }
