@@ -67,6 +67,8 @@ class VectorMmapMpi {
     if constexpr (USE_REAL_CACHE) {
       real_data_.resize(size_);
     }
+    path_ = other.path_;
+    dir_ = other.dir_;
   }
 
   /** Explicit initializer */

@@ -130,9 +130,8 @@ class DbscanMpi {
     sample.Init(
         hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0),
         data_.size());
-    sample = sample.Subset(bounds.off_, bounds.size_);
     for (size_t i = 0; i < bounds.size_; ++i) {
-      sample[i] = bounds.off_ + i;
+      sample[bounds.off_ + i] = bounds.off_ + i;
     }
     return sample;
   }
@@ -153,9 +152,13 @@ class DbscanMpi {
                           AssignT &sample,
                           uint64_t uuid,
                           MPI_Comm comm, int proc_off, int nprocs) {
-    HILOG(kInfo, "{}: Beginning tree {} {}", rank_, proc_off, nprocs);
+    HILOG(kInfo, "{}: Beginning tree proc_off={} nprocs={} uuid={} depth={}",
+          rank_, proc_off, nprocs, uuid, node->depth_);
+    Bounds proc_bounds(rank_ - proc_off, nprocs,
+                       sample.size());
+    AssignT proc_sample = sample.Subset(proc_bounds.off_, proc_bounds.size_);
     // Decide the feature to split on
-    FindGlobalMedianAndFeature(*node, sample,
+    FindGlobalMedianAndFeature(*node, proc_sample,
                                node->depth_, uuid,
                                comm, proc_off, nprocs);
     node->left_ = std::make_unique<Node<T>>();
@@ -181,9 +184,9 @@ class DbscanMpi {
         hshm::Formatter::format("{}/sample_{}_{}",
                                 dir_, node->depth_ + 1,
                                 right_uuid);
-    left_sample.Init(left_sample_name, sample.size() * 3 / 2);
-    right_sample.Init(right_sample_name, sample.size() * 3 / 2);
-    DivideSample(*node, sample,
+    left_sample.Init(left_sample_name, sample.size());
+    right_sample.Init(right_sample_name, sample.size());
+    DivideSample(*node, proc_sample,
                  left_sample, right_sample,
                  comm, proc_off, nprocs);
     sample.Barrier(comm);
@@ -201,7 +204,8 @@ class DbscanMpi {
       left_off = proc_off;
       left_proc = 1;
     }
-    HILOG(kInfo, "{}: Finished tree {} {}", rank_, proc_off, nprocs)
+    HILOG(kInfo, "{}: Finished tree proc_off={} nprocs={} uuid={} depth={}",
+          rank_, proc_off, nprocs, uuid, node->depth_);
     if (left_sample.size() > window_size_ * nprocs) {
       if (left_off <= rank_ && rank_ < left_off + nprocs) {
         Bounds bounds(rank_ - proc_off, nprocs, left_sample.size());
@@ -277,8 +281,9 @@ class DbscanMpi {
                                   int depth, uint64_t uuid,
                                   MPI_Comm comm, int proc_off, int nprocs) {
     NodeT all_nodes;
-    all_nodes.Init(hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid),
-                   nprocs, 256);
+    std::string all_nodes_name =
+        hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid);
+    all_nodes.Init(all_nodes_name, nprocs, 256);
     int subrank = rank_ - proc_off;
     all_nodes[subrank].resize(num_features_);
     FindLocalEntropy(all_nodes[subrank], sample);
@@ -331,7 +336,8 @@ class DbscanMpi {
     subsample.reserve(subsample_size);
     for (size_t i = 0; i < subsample_size; ++i) {
       size_t idx = dist.GetSize();
-      subsample.emplace_back(data_[sample[idx]]);
+      size_t off = sample[idx];
+      subsample.emplace_back(data_[off]);
     }
     // Calculate the median of each feature
     for (int feature = 0; feature < num_features_; ++feature) {
