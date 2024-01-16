@@ -1,0 +1,11 @@
+name: mm_gadget2
+env: gadget2
+pkgs:
+  - pkg_type: gadget2
+    pkg_name: gadget2
+    test_case: lcdm_gas-ngen
+    ic: custom_ic
+    out: ${HOME}/mm_data/gadget2
+    tree_alloc_factor: .8
+    nprocs: 4
+    ppn: 16

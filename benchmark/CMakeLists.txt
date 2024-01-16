@@ -17,3 +17,7 @@ target_link_libraries(mm_random_forest_df ${HermesShm_LIBRARIES} MPI::MPI_CXX ar
 
 add_executable(mm_dbscan mm_dbscan.cc)
 target_link_libraries(mm_dbscan ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+
+add_executable(mm_gadget2conv mm_gadget2conv.cc)
+target_link_libraries(mm_gadget2conv ${HermesShm_LIBRARIES}
+        MPI::MPI_CXX arrow_shared parquet_shared HDF5::HDF5)

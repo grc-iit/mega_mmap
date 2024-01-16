@@ -1,0 +1,9 @@
+name: mm_gadget2conv
+env: mega_mmap
+pkgs:
+  - pkg_type: mm_gadget2conv
+    pkg_name: mm_gadget2conv
+    in: ${HOME}/mm_data/gadget2/snapshot_002.hdf5
+    out: ${HOME}/mm_data/gadget2/gadget2.bin
+    nprocs: 1
+    ppn: 16

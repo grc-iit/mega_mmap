@@ -89,6 +89,11 @@ if(PkgConfig)
   message(STATUS "found pkg config")
 endif()
 
+# HDF5
+set(MEGAMMAP_REQUIRED_HDF5_VERSION 1.14.0)
+find_package(HDF5 ${MEGAMMAP_REQUIRED_HDF5_VERSION} REQUIRED)
+
+
 #------------------------------------------------------------------------------
 # Includes
 #------------------------------------------------------------------------------

@@ -1,0 +1,9 @@
+name: mm_gadget2_df
+env: gadget2
+pkgs:
+  - pkg_type: gadget2_df
+    pkg_name: gadget2_df
+    ic: custom_ic
+    nparticles: 100000
+    nprocs: 4
+    ppn: 16
