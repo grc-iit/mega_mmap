@@ -56,6 +56,7 @@ class VectorMegaMpi {
   int rank_, nprocs_;
   size_t window_size_ = 0;
   size_t emplace_elts_ = 0;
+  size_t backend_size_ = 0;
 
  public:
   VectorMegaMpi() = default;

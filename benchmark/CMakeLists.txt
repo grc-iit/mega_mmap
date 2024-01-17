@@ -21,3 +21,10 @@ target_link_libraries(mm_dbscan ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared pa
 add_executable(mm_gadget2conv mm_gadget2conv.cc)
 target_link_libraries(mm_gadget2conv ${Hermes_LIBRARIES}
         MPI::MPI_CXX arrow_shared parquet_shared HDF5::HDF5)
+
+install(TARGETS mm_sort mm_kmeans mm_kmeans_df mm_random_forest mm_random_forest_df mm_dbscan mm_gadget2conv
+        RUNTIME DESTINATION bin)
+
+install(FILES mm_sort.py pandas_kmeans.py pandas_random_forest.py pandas_dbscan.py
+        spark_kmeans.py spark_random_forest.py spark_dbscan.py
+        DESTINATION src)

@@ -11,31 +11,33 @@ import pandas as pd
 import sys
 
 # Get cmd
-path = sys.argv[1]
+train_path = sys.argv[1]
+test_path = sys.argv[2]
 
 # Initialize Spark
 spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
-def make_parquet_rdd():
+def make_parquet_rdd(path):
     parquet_path = f"{path}*"
     rdd = spark.read.parquet(parquet_path)
-    feature_cols = ["x", "y"]
+    feature_cols = ["x", "y", "class"]
     assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
     hermes_rdd = assembler.transform(rdd)
     return hermes_rdd
 
-def make_iris_rdd():
-    rdd_path = "/home/lukemartinlogan/Documents/Projects/PhD/mega_mmap/benchmark/iris.csv"
-    rdd = spark.read.csv(rdd_path, header=True, inferSchema=True)
-    feature_cols = ["sepal_length", "sepal_width", "petal_length", "petal_width"]
-    assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
-    iris_rdd = assembler.transform(rdd)
-    return iris_rdd
-
 # Read training data and fit
-rdd = make_parquet_rdd()
-kmeans = KMeans(k=8, seed=1)
-model = kmeans.fit(rdd)
-print(model.clusterCenters())
+print("Loading RDD")
+train_rdd = make_parquet_rdd(train_path)
+print("Random forest")
+rf = RandomForestClassifier(k=8, seed=1)
+model = rf.fit(train_rdd)
+
+# Read testing data and predict
+test_rdd = make_parquet_rdd(test_path)
+preds = model.transform(test_rdd)
+evaluator = MulticlassClassificationEvaluator(
+    labelCol="indexedLabel", predictionCol="prediction", metricName="accuracy")
+accuracy = evaluator.evaluate(preds)
+print(f'Accuracy: {accuracy}')
 
 # Stop Spark
 spark.stop()
