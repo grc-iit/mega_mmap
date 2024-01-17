@@ -32,6 +32,7 @@ def make_iris_rdd():
     return iris_rdd
 
 # Read training data and fit
+print("Beginning KMeans")
 rdd = make_parquet_rdd()
 kmeans = KMeans(k=8, seed=1)
 model = kmeans.fit(rdd)

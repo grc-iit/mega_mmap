@@ -4,7 +4,6 @@ import pandas as pd
 import sys
 from sklearn.ensemble import RandomForestClassifier
 
-print('HERE!!!')
 train_path = sys.argv[1]
 test_path = sys.argv[2]
 print(f'RF classifier on {train_path} and {test_path}')

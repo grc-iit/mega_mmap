@@ -25,9 +25,8 @@ def make_parquet_rdd(path):
     return hermes_rdd
 
 # Read training data and fit
-print("Loading RDD")
+print("Beginning Random forest")
 train_rdd = make_parquet_rdd(train_path)
-print("Random forest")
 rf = RandomForestClassifier(k=8, seed=1)
 model = rf.fit(train_rdd)
 

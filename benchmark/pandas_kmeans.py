@@ -4,7 +4,6 @@ import pandas as pd
 import sys
 from sklearn.cluster import KMeans
 
-print('HERE!!!')
 path = sys.argv[1]
 print(f'KMeans on {path}')
 df = pd.read_parquet(path)
