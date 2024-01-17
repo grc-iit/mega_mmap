@@ -49,8 +49,11 @@ endif()
 # Find packages
 #------------------------------------------------------------------------------
 # Hermes
-#find_package(Hermes CONFIG REQUIRED)
-#message(STATUS "found Hermes at ${Hermes_DIR}")
+find_package(Hermes CONFIG REQUIRED)
+message(STATUS "found Hermes at ${Hermes_DIR}")
+include_directories(${Hermes_INCLUDE_DIRS})
+message("LIBRARIES: ${Hermes_LIBRARIES}")
+message("INCLUDE: ${Hermes_INCLUDE_DIRS}")
 
 # Apache Arrow
 find_package(Arrow REQUIRED)

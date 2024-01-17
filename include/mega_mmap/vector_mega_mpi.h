@@ -2,8 +2,8 @@
 // Created by lukemartinlogan on 1/1/24.
 //
 
-#ifndef MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MMAP_MPI_H_
-#define MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MMAP_MPI_H_
+#ifndef MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MEGA_MPI_H_
+#define MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MEGA_MPI_H_
 
 #include <string>
 #include <mpi.h>
@@ -15,49 +15,59 @@
 #include <filesystem>
 #include <cereal/types/memory.hpp>
 #include <sys/resource.h>
-
+#include "hermes/hermes.h"
 
 namespace stdfs = std::filesystem;
 
 namespace mm {
 
-template<typename T>
-struct VectorMmapEntry {
-  bool modified_ = false;
-  T data_;
-};
-
 /** Forward declaration */
 template<typename T, bool USE_REAL_CACHE=false>
-class VectorMmapMpiIterator;
+class VectorMegaMpiIterator;
+
+template<typename T>
+struct Page {
+  std::vector<T> elmts_;
+  bool modified_;
+
+  Page() : modified_(false) {}
+
+  template<typename Ar>
+  void serialize(Ar &ar) {
+    ar & elmts_;
+  }
+};
 
 /** A wrapper for mmap-based vectors */
 template<typename T, bool USE_REAL_CACHE=false>
-class VectorMmapMpi {
+class VectorMegaMpi {
  public:
-  T* data_ = nullptr;
+  std::vector<Page<T>> data_;
+  std::vector<T> back_data_;
+  hermes::Bucket bkt_;
   size_t off_ = 0;
   size_t size_ = 0;
   size_t max_size_ = 0;
   size_t elmt_size_ = 0;
-  std::vector<VectorMmapEntry<T>> real_data_;
-  std::vector<T> back_data_;
+  size_t elmts_per_page_ = 0;
+  size_t num_pages_ = 0;
   std::string path_;
   std::string dir_;
   int rank_, nprocs_;
   size_t window_size_ = 0;
+  size_t emplace_elts_ = 0;
 
  public:
-  VectorMmapMpi() = default;
-  ~VectorMmapMpi() = default;
+  VectorMegaMpi() = default;
+  ~VectorMegaMpi() = default;
 
   /** Constructor */
-  VectorMmapMpi(const std::string &path, size_t count) {
+  VectorMegaMpi(const std::string &path, size_t count) {
     Init(path, count);
   }
 
   /** Copy constructor */
-  VectorMmapMpi(const VectorMmapMpi<T> &other) {
+  VectorMegaMpi(const VectorMegaMpi<T> &other) {
     data_ = other.data_;
     off_ = other.off_;
     size_ = other.size_;
@@ -65,9 +75,6 @@ class VectorMmapMpi {
     elmt_size_ = other.elmt_size_;
     rank_ = other.rank_;
     nprocs_ = other.nprocs_;
-    if constexpr (USE_REAL_CACHE) {
-      real_data_.resize(size_);
-    }
     path_ = other.path_;
     dir_ = other.dir_;
   }
@@ -86,7 +93,7 @@ class VectorMmapMpi {
 
   /** Explicit initializer */
   void Init(const std::string &path, size_t count, size_t elmt_size) {
-    if (data_ != nullptr) {
+    if (data_.size()) {
       return;
     }
     path_ = path;
@@ -103,83 +110,47 @@ class VectorMmapMpi {
       HELOG(kFatal, "Failed to truncate file {}: {}",
               path.c_str(), strerror(errno));
     }
-    data_ = (T*)mmap64(NULL, file_size, PROT_READ | PROT_WRITE,
-                       MAP_SHARED, fd, 0);
-    if (data_ == MAP_FAILED || data_ == nullptr) {
-      data_ = nullptr;
-      HELOG(kFatal, "Failed to mmap file {}: {}",
-            path.c_str(), strerror(errno));
+    elmts_per_page_ = KILOBYTES(256) / elmt_size;
+    if (elmts_per_page_ == 0) {
+      elmts_per_page_ = 1;
     }
-    if constexpr (USE_REAL_CACHE) {
-      real_data_.resize(count);
-    }
+    num_pages_ = (count + elmts_per_page_ - 1) / elmts_per_page_;
+    data_.resize(num_pages_);
+    bkt_ = HERMES->GetBucket(path);
     off_ = 0;
     size_ = count;
     max_size_ = count;
     elmt_size_ = elmt_size;
-    MaximizeFds();
+  }
+
+  void Resize(size_t count) {
+    size_t num_pages = (count + elmts_per_page_ - 1) / elmts_per_page_;
+    if (num_pages > num_pages_) {
+      data_.resize(num_pages);
+      num_pages_ = num_pages;
+    }
   }
 
   void BoundMemory(size_t window_size) {
     window_size_ = window_size;
   }
 
-  VectorMmapMpi Subset(size_t off, size_t size) {
-    VectorMmapMpi mmap(*this);
+  VectorMegaMpi Subset(size_t off, size_t size) {
+    VectorMegaMpi mmap(*this);
     mmap.off_ = off;
     mmap.size_ = size;
     return mmap;
   }
 
-  void MaximizeFds() {
-    struct rlimit rlim;
-    if (getrlimit(RLIMIT_NOFILE, &rlim) == 0) {
-      rlim.rlim_cur = rlim.rlim_max;
-    }
-    if (setrlimit(RLIMIT_NOFILE, &rlim) != 0) {
-      HILOG(kInfo, "Cannot set maximum fd limit to {}", rlim.rlim_max);
-    }
-  }
-
-  void PrintNumOpenFds() {
-    struct rlimit rlim;
-    if (getrlimit(RLIMIT_NOFILE, &rlim) == 0) {
-      HILOG(kInfo, "Number of open files: {} / {}",
-            CountFds(), (long)rlim.rlim_cur)
-    }
-  }
-
-  int CountFds() {
-    int count = 0;
-
-    // Iterate through file descriptors
-    for (int fd = 0; fd < getdtablesize(); ++fd) {
-      if (fcntl(fd, F_GETFD) != -1) {
-        // Descriptor is valid
-        count++;
-      }
-    }
-
-    return count;
-  }
-
   /** Serialize the in-memory cache back to backend */
   void _SerializeToBackend() {
     if constexpr (USE_REAL_CACHE) {
-      for (size_t i = 0; i < size_; ++i) {
-        const VectorMmapEntry<T> &elmt = real_data_[i];
-        if (elmt.modified_) {
-          std::stringstream ss;
-          cereal::BinaryOutputArchive ar(ss);
-          ar(elmt.data_);
-          std::string srl = ss.str();
-          size_t off = i * elmt_size_;
-          if (srl.size() > elmt_size_) {
-            HELOG(kFatal, "Serialization size {} is larger than element size {}",
-                  srl.size(), elmt_size_);
-          }
-          memcpy((char*)data_ + off_ + off,
-                 srl.c_str(), srl.size());
+      hermes::Context ctx;
+      for (size_t i = 0; i < num_pages_; ++i) {
+        Page<T> &page = data_[i];
+        if (page.modified_) {
+          bkt_.Put<Page<T>>(std::to_string(i), page, ctx);
+          page.modified_ = false;
         }
       }
     }
@@ -187,16 +158,6 @@ class VectorMmapMpi {
 
   /** Deserialize in-memory cache from backend */
   void _DeserializeFromBackend() {
-    if constexpr (USE_REAL_CACHE) {
-      for (size_t i = 0; i < size_; ++i) {
-        char *elmt_data = (char*)data_ + (off_ + i) * elmt_size_;
-        VectorMmapEntry<T> &elmt = real_data_[i];
-        std::stringstream ss(std::string(elmt_data, elmt_size_));
-        cereal::BinaryInputArchive ar(ss);
-        ar(elmt.data_);
-        elmt.modified_ = false;
-      }
-    }
   }
 
   /** Lock a region */
@@ -208,61 +169,53 @@ class VectorMmapMpi {
 
   /** Index operator */
   T& operator[](size_t idx) {
-    if constexpr (!USE_REAL_CACHE) {
-      return data_[off_ + idx];
-    } else {
-      VectorMmapEntry<T> &entry = real_data_[idx];
-      entry.modified_ = true;
-      return entry.data_;
+    size_t page_idx = idx / elmts_per_page_;
+    size_t page_off = idx % elmts_per_page_;
+    Page<T> &page = data_[page_idx];
+    if (page.elmts_.size() == 0) {
+      hermes::Context ctx;
+      page.elmts_.resize(elmts_per_page_);
+      std::string page_name = std::to_string(page_idx);
+      bkt_.Get<Page<T>>(page_name, page, ctx);
+      page.modified_ = true;
     }
+    return page.elmts_[page_off];
   }
 
   /** Addition operator */
-  VectorMmapMpi<T> operator+(size_t idx) {
+  VectorMegaMpi<T> operator+(size_t idx) {
     return Subset(off_ + idx, size_ - idx);
   }
 
   /** Addition assign operator */
-  VectorMmapMpi<T>& operator+=(size_t idx) {
+  VectorMegaMpi<T>& operator+=(size_t idx) {
     off_ += idx;
     size_ -= idx;
     return *this;
   }
 
   /** Subtraction operator */
-  VectorMmapMpi<T> operator-(size_t idx) {
+  VectorMegaMpi<T> operator-(size_t idx) {
     return Subset(off_ - idx, size_ + idx);
   }
 
   /** Subtraction assign operator */
-  VectorMmapMpi<T>& operator-=(size_t idx) {
+  VectorMegaMpi<T>& operator-=(size_t idx) {
     off_ -= idx;
     size_ += idx;
     return *this;
   }
 
-  /** Memcpy operator */
-  void Memcpy(T *src, size_t size, size_t off = 0) {
-    memcpy(data_ + off_ + off, src, size);
-  }
-
-  /** Memcpy operator (II) */
-  void Memcpy(VectorMmapMpi<T> &src, size_t size, size_t off = 0) {
-    memcpy(data_ + off_ + off,
-           src.data_ + src.off_,
-           size);
-  }
-
   /** check if sorted */
   bool IsSorted(size_t off, size_t size) {
-    return std::is_sorted(data_ + off_ + off,
-                          data_ + off_ + off + size);
+    return std::is_sorted(begin() + off,
+                          begin() + off + size);
   }
 
   /** Sort a subset */
   void Sort(size_t off, size_t size) {
-      std::sort(data_ + off_ + off,
-                data_ + off_ + off + size);
+      std::sort(begin() + off,
+                begin() + off + size);
   }
 
   /** Size */
@@ -271,24 +224,22 @@ class VectorMmapMpi {
   }
 
   /** Begin iterator */
-  VectorMmapMpiIterator<T, USE_REAL_CACHE> begin() {
-    return VectorMmapMpiIterator<T, USE_REAL_CACHE>(this, 0);
+  VectorMegaMpiIterator<T, USE_REAL_CACHE> begin() {
+    return VectorMegaMpiIterator<T, USE_REAL_CACHE>(this, 0);
   }
 
   /** End iterator */
-  VectorMmapMpiIterator<T, USE_REAL_CACHE> end() {
-    return VectorMmapMpiIterator<T, USE_REAL_CACHE>(this, size());
+  VectorMegaMpiIterator<T, USE_REAL_CACHE> end() {
+    return VectorMegaMpiIterator<T, USE_REAL_CACHE>(this, size());
   }
 
   /** Close region */
-  void Close() {
-    munmap(data_, max_size_ * elmt_size_);
-  }
+  void Close() {}
 
   /** Destroy region */
   void Destroy() {
     Close();
-    remove(path_.c_str());
+    bkt_.Destroy();
   }
 
   /** Emplace back */
@@ -301,7 +252,7 @@ class VectorMmapMpi {
   void flush_emplace(MPI_Comm comm, int proc_off, int nprocs) {
     std::string flush_map = hshm::Formatter::format(
         "{}_flusher_{}_{}", path_, proc_off, nprocs);
-    VectorMmapMpi<size_t, false> back(
+    VectorMegaMpi<size_t, false> back(
         flush_map,
         nprocs);
     back[rank_ - proc_off] = back_data_.size();
@@ -313,8 +264,9 @@ class VectorMmapMpi {
     for (size_t i = 0; i < nprocs; ++i) {
       new_size += back[i];
     }
+    Resize(new_size);
     for (size_t i = 0; i < back_data_.size(); ++i) {
-      data_[my_off + i] = back_data_[i];
+      (*this)[my_off + i] = back_data_[i];
     }
     back.Barrier(comm);
     back.Destroy();
@@ -323,43 +275,43 @@ class VectorMmapMpi {
   }
 };
 
-/** Iterator for VectorMmapMpi */
+/** Iterator for VectorMegaMpi */
 template<typename T, bool USE_REAL_CACHE>
-class VectorMmapMpiIterator {
+class VectorMegaMpiIterator {
  public:
-  VectorMmapMpi<T, USE_REAL_CACHE> *ptr_;
+  VectorMegaMpi<T, USE_REAL_CACHE> *ptr_;
   size_t idx_;
 
  public:
-  VectorMmapMpiIterator() : idx_(0) {}
-  ~VectorMmapMpiIterator() = default;
+  VectorMegaMpiIterator() : idx_(0) {}
+  ~VectorMegaMpiIterator() = default;
 
   /** Constructor */
-  VectorMmapMpiIterator(VectorMmapMpi<T, USE_REAL_CACHE> *ptr, size_t idx) {
+  VectorMegaMpiIterator(VectorMegaMpi<T, USE_REAL_CACHE> *ptr, size_t idx) {
     ptr_ = ptr;
     idx_ = idx;
   }
 
   /** Copy constructor */
-  VectorMmapMpiIterator(const VectorMmapMpiIterator &other) {
+  VectorMegaMpiIterator(const VectorMegaMpiIterator &other) {
     ptr_ = other.ptr_;
     idx_ = other.idx_;
   }
 
   /** Assignment operator */
-  VectorMmapMpiIterator& operator=(const VectorMmapMpiIterator &other) {
+  VectorMegaMpiIterator& operator=(const VectorMegaMpiIterator &other) {
     ptr_ = other.ptr_;
     idx_ = other.idx_;
     return *this;
   }
 
   /** Equality operator */
-  bool operator==(const VectorMmapMpiIterator &other) const {
+  bool operator==(const VectorMegaMpiIterator &other) const {
     return ptr_ == other.ptr_ && idx_ == other.idx_;
   }
 
   /** Inequality operator */
-  bool operator!=(const VectorMmapMpiIterator &other) const {
+  bool operator!=(const VectorMegaMpiIterator &other) const {
     return ptr_ != other.ptr_ || idx_ != other.idx_;
   }
 
@@ -369,49 +321,49 @@ class VectorMmapMpiIterator {
   }
 
   /** Prefix increment operator */
-  VectorMmapMpiIterator& operator++() {
+  VectorMegaMpiIterator& operator++() {
     ++idx_;
     return *this;
   }
 
   /** Postfix increment operator */
-  VectorMmapMpiIterator operator++(int) {
-    VectorMmapMpiIterator tmp(*this);
+  VectorMegaMpiIterator operator++(int) {
+    VectorMegaMpiIterator tmp(*this);
     ++idx_;
     return tmp;
   }
 
   /** Prefix decrement operator */
-  VectorMmapMpiIterator& operator--() {
+  VectorMegaMpiIterator& operator--() {
     --idx_;
     return *this;
   }
 
   /** Postfix decrement operator */
-  VectorMmapMpiIterator operator--(int) {
-    VectorMmapMpiIterator tmp(*this);
+  VectorMegaMpiIterator operator--(int) {
+    VectorMegaMpiIterator tmp(*this);
     --idx_;
     return tmp;
   }
 
   /** Addition operator */
-  VectorMmapMpiIterator operator+(size_t idx) {
-    return VectorMmapMpiIterator(ptr_, idx_ + idx);
+  VectorMegaMpiIterator operator+(size_t idx) {
+    return VectorMegaMpiIterator(ptr_, idx_ + idx);
   }
 
   /** Addition assign operator */
-  VectorMmapMpiIterator& operator+=(size_t idx) {
+  VectorMegaMpiIterator& operator+=(size_t idx) {
     idx_ += idx;
     return *this;
   }
 
   /** Subtraction operator */
-  VectorMmapMpiIterator operator-(size_t idx) {
-    return VectorMmapMpiIterator(ptr_, idx_ - idx);
+  VectorMegaMpiIterator operator-(size_t idx) {
+    return VectorMegaMpiIterator(ptr_, idx_ - idx);
   }
 
   /** Subtraction assign operator */
-  VectorMmapMpiIterator& operator-=(size_t idx) {
+  VectorMegaMpiIterator& operator-=(size_t idx) {
     idx_ -= idx;
     return *this;
   }
@@ -419,4 +371,4 @@ class VectorMmapMpiIterator {
 
 }  // namespace mm
 
-#endif  // MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MMAP_MPI_H_
+#endif  // MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MEGA_MPI_H_

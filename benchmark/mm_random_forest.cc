@@ -130,7 +130,7 @@ class RandomForestClassifierMpi {
     trees_per_proc_ = trees_per_proc;
     trees_.Init(dir_ + "/trees",
                 trees_per_proc_ * nprocs_,
-                KILOBYTES(32));
+                KILOBYTES(256));
 
     shuffle_.Seed(2354235 * (rank_ + 1));
     shuffle_.Shape(0, num_windows_ - 1);

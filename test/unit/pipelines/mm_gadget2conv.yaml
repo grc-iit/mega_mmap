@@ -7,3 +7,5 @@ pkgs:
     out: ${HOME}/mm_data/gadget2/gadget2.bin
     nprocs: 1
     ppn: 16
+    do_dbg: True
+    dbg_port: 4001

@@ -14,6 +14,7 @@
 #include "cereal/types/vector.hpp"
 
 #include "mega_mmap/vector_mmap_mpi.h"
+#include "mega_mmap/vector_mega_mpi.h"
 #include "test_types.h"
 
 namespace stdfs = std::filesystem;
@@ -118,7 +119,7 @@ class DbscanMpi {
     dist_ = dist;
     trees_.Init(dir_ + "/trees",
                 nprocs_,
-                KILOBYTES(32));
+                KILOBYTES(512));
     path_ = path;
     max_depth_ = 16;
   }
@@ -130,6 +131,7 @@ class DbscanMpi {
     sample.Init(
         hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0),
         data_.size());
+    sample.BoundMemory(window_size_);
     for (size_t i = 0; i < bounds.size_; ++i) {
       sample[bounds.off_ + i] = bounds.off_ + i;
     }
@@ -424,6 +426,7 @@ class DbscanMpi {
   }
 
   void PrintClusters(std::vector<std::vector<T>> &agglo) {
+    HILOG(kInfo, "Number of discovered clusters: {}", agglo.size())
     for (size_t i = 0; i < agglo.size(); ++i) {
       HILOG(kInfo, "Cluster {}: ", i);
       for (const T &joint : agglo[i]) {
@@ -490,16 +493,26 @@ int main(int argc, char **argv) {
 
   if (algo == "mmap") {
     DbscanMpi<
-        mm::VectorMmapMpi<Row>,
-        mm::VectorMmapMpi<std::unique_ptr<Node<Row>>, true>,
-        mm::VectorMmapMpi<std::vector<Node<Row>>, true>,
+        mm::VectorMmapMpi<RowND<3>>,
+        mm::VectorMmapMpi<std::unique_ptr<Node<RowND<3>>>, true>,
+        mm::VectorMmapMpi<std::vector<Node<RowND<3>>>, true>,
         mm::VectorMmapMpi<size_t>,
         mm::VectorMmapMpi<int>,
         mm::VectorMmapMpi<bool>,
-        Row> dbscan;
+        RowND<3>> dbscan;
     dbscan.Init(path, window_size, rank, nprocs, dist);
     dbscan.Run();
   } else if (algo == "mega") {
+    DbscanMpi<
+        mm::VectorMegaMpi<Row>,
+        mm::VectorMegaMpi<std::unique_ptr<Node<Row>>, true>,
+        mm::VectorMegaMpi<std::vector<Node<Row>>, true>,
+        mm::VectorMegaMpi<size_t>,
+        mm::VectorMegaMpi<int>,
+        mm::VectorMegaMpi<int>,
+        Row> dbscan;
+    dbscan.Init(path, window_size, rank, nprocs, dist);
+    dbscan.Run();
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
   }

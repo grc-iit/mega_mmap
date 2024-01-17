@@ -1,23 +1,23 @@
 cmake_minimum_required (VERSION 3.10)
 
 add_executable(mm_sort mm_sort.cc)
-target_link_libraries(mm_sort ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+target_link_libraries(mm_sort ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
 add_executable(mm_kmeans mm_kmeans.cc)
-target_link_libraries(mm_kmeans ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+target_link_libraries(mm_kmeans ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
 add_executable(mm_kmeans_df mm_kmeans_df.cc)
-target_link_libraries(mm_kmeans_df ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+target_link_libraries(mm_kmeans_df ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
 add_executable(mm_random_forest mm_random_forest.cc)
-target_link_libraries(mm_random_forest ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+target_link_libraries(mm_random_forest ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
 add_executable(mm_random_forest_df mm_random_forest_df.cc)
-target_link_libraries(mm_random_forest_df ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+target_link_libraries(mm_random_forest_df ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
 add_executable(mm_dbscan mm_dbscan.cc)
-target_link_libraries(mm_dbscan ${HermesShm_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+target_link_libraries(mm_dbscan ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
 add_executable(mm_gadget2conv mm_gadget2conv.cc)
-target_link_libraries(mm_gadget2conv ${HermesShm_LIBRARIES}
+target_link_libraries(mm_gadget2conv ${Hermes_LIBRARIES}
         MPI::MPI_CXX arrow_shared parquet_shared HDF5::HDF5)

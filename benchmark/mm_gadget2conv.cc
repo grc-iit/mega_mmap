@@ -48,22 +48,21 @@ class Gadget2Conv {
     hsize_t start[ndims];
     hsize_t count[ndims];
     size_t count_agg = 1;
-    off_bytes = type_size;
     // Find the largest dimension
-    for (int i = 0; i < ndims; ++i) {
-      size_t sizepp = dims[i] / nprocs_;
-      if (sizepp == 0) {
-        HILOG(kFatal, "Number of processes must be less than or equal to "
-                      "the largest dimension of the dataset")
-      }
-      start[i] = rank_ * sizepp;
-      off_bytes *= sizepp;
-      if (rank_ == nprocs_ - 1) {
-        sizepp = dims[i] - sizepp * (nprocs_ - 1);
-      }
-      count[i] = sizepp;
-      count_agg *= sizepp;
+    size_t sizepp = dims[0] / nprocs_;
+    if (sizepp == 0) {
+      HILOG(kFatal, "Number of processes must be less than or equal to "
+                    "the largest dimension of the dataset")
     }
+    start[0] = rank_ * sizepp;
+    start[1] = 0;
+    count[0] = sizepp;
+    if (rank_ == nprocs_ - 1) {
+      count[0] = dims[0] - sizepp * (nprocs_ - 1);
+    }
+    count[1] = 3;
+    count_agg = count[0] * count[1];
+    off_bytes = start[0] * count[1] * type_size;
     // Read subset of dataset
     hid_t memspace = H5Screate_simple(ndims, count, NULL);
     H5Sselect_hyperslab(dspace, H5S_SELECT_SET, start, NULL, count, NULL);

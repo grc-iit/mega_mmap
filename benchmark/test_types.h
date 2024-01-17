@@ -99,30 +99,6 @@ struct Row {
     y_ = 0;
   }
 
-  float& operator[](size_t idx) {
-    if (idx == 0) {
-      return x_;
-    } else if (idx == 1) {
-      return y_;
-    } else {
-      HILOG(kFatal, "Invalid index");
-    }
-  }
-
-  const float& operator[](size_t idx) const {
-    if (idx == 0) {
-      return x_;
-    } else if (idx == 1) {
-      return y_;
-    } else {
-      HILOG(kFatal, "Invalid index");
-    }
-  }
-
-  const float &last() const {
-    return y_;
-  }
-
   template<typename Ar>
   void serialize(Ar &ar) {
     ar(x_, y_);
@@ -153,6 +129,94 @@ struct Row {
 
   std::string ToString() const {
     return hshm::Formatter::format("({}, {})", x_, y_);
+  }
+};
+
+template<int N>
+struct RowND {
+  float p_[N];
+
+  RowND() = default;
+
+  RowND(const RowND &other) {
+    memcpy(p_, other.p_, N * sizeof(float));
+  }
+
+  RowND &operator=(const RowND &other) {
+    memcpy(p_, other.p_, N * sizeof(float));
+    return *this;
+  }
+
+  RowND &operator+=(const RowND &other) {
+    for (int i = 0; i < N; ++i) {
+      p_[i] += other.p_[i];
+    }
+    return *this;
+  }
+
+  RowND &operator/=(const size_t &other) {
+    for (int i = 0; i < N; ++i) {
+      p_[i] /= other;
+    }
+    return *this;
+  }
+
+  double Distance(const RowND &other) const {
+    size_t sum = 0;
+    for (int i = 0; i < N; ++i) {
+      sum += sqrt((p_[i] - other.p_[i]) * (p_[i] - other.p_[i]));
+    }
+    return sum;
+  }
+
+  void Zero() {
+    for (int i = 0; i < N; ++i) {
+      p_[i] = 0;
+    }
+  }
+
+  template<typename Ar>
+  void serialize(Ar &ar) {
+    for (int i = 0; i < N; ++i) {
+      ar(p_[i]);
+    }
+  }
+
+  bool LessThan(const RowND &other, int feature) const {
+    if (feature < 0 || feature >= N) {
+      HILOG(kFatal, "Invalid feature: {}", feature);
+      exit(1);
+    }
+    return p_[feature] < other.p_[feature];
+  }
+
+  size_t GetNumFeatures() {
+    return N;
+  }
+
+  size_t operator()(const RowND &row) const {
+    size_t hash = 0;
+    for (int i = 0; i < N; ++i) {
+      hash += (size_t) row.p_[i];
+    }
+    return hash;
+  }
+
+  bool operator==(const RowND &other) const {
+    bool eq = true;
+    for (int i = 0; i < N; ++i) {
+      eq &= p_[i] == other.p_[i];
+    }
+    return eq;
+  }
+
+  std::string ToString() const {
+    std::string str = "(";
+    for (int i = 0; i < N - 1; ++i) {
+      str += hshm::Formatter::format("{}, ", p_[i]);
+    }
+    str += hshm::Formatter::format("{})", p_[N - 1]);
+    return str;
   }
 };
 
