@@ -73,20 +73,32 @@ class VectorMegaMpi {
   /** Copy constructor */
   VectorMegaMpi(const VectorMegaMpi<T> &other) {
     data_ = other.data_;
+    cur_page_ = other.cur_page_;
+    bkt_ = other.bkt_;
     off_ = other.off_;
     size_ = other.size_;
     max_size_ = other.max_size_;
     elmt_size_ = other.elmt_size_;
-    rank_ = other.rank_;
-    nprocs_ = other.nprocs_;
+    elmts_per_page_ = other.elmts_per_page_;
+    page_size_ = other.page_size_;
     path_ = other.path_;
     dir_ = other.dir_;
+    rank_ = other.rank_;
+    nprocs_ = other.nprocs_;
+    window_size_ = other.window_size_;
+    cur_memory_ = other.cur_memory_;
+    min_page_ = other.min_page_;
+    max_page_ = other.max_page_;
+    flags_ = other.flags_;
   }
 
   /** Explicit initializer */
   void Init(const std::string &path,
             u32 flags) {
-    size_t data_size = stdfs::file_size(path);
+    size_t data_size = 0;
+    if (stdfs::exists(path)) {
+      data_size = stdfs::file_size(path);
+    }
     size_t size = data_size / sizeof(T);
     Init(path, size, flags);
   }
@@ -100,6 +112,7 @@ class VectorMegaMpi {
   /** Explicit initializer */
   void Init(const std::string &path, size_t count, size_t elmt_size,
             u32 flags) {
+    TRANSPARENT_HERMES();
     if (data_.size()) {
       return;
     }
@@ -153,9 +166,12 @@ class VectorMegaMpi {
 
   /** Flush data to backend */
   void _Flush() {
+    if (min_page_ == -1) {
+      return;
+    }
     if (!flags_.Any(MM_READ_ONLY)) {
       hermes::Context ctx;
-      for (size_t page_idx = min_page_; page_idx < max_page_; ++page_idx) {
+      for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
         auto it = data_.find(page_idx);
         if (it == data_.end()) {
           continue;
@@ -183,15 +199,18 @@ class VectorMegaMpi {
       return;
     }
     for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
+      if (cur_memory_ - 2 * page_size_ < window_size_) {
+        break;
+      }
       auto it = data_.find(page_idx);
       if (it == data_.end()) {
         continue;
       }
+      if (cur_page_ == &it->second) {
+        cur_page_ = nullptr;
+      }
       data_.erase(it);
       cur_memory_ -= elmts_per_page_ * elmt_size_;
-      if (cur_memory_ - 2 * page_size_ < window_size_) {
-        break;
-      }
     }
   }
 
@@ -209,6 +228,9 @@ class VectorMegaMpi {
 
   /** Induct a page */
   Page<T>* _Fault(size_t page_idx) {
+    if (window_size_ > page_size_ && cur_memory_ > window_size_ - page_size_) {
+      _Evict();
+    }
     hermes::Context ctx;
     data_.emplace(page_idx, Page<T>(page_idx));
     Page<T> &page = data_[page_idx];
@@ -235,9 +257,6 @@ class VectorMegaMpi {
     if (page_idx > max_page_) {
       max_page_ = page_idx;
     }
-    if (cur_memory_ > window_size_) {
-      _Evict();
-    }
     return &page;
   }
 
@@ -257,6 +276,8 @@ class VectorMegaMpi {
       }
     }
     Page<T> &page = *page_ptr;
+    page.modified_ = true;
+    cur_page_ = page_ptr;
     return page.elmts_[page_off];
   }
 

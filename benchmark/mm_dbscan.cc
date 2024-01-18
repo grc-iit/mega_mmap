@@ -110,6 +110,7 @@ class DbscanMpi {
     dir_ = stdfs::path(path).parent_path();
     output_ = dir_ + "/output.bin";
     data_.Init(path, MM_READ_ONLY);
+    data_.BoundMemory(window_size);
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size / sizeof(T);
@@ -121,6 +122,7 @@ class DbscanMpi {
                 nprocs_,
                 KILOBYTES(512),
                 MM_WRITE_ONLY);
+    trees_.BoundMemory(window_size_);
     path_ = path;
     max_depth_ = 16;
   }
@@ -190,6 +192,8 @@ class DbscanMpi {
                                 right_uuid);
     left_sample.Init(left_sample_name, sample.size(), MM_APPEND_ONLY);
     right_sample.Init(right_sample_name, sample.size(), MM_APPEND_ONLY);
+    left_sample.BoundMemory(window_size_);
+    right_sample.BoundMemory(window_size_);
     DivideSample(*node, proc_sample,
                  left_sample, right_sample,
                  comm, proc_off, nprocs);
@@ -270,6 +274,7 @@ class DbscanMpi {
         hshm::Formatter::format("{}/should_split_{}_{}",
                                 dir_, node.depth_, uuid);
     should_splits.Init(should_splits_name, nprocs, MM_WRITE_ONLY);
+    should_splits.BoundMemory(window_size_);
     should_splits[rank_ - proc_off] = !(low_entropy || is_max_depth);
     should_splits.Barrier(MM_READ_ONLY, comm);
     bool ret = false;
@@ -291,6 +296,7 @@ class DbscanMpi {
     std::string all_nodes_name =
         hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid);
     all_nodes.Init(all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
+    all_nodes.BoundMemory(window_size_);
     int subrank = rank_ - proc_off;
     all_nodes[subrank].resize(num_features_);
     FindLocalEntropy(all_nodes[subrank], sample);
@@ -461,6 +467,7 @@ class DbscanMpi {
   void Predict() {
     OutT preds;
     preds.Init(output_, data_.size());
+    preds.BoundMemory(window_size_);
     size_t size_pp = data_.size() / nprocs_;
     size_t off = size_pp * rank_;
     size_t end = off + size_pp;

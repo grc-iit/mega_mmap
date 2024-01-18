@@ -1,11 +1,11 @@
-name: mm_kmeans_mmap
+name: mm_dbscan_mmap
 env: mega_mmap
 pkgs:
   - pkg_type: mm_dbscan
     pkg_name: mm_dbscan
     path: ${HOME}/mm_data/kmeans.bin
     window_size: 1m
-    nprocs: 2
+    nprocs: 1
     ppn: 16
     api: mmap
     dist: 6

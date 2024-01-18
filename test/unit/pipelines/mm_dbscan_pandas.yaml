@@ -1,4 +1,4 @@
-name: mm_kmeans_mmap
+name: mm_dbscan_mmap_pandas
 env: mega_mmap
 pkgs:
   - pkg_type: mm_dbscan
