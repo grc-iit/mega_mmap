@@ -16,55 +16,58 @@
 #include <cereal/types/memory.hpp>
 #include <sys/resource.h>
 #include "hermes/hermes.h"
+#include "data_stager/factory/stager_factory.h"
+#include "macros.h"
 
 namespace stdfs = std::filesystem;
 
 namespace mm {
 
 /** Forward declaration */
-template<typename T, bool USE_REAL_CACHE=false>
+template<typename T, bool IS_COMPLEX_TYPE=false>
 class VectorMegaMpiIterator;
 
 template<typename T>
 struct Page {
   std::vector<T> elmts_;
   bool modified_;
+  u32 id_;
 
-  Page() : modified_(false) {}
+  Page() = default;
 
-  template<typename Ar>
-  void serialize(Ar &ar) {
-    ar & elmts_;
-  }
+  Page(u32 id) : modified_(false), id_(id) {}
 };
 
 /** A wrapper for mmap-based vectors */
-template<typename T, bool USE_REAL_CACHE=false>
+template<typename T, bool IS_COMPLEX_TYPE=false>
 class VectorMegaMpi {
  public:
-  std::vector<Page<T>> data_;
-  std::vector<T> back_data_;
+  std::unordered_map<size_t, Page<T>> data_;
+  Page<T> *cur_page_ = nullptr;
   hermes::Bucket bkt_;
   size_t off_ = 0;
   size_t size_ = 0;
   size_t max_size_ = 0;
   size_t elmt_size_ = 0;
   size_t elmts_per_page_ = 0;
-  size_t num_pages_ = 0;
+  size_t page_size_ = 0;
   std::string path_;
   std::string dir_;
   int rank_, nprocs_;
   size_t window_size_ = 0;
-  size_t emplace_elts_ = 0;
-  size_t backend_size_ = 0;
+  size_t cur_memory_ = 0;
+  size_t min_page_ = -1, max_page_ = -1;
+  bitfield32_t flags_;
 
  public:
   VectorMegaMpi() = default;
   ~VectorMegaMpi() = default;
 
   /** Constructor */
-  VectorMegaMpi(const std::string &path, size_t count) {
-    Init(path, count);
+  VectorMegaMpi(const std::string &path,
+                size_t count,
+                u32 flags) {
+    Init(path, count, flags);
   }
 
   /** Copy constructor */
@@ -81,19 +84,22 @@ class VectorMegaMpi {
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path) {
+  void Init(const std::string &path,
+            u32 flags) {
     size_t data_size = stdfs::file_size(path);
     size_t size = data_size / sizeof(T);
-    Init(path, size);
+    Init(path, size, flags);
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path, size_t count) {
-    Init(path, count, sizeof(T));
+  void Init(const std::string &path, size_t count,
+            u32 flags) {
+    Init(path, count, sizeof(T), flags);
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path, size_t count, size_t elmt_size) {
+  void Init(const std::string &path, size_t count, size_t elmt_size,
+            u32 flags) {
     if (data_.size()) {
       return;
     }
@@ -106,30 +112,32 @@ class VectorMegaMpi {
       HELOG(kFatal, "Failed to open file {}: {}",
             path.c_str(), strerror(errno));
     }
-    size_t file_size = count * elmt_size;
-    if (ftruncate64(fd, (ssize_t)(file_size)) < 0) {
-      HELOG(kFatal, "Failed to truncate file {}: {}",
-              path.c_str(), strerror(errno));
-    }
-    elmts_per_page_ = KILOBYTES(256) / elmt_size;
-    if (elmts_per_page_ == 0) {
+    if (!IS_COMPLEX_TYPE) {
+      elmts_per_page_ = KILOBYTES(256) / elmt_size;
+      if (elmts_per_page_ == 0) {
+        elmts_per_page_ = 1;
+      }
+    } else {
       elmts_per_page_ = 1;
     }
-    num_pages_ = (count + elmts_per_page_ - 1) / elmts_per_page_;
-    data_.resize(num_pages_);
-    bkt_ = HERMES->GetBucket(path);
+    page_size_ = elmts_per_page_ * elmt_size + sizeof(Page<T>);
+    hermes::Context ctx;
+    if constexpr(!IS_COMPLEX_TYPE) {
+      ctx = hermes::data_stager::BinaryFileStager::BuildContext(
+          KILOBYTES(64), elmt_size);
+    }
+    bkt_ = HERMES->GetBucket(path, ctx);
     off_ = 0;
     size_ = count;
     max_size_ = count;
     elmt_size_ = elmt_size;
+    flags_ = bitfield32_t(flags);
+    if (flags_.Any(MM_APPEND_ONLY)) {
+      size_ = 0;
+    }
   }
 
   void Resize(size_t count) {
-    size_t num_pages = (count + elmts_per_page_ - 1) / elmts_per_page_;
-    if (num_pages > num_pages_) {
-      data_.resize(num_pages);
-      num_pages_ = num_pages;
-    }
   }
 
   void BoundMemory(size_t window_size) {
@@ -143,43 +151,112 @@ class VectorMegaMpi {
     return mmap;
   }
 
-  /** Serialize the in-memory cache back to backend */
-  void _SerializeToBackend() {
-    if constexpr (USE_REAL_CACHE) {
+  /** Flush data to backend */
+  void _Flush() {
+    if (!flags_.Any(MM_READ_ONLY)) {
       hermes::Context ctx;
-      for (size_t i = 0; i < num_pages_; ++i) {
-        Page<T> &page = data_[i];
+      for (size_t page_idx = min_page_; page_idx < max_page_; ++page_idx) {
+        auto it = data_.find(page_idx);
+        if (it == data_.end()) {
+          continue;
+        }
+        Page<T> &page = it->second;
         if (page.modified_) {
-          bkt_.Put<Page<T>>(std::to_string(i), page, ctx);
+          if constexpr (!IS_COMPLEX_TYPE) {
+            ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+            hermes::Blob blob((char*)page.elmts_.data(),
+                              elmts_per_page_ * elmt_size_);
+            bkt_.Put(std::to_string(page_idx), blob, ctx);
+          } else {
+            bkt_.Put<T>(std::to_string(page_idx), page.elmts_[0], ctx);
+          }
           page.modified_ = false;
         }
       }
     }
   }
 
-  /** Deserialize in-memory cache from backend */
-  void _DeserializeFromBackend() {
+  /** Serialize the in-memory cache back to backend */
+  void _Evict() {
+    _Flush();
+    if (min_page_ == -1) {
+      return;
+    }
+    for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
+      auto it = data_.find(page_idx);
+      if (it == data_.end()) {
+        continue;
+      }
+      data_.erase(it);
+      cur_memory_ -= elmts_per_page_ * elmt_size_;
+      if (cur_memory_ - 2 * page_size_ < window_size_) {
+        break;
+      }
+    }
   }
 
   /** Lock a region */
-  void Barrier(MPI_Comm comm = MPI_COMM_WORLD) {
-    _SerializeToBackend();
+  void Barrier(u32 flags = 0, MPI_Comm comm = MPI_COMM_WORLD) {
+    _Evict();
     MPI_Barrier(comm);
-    _DeserializeFromBackend();
+    flags_.SetBits(flags);
+  }
+
+  /** Hint access pattern */
+  void Hint(u32 flags) {
+    flags_.SetBits(flags);
+  }
+
+  /** Induct a page */
+  Page<T>* _Fault(size_t page_idx) {
+    hermes::Context ctx;
+    data_.emplace(page_idx, Page<T>(page_idx));
+    Page<T> &page = data_[page_idx];
+    page.elmts_.resize(elmts_per_page_);
+    std::string page_name = std::to_string(page_idx);
+    if (flags_.Any(MM_READ_ONLY | MM_READ_WRITE)) {
+      if constexpr (!IS_COMPLEX_TYPE) {
+        ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+        hermes::Blob blob((char*)page.elmts_.data(), page.elmts_.size() * elmt_size_);
+        bkt_.Get(page_name, blob, ctx);
+      } else {
+        bkt_.Get<T>(page_name, page.elmts_[0], ctx);
+      }
+    }
+    page.modified_ = false;
+    cur_memory_ += page_size_;
+    if (min_page_ == -1) {
+      min_page_ = page_idx;
+      max_page_ = page_idx;
+    }
+    if (page_idx < min_page_) {
+      min_page_ = page_idx;
+    }
+    if (page_idx > max_page_) {
+      max_page_ = page_idx;
+    }
+    if (cur_memory_ > window_size_) {
+      _Evict();
+    }
+    return &page;
   }
 
   /** Index operator */
   T& operator[](size_t idx) {
     size_t page_idx = idx / elmts_per_page_;
     size_t page_off = idx % elmts_per_page_;
-    Page<T> &page = data_[page_idx];
-    if (page.elmts_.size() == 0) {
-      hermes::Context ctx;
-      page.elmts_.resize(elmts_per_page_);
-      std::string page_name = std::to_string(page_idx);
-      bkt_.Get<Page<T>>(page_name, page, ctx);
-      page.modified_ = true;
+    Page<T> *page_ptr;
+    if (cur_page_ && cur_page_->id_ == page_idx) {
+      page_ptr = cur_page_;
+    } else {
+      auto it = data_.find(page_idx);
+      if (it == data_.end()) {
+        page_ptr = _Fault(page_idx);
+      } else {
+        page_ptr = &it->second;
+      }
     }
+    Page<T> &page = *page_ptr;
     return page.elmts_[page_off];
   }
 
@@ -225,13 +302,13 @@ class VectorMegaMpi {
   }
 
   /** Begin iterator */
-  VectorMegaMpiIterator<T, USE_REAL_CACHE> begin() {
-    return VectorMegaMpiIterator<T, USE_REAL_CACHE>(this, 0);
+  VectorMegaMpiIterator<T, IS_COMPLEX_TYPE> begin() {
+    return VectorMegaMpiIterator<T, IS_COMPLEX_TYPE>(this, 0);
   }
 
   /** End iterator */
-  VectorMegaMpiIterator<T, USE_REAL_CACHE> end() {
-    return VectorMegaMpiIterator<T, USE_REAL_CACHE>(this, size());
+  VectorMegaMpiIterator<T, IS_COMPLEX_TYPE> end() {
+    return VectorMegaMpiIterator<T, IS_COMPLEX_TYPE>(this, size());
   }
 
   /** Close region */
@@ -245,8 +322,7 @@ class VectorMegaMpi {
 
   /** Emplace back */
   void emplace_back(const T &elmt) {
-    back_data_.reserve(MEGABYTES(1));
-    back_data_.emplace_back(elmt);
+    (*this)[size_++] = elmt;
   }
 
   /** Flush emplace */
@@ -255,9 +331,10 @@ class VectorMegaMpi {
         "{}_flusher_{}_{}", path_, proc_off, nprocs);
     VectorMegaMpi<size_t, false> back(
         flush_map,
-        nprocs);
-    back[rank_ - proc_off] = back_data_.size();
-    back.Barrier(comm);
+        nprocs,
+        MM_WRITE_ONLY);
+    back[rank_ - proc_off] = data_.size();
+    back.Barrier(MM_READ_ONLY, comm);
     size_t my_off = 0, new_size = 0;
     for (size_t i = 0; i < rank_ - proc_off; ++i) {
       my_off += back[i];
@@ -266,21 +343,20 @@ class VectorMegaMpi {
       new_size += back[i];
     }
     Resize(new_size);
-    for (size_t i = 0; i < back_data_.size(); ++i) {
-      (*this)[my_off + i] = back_data_[i];
+    for (size_t i = 0; i < data_.size(); ++i) {
+      (*this)[my_off + i] = (*this)[i];
     }
-    back.Barrier(comm);
+    back.Barrier(0, comm);
     back.Destroy();
-    back_data_.clear();
     size_ = new_size;
   }
 };
 
 /** Iterator for VectorMegaMpi */
-template<typename T, bool USE_REAL_CACHE>
+template<typename T, bool IS_COMPLEX_TYPE>
 class VectorMegaMpiIterator {
  public:
-  VectorMegaMpi<T, USE_REAL_CACHE> *ptr_;
+  VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr_;
   size_t idx_;
 
  public:
@@ -288,7 +364,7 @@ class VectorMegaMpiIterator {
   ~VectorMegaMpiIterator() = default;
 
   /** Constructor */
-  VectorMegaMpiIterator(VectorMegaMpi<T, USE_REAL_CACHE> *ptr, size_t idx) {
+  VectorMegaMpiIterator(VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr, size_t idx) {
     ptr_ = ptr;
     idx_ = idx;
   }

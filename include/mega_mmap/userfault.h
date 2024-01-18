@@ -1,8 +1,0 @@
-//
-// Created by lukemartinlogan on 8/23/23.
-//
-
-#ifndef MEGA_MMAP_INCLUDE_MEGA_MMAP_USERFAULT_H_
-#define MEGA_MMAP_INCLUDE_MEGA_MMAP_USERFAULT_H_
-
-#endif  // MEGA_MMAP_INCLUDE_MEGA_MMAP_USERFAULT_H_

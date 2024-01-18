@@ -109,7 +109,7 @@ class DbscanMpi {
             float dist){
     dir_ = stdfs::path(path).parent_path();
     output_ = dir_ + "/output.bin";
-    data_.Init(path);
+    data_.Init(path, MM_READ_ONLY);
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size / sizeof(T);
@@ -119,7 +119,8 @@ class DbscanMpi {
     dist_ = dist;
     trees_.Init(dir_ + "/trees",
                 nprocs_,
-                KILOBYTES(512));
+                KILOBYTES(512),
+                MM_WRITE_ONLY);
     path_ = path;
     max_depth_ = 16;
   }
@@ -128,13 +129,14 @@ class DbscanMpi {
     AssignT sample;
     Bounds bounds(rank_, nprocs_, data_.size());
     HILOG(kInfo, "BOUNDS: {} {} {}", bounds.off_, bounds.size_, data_.size_)
-    sample.Init(
-        hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0),
-        data_.size());
+    std::string sample_name =
+        hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0);
+    sample.Init(sample_name, data_.size(), MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
     for (size_t i = 0; i < bounds.size_; ++i) {
       sample[bounds.off_ + i] = bounds.off_ + i;
     }
+    sample.Barrier(MM_READ_ONLY);
     return sample;
   }
 
@@ -144,7 +146,7 @@ class DbscanMpi {
     CreateDecisionTree(root, sample, 0,
                        MPI_COMM_WORLD, 0, nprocs_);
     trees_[rank_] = std::move(root);
-    trees_.Barrier();
+    trees_.Barrier(MM_READ_ONLY);
     std::unordered_set<T, T> joints = CombineDecisionTrees();
     Agglomerate(joints);
     Predict();
@@ -186,13 +188,15 @@ class DbscanMpi {
         hshm::Formatter::format("{}/sample_{}_{}",
                                 dir_, node->depth_ + 1,
                                 right_uuid);
-    left_sample.Init(left_sample_name, sample.size());
-    right_sample.Init(right_sample_name, sample.size());
+    left_sample.Init(left_sample_name, sample.size(), MM_APPEND_ONLY);
+    right_sample.Init(right_sample_name, sample.size(), MM_APPEND_ONLY);
     DivideSample(*node, proc_sample,
                  left_sample, right_sample,
                  comm, proc_off, nprocs);
-    sample.Barrier(comm);
+    sample.Barrier(0, comm);
     sample.Destroy();
+    left_sample.Hint(MM_READ_ONLY);
+    right_sample.Hint(MM_READ_ONLY);
     // Decide which nodes git which part of the sample
     int left_off = proc_off;
     int left_proc = nprocs / 2;
@@ -262,11 +266,12 @@ class DbscanMpi {
     bool low_entropy = node.entropy_ <= dist_ / 2;
     bool is_max_depth = node.depth_ >= max_depth_;
     BoolT should_splits;
-    should_splits.Init(hshm::Formatter::format("{}/should_split_{}_{}",
-                                               dir_, node.depth_ + 1, uuid),
-                       nprocs);
+    std::string should_splits_name =
+        hshm::Formatter::format("{}/should_split_{}_{}",
+                                dir_, node.depth_, uuid);
+    should_splits.Init(should_splits_name, nprocs, MM_WRITE_ONLY);
     should_splits[rank_ - proc_off] = !(low_entropy || is_max_depth);
-    should_splits.Barrier(comm);
+    should_splits.Barrier(MM_READ_ONLY, comm);
     bool ret = false;
     for (int i = 0; i < nprocs; ++i) {
       if (should_splits[i]) {
@@ -274,7 +279,7 @@ class DbscanMpi {
         break;
       }
     }
-    should_splits.Barrier(comm);
+    should_splits.Barrier(0, comm);
     should_splits.Destroy();
     return ret;
   }
@@ -285,11 +290,11 @@ class DbscanMpi {
     NodeT all_nodes;
     std::string all_nodes_name =
         hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid);
-    all_nodes.Init(all_nodes_name, nprocs, 256);
+    all_nodes.Init(all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
     int subrank = rank_ - proc_off;
     all_nodes[subrank].resize(num_features_);
     FindLocalEntropy(all_nodes[subrank], sample);
-    all_nodes.Barrier(comm);
+    all_nodes.Barrier(MM_READ_ONLY, comm);
     // Determine the feature of interest by aggregating entropies
     std::vector<Node<T>> agg_fnodes;
     agg_fnodes.resize(num_features_);
@@ -321,7 +326,7 @@ class DbscanMpi {
                 return a.entropy_ < b.entropy_;
               });
     node.joint_ = agg_mnodes[agg_mnodes.size() / 2].joint_;
-    sample.Barrier(comm);
+    sample.Barrier(0, comm);
     all_nodes.Destroy();
   }
 

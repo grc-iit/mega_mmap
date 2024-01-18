@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.10)
 
-add_executable(mm_sort mm_sort.cc)
-target_link_libraries(mm_sort ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
+# add_executable(mm_sort mm_sort.cc)
+# target_link_libraries(mm_sort ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
 add_executable(mm_kmeans mm_kmeans.cc)
 target_link_libraries(mm_kmeans ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
@@ -22,9 +22,9 @@ add_executable(mm_gadget2conv mm_gadget2conv.cc)
 target_link_libraries(mm_gadget2conv ${Hermes_LIBRARIES}
         MPI::MPI_CXX arrow_shared parquet_shared HDF5::HDF5)
 
-install(TARGETS mm_sort mm_kmeans mm_kmeans_df mm_random_forest mm_random_forest_df mm_dbscan mm_gadget2conv
+install(TARGETS mm_kmeans mm_kmeans_df mm_random_forest mm_random_forest_df mm_dbscan mm_gadget2conv
         RUNTIME DESTINATION bin)
 
-install(FILES mm_sort.py pandas_kmeans.py pandas_random_forest.py pandas_dbscan.py
+install(FILES pandas_kmeans.py pandas_random_forest.py pandas_dbscan.py
         spark_kmeans.py spark_random_forest.py spark_dbscan.py
         DESTINATION src)

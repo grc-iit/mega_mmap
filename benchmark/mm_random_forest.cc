@@ -115,8 +115,8 @@ class RandomForestClassifierMpi {
             float tol = .0001,
             int max_depth = 5){
     dir_ = stdfs::path(train_path).parent_path();
-    data_.Init(train_path);
-    test_data_.Init(test_path);
+    data_.Init(train_path, MM_READ_ONLY);
+    test_data_.Init(test_path, MM_READ_ONLY);
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size / sizeof(T);
@@ -130,7 +130,8 @@ class RandomForestClassifierMpi {
     trees_per_proc_ = trees_per_proc;
     trees_.Init(dir_ + "/trees",
                 trees_per_proc_ * nprocs_,
-                KILOBYTES(256));
+                KILOBYTES(256),
+                MM_WRITE_ONLY);
 
     shuffle_.Seed(2354235 * (rank_ + 1));
     shuffle_.Shape(0, num_windows_ - 1);
@@ -145,14 +146,14 @@ class RandomForestClassifierMpi {
       CreateDecisionTree(root, nullptr, sample);
       trees_[rank_ * trees_per_proc_ + i] = std::move(root);
     }
-    trees_.Barrier();
+    trees_.Barrier(MM_READ_ONLY);
     float error = Predict(test_data_);
     HILOG(kInfo, "Prediction Accuracy: {}", 1 - error);
   }
 
   float Predict(DataT &data) {
     PredT preds;
-    preds.Init(dir_ + "/preds", nprocs_);
+    preds.Init(dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
     size_t err_count = 0;
     // Get the offset and size of data to predict
     size_t size_pp = test_data_.size() / nprocs_;
@@ -163,7 +164,7 @@ class RandomForestClassifierMpi {
     // Predict and calculate classification error
     PredictLocal(data, off, size_pp, err_count);
     preds[rank_] = err_count;
-    preds.Barrier();
+    preds.Barrier(MM_READ_ONLY);
     float err = 0;
     for (int i = 0; i < nprocs_; ++i) {
       err += preds[i];

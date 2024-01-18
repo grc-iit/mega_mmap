@@ -15,7 +15,7 @@
 #include <filesystem>
 #include <cereal/types/memory.hpp>
 #include <sys/resource.h>
-
+#include "macros.h"
 
 namespace stdfs = std::filesystem;
 
@@ -28,11 +28,11 @@ struct VectorMmapEntry {
 };
 
 /** Forward declaration */
-template<typename T, bool USE_REAL_CACHE=false>
+template<typename T, bool IS_COMPLEX_TYPE=false>
 class VectorMmapMpiIterator;
 
 /** A wrapper for mmap-based vectors */
-template<typename T, bool USE_REAL_CACHE=false>
+template<typename T, bool IS_COMPLEX_TYPE=false>
 class VectorMmapMpi {
  public:
   T* data_ = nullptr;
@@ -46,14 +46,16 @@ class VectorMmapMpi {
   std::string dir_;
   int rank_, nprocs_;
   size_t window_size_ = 0;
+  bitfield32_t flags_;
 
  public:
   VectorMmapMpi() = default;
   ~VectorMmapMpi() = default;
 
   /** Constructor */
-  VectorMmapMpi(const std::string &path, size_t count) {
-    Init(path, count);
+  VectorMmapMpi(const std::string &path, size_t count,
+                u32 flags) {
+    Init(path, count, flags);
   }
 
   /** Copy constructor */
@@ -65,7 +67,7 @@ class VectorMmapMpi {
     elmt_size_ = other.elmt_size_;
     rank_ = other.rank_;
     nprocs_ = other.nprocs_;
-    if constexpr (USE_REAL_CACHE) {
+    if constexpr (IS_COMPLEX_TYPE) {
       real_data_.resize(size_);
     }
     path_ = other.path_;
@@ -73,19 +75,22 @@ class VectorMmapMpi {
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path) {
+  void Init(const std::string &path,
+            u32 flags) {
     size_t data_size = stdfs::file_size(path);
     size_t size = data_size / sizeof(T);
-    Init(path, size);
+    Init(path, size, flags);
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path, size_t count) {
-    Init(path, count, sizeof(T));
+  void Init(const std::string &path, size_t count,
+            u32 flags) {
+    Init(path, count, sizeof(T), flags);
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path, size_t count, size_t elmt_size) {
+  void Init(const std::string &path, size_t count, size_t elmt_size,
+            u32 flags) {
     if (data_ != nullptr) {
       return;
     }
@@ -110,13 +115,14 @@ class VectorMmapMpi {
       HELOG(kFatal, "Failed to mmap file {}: {}",
             path.c_str(), strerror(errno));
     }
-    if constexpr (USE_REAL_CACHE) {
+    if constexpr (IS_COMPLEX_TYPE) {
       real_data_.resize(count);
     }
     off_ = 0;
     size_ = count;
     max_size_ = count;
     elmt_size_ = elmt_size;
+    flags_ = bitfield32_t(flags);
     MaximizeFds();
   }
 
@@ -165,7 +171,7 @@ class VectorMmapMpi {
 
   /** Serialize the in-memory cache back to backend */
   void _SerializeToBackend() {
-    if constexpr (USE_REAL_CACHE) {
+    if constexpr (IS_COMPLEX_TYPE) {
       for (size_t i = 0; i < size_; ++i) {
         const VectorMmapEntry<T> &elmt = real_data_[i];
         if (elmt.modified_) {
@@ -187,7 +193,7 @@ class VectorMmapMpi {
 
   /** Deserialize in-memory cache from backend */
   void _DeserializeFromBackend() {
-    if constexpr (USE_REAL_CACHE) {
+    if constexpr (IS_COMPLEX_TYPE) {
       for (size_t i = 0; i < size_; ++i) {
         char *elmt_data = (char*)data_ + (off_ + i) * elmt_size_;
         VectorMmapEntry<T> &elmt = real_data_[i];
@@ -200,15 +206,21 @@ class VectorMmapMpi {
   }
 
   /** Lock a region */
-  void Barrier(MPI_Comm comm = MPI_COMM_WORLD) {
+  void Barrier(u32 flags = 0, MPI_Comm comm = MPI_COMM_WORLD) {
     _SerializeToBackend();
     MPI_Barrier(comm);
     _DeserializeFromBackend();
+    flags_.SetBits(flags);
+  }
+
+  /** Hint access pattern */
+  void Hint(u32 flags) {
+    flags_.SetBits(flags);
   }
 
   /** Index operator */
   T& operator[](size_t idx) {
-    if constexpr (!USE_REAL_CACHE) {
+    if constexpr (!IS_COMPLEX_TYPE) {
       return data_[off_ + idx];
     } else {
       VectorMmapEntry<T> &entry = real_data_[idx];
@@ -271,13 +283,13 @@ class VectorMmapMpi {
   }
 
   /** Begin iterator */
-  VectorMmapMpiIterator<T, USE_REAL_CACHE> begin() {
-    return VectorMmapMpiIterator<T, USE_REAL_CACHE>(this, 0);
+  VectorMmapMpiIterator<T, IS_COMPLEX_TYPE> begin() {
+    return VectorMmapMpiIterator<T, IS_COMPLEX_TYPE>(this, 0);
   }
 
   /** End iterator */
-  VectorMmapMpiIterator<T, USE_REAL_CACHE> end() {
-    return VectorMmapMpiIterator<T, USE_REAL_CACHE>(this, size());
+  VectorMmapMpiIterator<T, IS_COMPLEX_TYPE> end() {
+    return VectorMmapMpiIterator<T, IS_COMPLEX_TYPE>(this, size());
   }
 
   /** Close region */
@@ -303,9 +315,10 @@ class VectorMmapMpi {
         "{}_flusher_{}_{}", path_, proc_off, nprocs);
     VectorMmapMpi<size_t, false> back(
         flush_map,
-        nprocs);
+        nprocs,
+        MM_WRITE_ONLY);
     back[rank_ - proc_off] = back_data_.size();
-    back.Barrier(comm);
+    back.Barrier(MM_READ_ONLY, comm);
     size_t my_off = 0, new_size = 0;
     for (size_t i = 0; i < rank_ - proc_off; ++i) {
       my_off += back[i];
@@ -316,7 +329,7 @@ class VectorMmapMpi {
     for (size_t i = 0; i < back_data_.size(); ++i) {
       data_[my_off + i] = back_data_[i];
     }
-    back.Barrier(comm);
+    back.Barrier(0, comm);
     back.Destroy();
     back_data_.clear();
     size_ = new_size;
@@ -324,10 +337,10 @@ class VectorMmapMpi {
 };
 
 /** Iterator for VectorMmapMpi */
-template<typename T, bool USE_REAL_CACHE>
+template<typename T, bool IS_COMPLEX_TYPE>
 class VectorMmapMpiIterator {
  public:
-  VectorMmapMpi<T, USE_REAL_CACHE> *ptr_;
+  VectorMmapMpi<T, IS_COMPLEX_TYPE> *ptr_;
   size_t idx_;
 
  public:
@@ -335,7 +348,7 @@ class VectorMmapMpiIterator {
   ~VectorMmapMpiIterator() = default;
 
   /** Constructor */
-  VectorMmapMpiIterator(VectorMmapMpi<T, USE_REAL_CACHE> *ptr, size_t idx) {
+  VectorMmapMpiIterator(VectorMmapMpi<T, IS_COMPLEX_TYPE> *ptr, size_t idx) {
     ptr_ = ptr;
     idx_ = idx;
   }
