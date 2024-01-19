@@ -1,0 +1,19 @@
+name: mm_kmeans_mega
+env: mega_mmap
+pkgs:
+  - pkg_type: hermes_run
+    pkg_name: hermes_run
+    sleep: 2
+    include: ${HOME}/mm_data
+    pqdepth: 8
+    qdpeth: 64
+  - pkg_type: mm_kmeans
+    pkg_name: mm_kmeans
+    path: ${HOME}/mm_data/kmeans.bin
+    window_size: 1m
+    df_size: 16m
+    nprocs: 4
+    ppn: 16
+    api: mmap
+    max_iter: 30
+    k: 8

@@ -130,7 +130,7 @@ class VectorMegaMpi {
             path.c_str(), strerror(errno));
     }
     if (!IS_COMPLEX_TYPE) {
-      elmts_per_page_ = KILOBYTES(256) / elmt_size;
+      elmts_per_page_ = MM_PAGE_SIZE / elmt_size;
       if (elmts_per_page_ == 0) {
         elmts_per_page_ = 1;
       }

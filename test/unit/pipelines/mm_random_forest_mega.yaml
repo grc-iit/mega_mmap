@@ -1,6 +1,12 @@
-name: mm_random_forest_mmap
+name: mm_random_forest_mega
 env: mega_mmap
 pkgs:
+  - pkg_type: hermes_run
+    pkg_name: hermes_run
+    sleep: 2
+    include: ${HOME}/mm_data
+    pqdepth: 8
+    qdpeth: 64
   - pkg_type: mm_random_forest
     pkg_name: mm_random_forest
     train_path: ${HOME}/mm_data/rf_train.bin
@@ -8,6 +14,6 @@ pkgs:
     window_size: 1m
     df_size: 16m
     nfeature: 2
-    api: mmap
-    nprocs: 4
+    api: mega
+    nprocs: 1
     ppn: 16

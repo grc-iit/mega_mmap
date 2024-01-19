@@ -14,6 +14,7 @@
 
 #include "mega_mmap/vector_mmap_mpi.h"
 #include "test_types.h"
+#include "mega_mmap/vector_mega_mpi.h"
 
 namespace stdfs = std::filesystem;
 
@@ -81,7 +82,7 @@ struct Node {
 template<typename DataT,
          typename TreeT,
          typename GiniT,
-         typename PredT,
+         typename AssignT,
          typename T>
 class RandomForestClassifierMpi {
  public:
@@ -98,7 +99,6 @@ class RandomForestClassifierMpi {
   int num_features_;
   int num_cols_;
   int max_features_;
-  hshm::UniformDistribution shuffle_;
   hshm::UniformDistribution feature_dist_;
   std::vector<size_t> my_windows_;
   float tol_;
@@ -115,14 +115,17 @@ class RandomForestClassifierMpi {
             float tol = .0001,
             int max_depth = 5){
     dir_ = stdfs::path(train_path).parent_path();
+    // Load train data and partition
     data_.Init(train_path, MM_READ_ONLY);
     data_.BoundMemory(window_size);
     Bounds bounds(rank_, nprocs_, data_.size());
     data_.Pgas(bounds.off_, bounds.size_);
+    // Load test data and partition
     test_data_.Init(test_path, MM_READ_ONLY);
     test_data_.BoundMemory(window_size);
     Bounds test_bounds(rank_, nprocs_, test_data_.size());
     test_data_.Pgas(test_bounds.off_, test_bounds.size_);
+    // Memory bounding paramters
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size / sizeof(T);
@@ -133,19 +136,20 @@ class RandomForestClassifierMpi {
     windows_per_proc_ = num_windows_ / nprocs_;
     tol_ = tol;
     max_depth_ = max_depth;
+    // Initialize final tree data structure
     trees_per_proc_ = trees_per_proc;
     trees_.Init(dir_ + "/trees",
                 trees_per_proc_ * nprocs_,
                 KILOBYTES(256),
                 MM_WRITE_ONLY);
     trees_.Pgas(rank_ * trees_per_proc_, trees_per_proc_);
-    shuffle_.Seed(2354235 * (rank_ + 1));
-    shuffle_.Shape(0, num_windows_ - 1);
+    // Initialize RNG
     feature_dist_.Seed(2354235);
     feature_dist_.Shape(0, num_features_ - 1);
   }
 
   void Run() {
+    HILOG(kInfo, "Running random forest on rank {}", rank_);
     for (int i = 0; i < trees_per_proc_; ++i) {
       std::vector<size_t> sample = SubsampleDataset();
       std::unique_ptr<Node<T>> root = std::make_unique<Node<T>>();
@@ -158,7 +162,7 @@ class RandomForestClassifierMpi {
   }
 
   float Predict(DataT &data) {
-    PredT preds;
+    AssignT preds;
     preds.Init(dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
     Bounds bounds(rank_, nprocs_, data.size());
     preds.Pgas(bounds.off_, bounds.size_);
@@ -215,30 +219,19 @@ class RandomForestClassifierMpi {
   }
 
   std::vector<size_t> SubsampleDataset() {
-    size_t sample_size = 0;
-    std::vector<Window> windows(windows_per_proc_);
-    for (size_t i = 0; i < windows_per_proc_; ++i) {
-      size_t idx = shuffle_.GetSize();
-      windows[i].off_ = idx * window_size_;
-      windows[i].size_ = window_size_;
-      if (windows[i].off_ + windows[i].size_ > data_.size()) {
-        windows[i].size_ = data_.size() - windows[i].off_;
-      }
-      sample_size += windows[i].size_;
-    }
-    // Specify sample offsets
+    size_t sample_size = windows_per_proc_ * window_size_;
+    mm::UniformSampler sampler(MM_PAGE_SIZE,
+                               data_.size(),
+                               2354235 * (rank_ + 1));
     std::vector<size_t> sample(sample_size);
-    size_t smpl_idx = 0;
-    for (Window &window : windows) {
-      for (size_t i = 0; i < window.size_; ++i) {
-        sample[smpl_idx] = window.off_ + i;
-        smpl_idx += 1;
-      }
+    size_t off = 0;
+    while (off < sample.size()) {
+      sampler.SamplePage(sample, off);
     }
     return sample;
   }
 
-  std::vector<size_t> SubsubsampleDataset(const std::vector<size_t> &sample,
+  std::vector<size_t> SubsubsampleDataset(std::vector<size_t> &sample,
                                           size_t divisor) {
     if (divisor > sample.size()) {
       size_t i = 5;
@@ -252,19 +245,21 @@ class RandomForestClassifierMpi {
     }
     size_t new_size = sample.size() / divisor;
     std::vector<size_t> new_sample(new_size);
-    hshm::UniformDistribution dist;
-    dist.Seed(2354235 * (rank_ + 1));
-    dist.Shape(0, sample.size() - 1);
-    for (size_t i = 0; i < new_sample.size(); ++i) {
-      size_t idx = dist.GetSize();
-      new_sample[i] = sample[idx];
+    mm::UniformSampler sampler(MM_PAGE_SIZE,
+                               sample.size(),
+                               2354235 * (rank_ + 1));
+    size_t off = 0;
+    while (off < new_sample.size()) {
+      sampler.SamplePage(sample, new_sample, off);
     }
     return new_sample;
   }
 
   void CreateDecisionTree(std::unique_ptr<Node<T>> &node,
                           const std::unique_ptr<Node<T>> &parent,
-                          const std::vector<size_t> &sample) {
+                          std::vector<size_t> &sample) {
+    HILOG(kInfo, "Creating decision tree on rank {} with {} samples",
+          rank_, sample.size());
     // Decide the feature to split on
     size_t num_bootstrap_samples = 30;
     std::vector<size_t> assign;
@@ -312,6 +307,8 @@ class RandomForestClassifierMpi {
     std::vector<size_t> left_sample, right_sample;
     DivideSample(*node, sample,
                  left_sample, right_sample);
+    HILOG(kInfo, "Finished decision tree on rank {} with {} samples",
+          rank_, sample.size());
     CreateDecisionTree(node->left_, node,
                        left_sample);
     CreateDecisionTree(node->right_, node,
@@ -392,6 +389,16 @@ int main(int argc, char **argv) {
             rank, nprocs);
     rf.Run();
   } else if (algo == "mega") {
+    RandomForestClassifierMpi<
+        mm::VectorMegaMpi<ClassRow>,
+        mm::VectorMegaMpi<std::unique_ptr<Node<ClassRow>>, true>,
+        Gini<ClassRow>,
+        mm::VectorMegaMpi<size_t>,
+        ClassRow> rf;
+    rf.Init(train_path, test_path,
+            nfeature, ncol, window_size,
+            rank, nprocs);
+    rf.Run();
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
   }

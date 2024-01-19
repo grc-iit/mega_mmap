@@ -14,6 +14,7 @@
 
 #include "mega_mmap/vector_mmap_mpi.h"
 #include "test_types.h"
+#include "mega_mmap/vector_mega_mpi.h"
 
 namespace stdfs = std::filesystem;
 
@@ -149,10 +150,12 @@ class KmeansMpi {
   }
 
   void Print() {
-    HILOG(kInfo, "Intertia: {}", inertia_);
-    HILOG(kInfo, "Iterations: {}", iter_);
-    for (int i = 0; i < k_; ++i) {
-      ks_[i].Print();
+    if (rank_ == 0) {
+      HILOG(kInfo, "Intertia: {}", inertia_);
+      HILOG(kInfo, "Iterations: {}", iter_);
+      for (int i = 0; i < k_; ++i) {
+        ks_[i].Print();
+      }
     }
   }
 
@@ -348,6 +351,14 @@ int main(int argc, char **argv) {
     kmeans.Init(path, rank, nprocs, window_size, k, max_iter);
     kmeans.Run();
   } else if (algo == "mega") {
+    KmeansMpi<
+        mm::VectorMegaMpi<Row>,
+        mm::VectorMegaMpi<LocalMax>,
+        mm::VectorMegaMpi<size_t>,
+        mm::VectorMegaMpi<RowSum>,
+        Row> kmeans;
+    kmeans.Init(path, rank, nprocs, window_size, k, max_iter);
+    kmeans.Run();
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
   }
