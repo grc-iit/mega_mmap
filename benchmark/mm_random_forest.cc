@@ -116,7 +116,13 @@ class RandomForestClassifierMpi {
             int max_depth = 5){
     dir_ = stdfs::path(train_path).parent_path();
     data_.Init(train_path, MM_READ_ONLY);
+    data_.BoundMemory(window_size);
+    Bounds bounds(rank_, nprocs_, data_.size());
+    data_.Pgas(bounds.off_, bounds.size_);
     test_data_.Init(test_path, MM_READ_ONLY);
+    test_data_.BoundMemory(window_size);
+    Bounds test_bounds(rank_, nprocs_, test_data_.size());
+    test_data_.Pgas(test_bounds.off_, test_bounds.size_);
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size / sizeof(T);
@@ -132,7 +138,7 @@ class RandomForestClassifierMpi {
                 trees_per_proc_ * nprocs_,
                 KILOBYTES(256),
                 MM_WRITE_ONLY);
-
+    trees_.Pgas(rank_ * trees_per_proc_, trees_per_proc_);
     shuffle_.Seed(2354235 * (rank_ + 1));
     shuffle_.Shape(0, num_windows_ - 1);
     feature_dist_.Seed(2354235);
@@ -154,6 +160,8 @@ class RandomForestClassifierMpi {
   float Predict(DataT &data) {
     PredT preds;
     preds.Init(dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
+    Bounds bounds(rank_, nprocs_, data.size());
+    preds.Pgas(bounds.off_, bounds.size_);
     size_t err_count = 0;
     // Get the offset and size of data to predict
     size_t size_pp = test_data_.size() / nprocs_;
