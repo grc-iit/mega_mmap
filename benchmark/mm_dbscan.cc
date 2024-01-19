@@ -123,6 +123,7 @@ class DbscanMpi {
                 KILOBYTES(512),
                 MM_WRITE_ONLY);
     trees_.BoundMemory(window_size_);
+    trees_.Pgas(rank_, 1);
     path_ = path;
     max_depth_ = 16;
   }
@@ -148,6 +149,7 @@ class DbscanMpi {
     AssignT sample = RootSample();
     CreateDecisionTree(root, sample, 0,
                        MPI_COMM_WORLD, 0, nprocs_);
+    HILOG(kInfo, "Created decision tree")
     trees_[rank_] = std::move(root);
     trees_.Barrier(MM_READ_ONLY);
     std::unordered_set<T, T> joints = CombineDecisionTrees();
@@ -276,7 +278,7 @@ class DbscanMpi {
         hshm::Formatter::format("{}/should_split_{}_{}",
                                 dir_, node.depth_, uuid);
     should_splits.Init(should_splits_name, nprocs, MM_WRITE_ONLY);
-    should_splits.BoundMemory(window_size_);
+    should_splits.Pgas(rank_ - proc_off, 1);
     should_splits[rank_ - proc_off] = !(low_entropy || is_max_depth);
     should_splits.Barrier(MM_READ_ONLY, comm);
     bool ret = false;
@@ -299,6 +301,7 @@ class DbscanMpi {
         hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid);
     all_nodes.Init(all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
     all_nodes.BoundMemory(window_size_);
+    all_nodes.Pgas(rank_ - proc_off, 1);
     int subrank = rank_ - proc_off;
     all_nodes[subrank].resize(num_features_);
     FindLocalEntropy(all_nodes[subrank], sample);

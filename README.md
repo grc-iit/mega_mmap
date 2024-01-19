@@ -38,18 +38,18 @@ spack load hermes_shm
 scspkg create mega_mmap
 cd $(scspkg pkg src mega_mmap)
 git clone https://github.com/lukemartinlogan/mega_mmap.git
-cd mega_mmap
-export MM_PATH=${PWD}
-scspkg env set mega_mmap MM_PATH ${MM_PATH}
+export MM_PATH=$(scspkg pkg root mega_mmap)
+scspkg env set mega_mmap MM_PATH=${MM_PATH}
 mkdir build
 cd build
-cmake ../ -DCMAKE_INSTALL_PREFIX=`scspkg pkg src mega_mmap`
+cmake ../ -DCMAKE_INSTALL_PREFIX=$(scspkg pkg root mega_mmap)
 make -j8
 ```
 
 # Build environment
 
 ```
+module use $(scspkg module dir)
 module load arrow
 module load hermes_run
 module load mega_mmap

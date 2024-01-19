@@ -26,5 +26,5 @@ install(TARGETS mm_kmeans mm_kmeans_df mm_random_forest mm_random_forest_df mm_d
         RUNTIME DESTINATION bin)
 
 install(FILES pandas_kmeans.py pandas_random_forest.py pandas_dbscan.py
-        spark_kmeans.py spark_random_forest.py spark_dbscan.py
-        DESTINATION src)
+        spark_kmeans.py spark_random_forest.py
+        DESTINATION scripts)

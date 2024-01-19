@@ -385,7 +385,8 @@ class VectorMegaMpi {
     if (append_data_.size()) {
       _flush_emplace();
     }
-    Barrier(comm);
+    HRUN_ADMIN->FlushRoot(DomainId::GetLocal());
+    MPI_Barrier(comm);
     size_t new_size = bkt_.GetSize();
     new_size = new_size / elmt_size_;
     Resize(new_size);

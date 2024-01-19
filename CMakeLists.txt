@@ -48,6 +48,9 @@ endif()
 #------------------------------------------------------------------------------
 # Find packages
 #------------------------------------------------------------------------------
+# This is for compatability with SPACK
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Hermes
 find_package(Hermes CONFIG REQUIRED)
 message(STATUS "found Hermes at ${Hermes_DIR}")

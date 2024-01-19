@@ -110,6 +110,9 @@ class KmeansMpi {
             float tol = .0001, float min_inertia = .1){
     dir_ = stdfs::path(path).parent_path();
     data_.Init(path, MM_READ_ONLY);
+    data_.BoundMemory(window_size);
+    Bounds bounds(rank_, nprocs_, data_.size());
+    data_.Pgas(bounds.off_, bounds.size_);
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size;
@@ -159,6 +162,7 @@ class KmeansMpi {
   void FindMax(std::vector<size_t> &ks) {
     MaxT local_maxes;
     local_maxes.Init(dir_ + "/" + "max", nprocs_, MM_WRITE_ONLY);
+    local_maxes.Pgas(rank_, 1);
     // Find point furthest away from all existing Ks
     LocalMax local_max = FindLocalMax(ks);
     // Wait for all processes to complete
@@ -168,6 +172,7 @@ class KmeansMpi {
     LocalMax global_max = FindGlobalMax(local_maxes);
     ks.emplace_back(global_max.idx_);
     local_maxes.Barrier();
+    local_maxes.Destroy();
   }
 
   /**
@@ -261,7 +266,11 @@ class KmeansMpi {
     AssignT assign;
     SumT sum;
     assign.Init(dir_ + "/" + "assign", data_.size(), MM_WRITE_ONLY);
+    assign.BoundMemory(window_size_);
+    Bounds assign_bounds(rank_, nprocs_, data_.size());
+    assign.Pgas(assign_bounds.off_, assign_bounds.size_);
     sum.Init(dir_ + "/" + "sum", nprocs_ * k_, MM_WRITE_ONLY);
+    sum.Pgas(rank_ * k_, k_);
     // Calculate local assignment
     size_t off = off_, last = last_;
     for (size_t i = rank_ * k_; i < (rank_ + 1) * k_; ++i) {

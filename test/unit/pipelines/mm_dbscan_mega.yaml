@@ -5,13 +5,15 @@ pkgs:
     pkg_name: hermes_run
     sleep: 2
     include: ${HOME}/mm_data
+    pqdepth: 8
+    qdpeth: 64
   - pkg_type: mm_dbscan
     pkg_name: mm_dbscan
     path: ${HOME}/mm_data/kmeans.bin
-    window_size: 1m
-    nprocs: 1
+    window_size: 16m
+    nprocs: 2
     ppn: 16
     api: mega
     dist: 6
-    do_dbg: True
+    do_dbg: False
     dbg_port: 4001
