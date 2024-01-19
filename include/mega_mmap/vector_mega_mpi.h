@@ -30,12 +30,11 @@ class VectorMegaMpiIterator;
 template<typename T>
 struct Page {
   std::vector<T> elmts_;
-  bool modified_;
   u32 id_;
 
   Page() = default;
 
-  Page(u32 id) : modified_(false), id_(id) {}
+  Page(u32 id) : id_(id) {}
 };
 
 /** A wrapper for mmap-based vectors */
@@ -43,14 +42,17 @@ template<typename T, bool IS_COMPLEX_TYPE=false>
 class VectorMegaMpi {
  public:
   std::unordered_map<size_t, Page<T>> data_;
+  std::vector<T> append_data_;
   Page<T> *cur_page_ = nullptr;
   hermes::Bucket bkt_;
+  hermes::Bucket append_;
   size_t off_ = 0;
   size_t size_ = 0;
   size_t max_size_ = 0;
   size_t elmt_size_ = 0;
   size_t elmts_per_page_ = 0;
   size_t page_size_ = 0;
+  size_t page_mem_ = 0;
   std::string path_;
   std::string dir_;
   int rank_, nprocs_;
@@ -58,6 +60,7 @@ class VectorMegaMpi {
   size_t cur_memory_ = 0;
   size_t min_page_ = -1, max_page_ = -1;
   bitfield32_t flags_;
+  PGAS pgas_;
 
  public:
   VectorMegaMpi() = default;
@@ -90,6 +93,7 @@ class VectorMegaMpi {
     min_page_ = other.min_page_;
     max_page_ = other.max_page_;
     flags_ = other.flags_;
+    pgas_ = other.pgas_;
   }
 
   /** Explicit initializer */
@@ -133,11 +137,12 @@ class VectorMegaMpi {
     } else {
       elmts_per_page_ = 1;
     }
-    page_size_ = elmts_per_page_ * elmt_size + sizeof(Page<T>);
+    page_size_ = elmts_per_page_ * elmt_size;
+    page_mem_ = page_size_ + sizeof(Page<T>);
     hermes::Context ctx;
     if constexpr(!IS_COMPLEX_TYPE) {
       ctx = hermes::data_stager::BinaryFileStager::BuildContext(
-          KILOBYTES(64), elmt_size);
+          page_size_, elmt_size);
     }
     bkt_ = HERMES->GetBucket(path, ctx);
     off_ = 0;
@@ -148,6 +153,9 @@ class VectorMegaMpi {
     if (flags_.Any(MM_APPEND_ONLY)) {
       size_ = 0;
     }
+    pgas_.off_ = 0;
+    pgas_.size_ = 0;
+    append_data_.reserve(elmts_per_page_);
   }
 
   void Resize(size_t count) {
@@ -155,6 +163,12 @@ class VectorMegaMpi {
 
   void BoundMemory(size_t window_size) {
     window_size_ = window_size;
+  }
+
+  void Pgas(size_t off, size_t count) {
+    pgas_.Init(off * elmt_size_,
+               count * elmt_size_,
+               page_size_);
   }
 
   VectorMegaMpi Subset(size_t off, size_t size) {
@@ -169,7 +183,7 @@ class VectorMegaMpi {
     if (min_page_ == -1) {
       return;
     }
-    if (!flags_.Any(MM_READ_ONLY)) {
+    if (flags_.Any(MM_WRITE_ONLY | MM_READ_WRITE) && pgas_.size_ > 0) {
       hermes::Context ctx;
       for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
         auto it = data_.find(page_idx);
@@ -177,16 +191,19 @@ class VectorMegaMpi {
           continue;
         }
         Page<T> &page = it->second;
-        if (page.modified_) {
-          if constexpr (!IS_COMPLEX_TYPE) {
-            ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
-            hermes::Blob blob((char*)page.elmts_.data(),
-                              elmts_per_page_ * elmt_size_);
-            bkt_.Put(std::to_string(page_idx), blob, ctx);
-          } else {
-            bkt_.Put<T>(std::to_string(page_idx), page.elmts_[0], ctx);
-          }
-          page.modified_ = false;
+        size_t page_off, page_size;
+        if constexpr (!IS_COMPLEX_TYPE) {
+          pgas_.GetModBounds(page_idx, page_off, page_size);
+          std::string page_name =
+              hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
+          ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+          hermes::Blob blob((char*)page.elmts_.data() + page_off,
+                            page_size);
+          bkt_.PartialPut(page_name, blob, page_off, ctx);
+        } else {
+          std::string page_name =
+              hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
+          bkt_.Put<T>(page_name, page.elmts_[0], ctx);
         }
       }
     }
@@ -199,7 +216,7 @@ class VectorMegaMpi {
       return;
     }
     for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
-      if (cur_memory_ - 2 * page_size_ < window_size_) {
+      if (cur_memory_ - 2 * page_mem_ < window_size_) {
         break;
       }
       auto it = data_.find(page_idx);
@@ -216,7 +233,7 @@ class VectorMegaMpi {
 
   /** Lock a region */
   void Barrier(u32 flags = 0, MPI_Comm comm = MPI_COMM_WORLD) {
-    _Evict();
+    _Flush();
     MPI_Barrier(comm);
     flags_.SetBits(flags);
   }
@@ -228,25 +245,25 @@ class VectorMegaMpi {
 
   /** Induct a page */
   Page<T>* _Fault(size_t page_idx) {
-    if (window_size_ > page_size_ && cur_memory_ > window_size_ - page_size_) {
+    if (window_size_ > page_mem_ && cur_memory_ > window_size_ - page_mem_) {
       _Evict();
     }
     hermes::Context ctx;
     data_.emplace(page_idx, Page<T>(page_idx));
     Page<T> &page = data_[page_idx];
     page.elmts_.resize(elmts_per_page_);
-    std::string page_name = std::to_string(page_idx);
+    std::string page_name =
+        hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
     if (flags_.Any(MM_READ_ONLY | MM_READ_WRITE)) {
       if constexpr (!IS_COMPLEX_TYPE) {
         ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
-        hermes::Blob blob((char*)page.elmts_.data(), page.elmts_.size() * elmt_size_);
+        hermes::Blob blob((char*)page.elmts_.data(), page_size_);
         bkt_.Get(page_name, blob, ctx);
       } else {
         bkt_.Get<T>(page_name, page.elmts_[0], ctx);
       }
     }
-    page.modified_ = false;
-    cur_memory_ += page_size_;
+    cur_memory_ += page_mem_;
     if (min_page_ == -1) {
       min_page_ = page_idx;
       max_page_ = page_idx;
@@ -276,7 +293,6 @@ class VectorMegaMpi {
       }
     }
     Page<T> &page = *page_ptr;
-    page.modified_ = true;
     cur_page_ = page_ptr;
     return page.elmts_[page_off];
   }
@@ -343,32 +359,36 @@ class VectorMegaMpi {
 
   /** Emplace back */
   void emplace_back(const T &elmt) {
-    (*this)[size_++] = elmt;
+    append_data_.emplace_back(elmt);
+    if (append_data_.size() == elmts_per_page_) {
+      _flush_emplace();
+    }
+    ++size_;
+  }
+
+  /** Flush append buffer */
+  void _flush_emplace() {
+    if constexpr(!IS_COMPLEX_TYPE) {
+      hermes::Context ctx;
+      ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+      hermes::Blob blob((char*)append_data_.data(),
+                        append_data_.size() * elmt_size_);
+      bkt_.Append(blob, page_size_, ctx);
+      append_data_.clear();
+    } else {
+      throw std::runtime_error("Complex types not supported");
+    }
   }
 
   /** Flush emplace */
   void flush_emplace(MPI_Comm comm, int proc_off, int nprocs) {
-    std::string flush_map = hshm::Formatter::format(
-        "{}_flusher_{}_{}", path_, proc_off, nprocs);
-    VectorMegaMpi<size_t, false> back(
-        flush_map,
-        nprocs,
-        MM_WRITE_ONLY);
-    back[rank_ - proc_off] = data_.size();
-    back.Barrier(MM_READ_ONLY, comm);
-    size_t my_off = 0, new_size = 0;
-    for (size_t i = 0; i < rank_ - proc_off; ++i) {
-      my_off += back[i];
+    if (append_data_.size()) {
+      _flush_emplace();
     }
-    for (size_t i = 0; i < nprocs; ++i) {
-      new_size += back[i];
-    }
+    Barrier(comm);
+    size_t new_size = bkt_.GetSize();
+    new_size = new_size / elmt_size_;
     Resize(new_size);
-    for (size_t i = 0; i < data_.size(); ++i) {
-      (*this)[my_off + i] = (*this)[i];
-    }
-    back.Barrier(0, comm);
-    back.Destroy();
     size_ = new_size;
   }
 };

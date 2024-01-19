@@ -135,6 +135,7 @@ class DbscanMpi {
         hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0);
     sample.Init(sample_name, data_.size(), MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
+    sample.Pgas(bounds.off_, bounds.size_);
     for (size_t i = 0; i < bounds.size_; ++i) {
       sample[bounds.off_ + i] = bounds.off_ + i;
     }
@@ -163,6 +164,7 @@ class DbscanMpi {
     Bounds proc_bounds(rank_ - proc_off, nprocs,
                        sample.size());
     AssignT proc_sample = sample.Subset(proc_bounds.off_, proc_bounds.size_);
+    proc_sample.Pgas(proc_bounds.off_, proc_bounds.size_);
     // Decide the feature to split on
     FindGlobalMedianAndFeature(*node, proc_sample,
                                node->depth_, uuid,
@@ -191,8 +193,8 @@ class DbscanMpi {
                                 dir_, node->depth_ + 1,
                                 right_uuid);
     left_sample.Init(left_sample_name, sample.size(), MM_APPEND_ONLY);
-    right_sample.Init(right_sample_name, sample.size(), MM_APPEND_ONLY);
     left_sample.BoundMemory(window_size_);
+    right_sample.Init(right_sample_name, sample.size(), MM_APPEND_ONLY);
     right_sample.BoundMemory(window_size_);
     DivideSample(*node, proc_sample,
                  left_sample, right_sample,
@@ -468,6 +470,8 @@ class DbscanMpi {
     OutT preds;
     preds.Init(output_, data_.size());
     preds.BoundMemory(window_size_);
+    Bounds bounds(rank_, nprocs_, data_.size());
+    preds.Pgas(bounds.off_, bounds.size_);
     size_t size_pp = data_.size() / nprocs_;
     size_t off = size_pp * rank_;
     size_t end = off + size_pp;

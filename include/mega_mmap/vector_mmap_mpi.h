@@ -130,6 +130,9 @@ class VectorMmapMpi {
     window_size_ = window_size;
   }
 
+  void Pgas(size_t off, size_t size) {
+  }
+
   VectorMmapMpi Subset(size_t off, size_t size) {
     VectorMmapMpi mmap(*this);
     mmap.off_ = off;
