@@ -1,0 +1,21 @@
+name: mm_random_forest_df_parquet
+env: mega_mmap
+pkgs:
+  - pkg_type: mm_random_forest_df
+    pkg_name: mm_random_forest_df_train
+    path: ${HOME}/mm_data/rf_train.parquet
+    window_size: 16m
+    df_size: 16m
+    nprocs: 1
+    ppn: 16
+    type: parquet
+    k: 8
+  - pkg_type: mm_random_forest_df
+    pkg_name: mm_random_forest_df_test
+    path: ${HOME}/mm_data/rf_test.parquet
+    window_size: 4m
+    df_size: 4m
+    nprocs: 1
+    ppn: 16
+    type: parquet
+    k: 8

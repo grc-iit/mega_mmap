@@ -1,0 +1,21 @@
+name: mm_random_forest_df_shared
+env: mega_mmap
+pkgs:
+  - pkg_type: mm_random_forest_df
+    pkg_name: mm_random_forest_df_train
+    path: ${HOME}/mm_data/rf_train.bin
+    window_size: 1m
+    df_size: 16m
+    nprocs: 1
+    ppn: 16
+    type: shared
+    k: 8
+  - pkg_type: mm_random_forest_df
+    pkg_name: mm_random_forest_df_test
+    path: ${HOME}/mm_data/rf_test.bin
+    window_size: 1m
+    df_size: 4m
+    nprocs: 1
+    ppn: 16
+    type: shared
+    k: 8

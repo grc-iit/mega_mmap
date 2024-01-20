@@ -124,11 +124,6 @@ class VectorMegaMpi {
     dir_ = stdfs::path(path).parent_path();
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs_);
-    int fd = open64(path.c_str(), O_RDWR | O_CREAT, 0666);
-    if (fd < 0) {
-      HELOG(kFatal, "Failed to open file {}: {}",
-            path.c_str(), strerror(errno));
-    }
     if (!IS_COMPLEX_TYPE) {
       elmts_per_page_ = MM_PAGE_SIZE / elmt_size;
       if (elmts_per_page_ == 0) {
@@ -264,7 +259,7 @@ class VectorMegaMpi {
       }
     }
     cur_memory_ += page_mem_;
-    if (min_page_ == -1) {
+    if (min_page_ == -1 || max_page_ == -1) {
       min_page_ = page_idx;
       max_page_ = page_idx;
     }

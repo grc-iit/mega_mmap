@@ -128,7 +128,7 @@ class RandomForestClassifierMpi {
     // Memory bounding paramters
     rank_ = rank;
     nprocs_ = nprocs;
-    window_size_ = window_size / sizeof(T);
+    window_size_ = window_size;
     num_features_ = num_features;
     max_features_ = sqrt(num_features);
     num_cols_ = num_cols;
@@ -151,14 +151,16 @@ class RandomForestClassifierMpi {
   void Run() {
     HILOG(kInfo, "Running random forest on rank {}", rank_);
     for (int i = 0; i < trees_per_proc_; ++i) {
-      std::vector<size_t> sample = SubsampleDataset();
+      AssignT sample = SubsampleDataset();
       std::unique_ptr<Node<T>> root = std::make_unique<Node<T>>();
-      CreateDecisionTree(root, nullptr, sample);
+      CreateDecisionTree(root, nullptr, sample, 0);
       trees_[rank_ * trees_per_proc_ + i] = std::move(root);
     }
     trees_.Barrier(MM_READ_ONLY);
     float error = Predict(test_data_);
-    HILOG(kInfo, "Prediction Accuracy: {}", 1 - error);
+    if (rank_ == 0) {
+      HILOG(kInfo, "Prediction Accuracy: {}", 1 - error);
+    }
   }
 
   float Predict(DataT &data) {
@@ -218,21 +220,27 @@ class RandomForestClassifierMpi {
     return features;
   }
 
-  std::vector<size_t> SubsampleDataset() {
-    size_t sample_size = windows_per_proc_ * window_size_;
+  AssignT SubsampleDataset() {
+    Bounds bounds(rank_, nprocs_, data_.size());
+    std::string sample_name =
+        hshm::Formatter::format("{}/sample_{}_{}_{}",
+                                dir_, 0, 0, rank_);
+    AssignT sample;
+    sample.Init(sample_name, bounds.size_, MM_WRITE_ONLY);
+    sample.BoundMemory(window_size_);
+    sample.Pgas(0, data_.size());
+    size_t off = 0;
     mm::UniformSampler sampler(MM_PAGE_SIZE,
                                data_.size(),
                                2354235 * (rank_ + 1));
-    std::vector<size_t> sample(sample_size);
-    size_t off = 0;
     while (off < sample.size()) {
       sampler.SamplePage(sample, off);
     }
+    sample.Hint(MM_READ_ONLY);
     return sample;
   }
 
-  std::vector<size_t> SubsubsampleDataset(std::vector<size_t> &sample,
-                                          size_t divisor) {
+  size_t SubsubsampleSize(AssignT &sample, size_t divisor) {
     if (divisor > sample.size()) {
       size_t i = 5;
       while (true) {
@@ -243,8 +251,20 @@ class RandomForestClassifierMpi {
         --i;
       }
     }
-    size_t new_size = sample.size() / divisor;
-    std::vector<size_t> new_sample(new_size);
+    return sample.size() / divisor;
+  }
+
+  AssignT SubsubsampleDataset(AssignT &sample,
+                              size_t divisor,
+                              uint64_t uuid,
+                              int depth) {
+    size_t new_size = SubsubsampleSize(sample, divisor);
+    std::string new_sample_name =
+        hshm::Formatter::format("{}/subsample_{}_{}_{}",
+                                dir_, uuid, depth, rank_);
+    AssignT new_sample(new_sample_name, new_size, MM_WRITE_ONLY);
+    new_sample.BoundMemory(window_size_);
+    new_sample.Pgas(0, new_size);
     mm::UniformSampler sampler(MM_PAGE_SIZE,
                                sample.size(),
                                2354235 * (rank_ + 1));
@@ -252,27 +272,27 @@ class RandomForestClassifierMpi {
     while (off < new_sample.size()) {
       sampler.SamplePage(sample, new_sample, off);
     }
+    new_sample.Hint(MM_READ_ONLY);
     return new_sample;
   }
 
   void CreateDecisionTree(std::unique_ptr<Node<T>> &node,
                           const std::unique_ptr<Node<T>> &parent,
-                          std::vector<size_t> &sample) {
+                          AssignT &sample,
+                          uint64_t uuid) {
     HILOG(kInfo, "Creating decision tree on rank {} with {} samples",
           rank_, sample.size());
     // Decide the feature to split on
     size_t num_bootstrap_samples = 30;
-    std::vector<size_t> assign;
     std::vector<Node<T>> stats(max_features_ * num_bootstrap_samples);
     hshm::UniformDistribution sample_dist;
     sample_dist.Seed(2354235 * (rank_ + 1));
     size_t stat_idx = 0;
     for (int i = 0; i < num_bootstrap_samples; ++i) {
       std::vector<int> features = SubsampleFeatures();
-      std::vector<size_t> subsample = SubsubsampleDataset(
-          sample, num_bootstrap_samples);
+      AssignT subsample = SubsubsampleDataset(
+          sample, num_bootstrap_samples, uuid, node->depth_);
       sample_dist.Shape(0, subsample.size() - 1);
-      assign.resize(subsample.size());
       for (int feature : features) {
         stats[stat_idx] = *node;
         stats[stat_idx].feature_ = feature;
@@ -281,9 +301,10 @@ class RandomForestClassifierMpi {
         stats[stat_idx].left_ = std::make_unique<Node<T>>();
         stats[stat_idx].right_ = std::make_unique<Node<T>>();
         Split(stats[stat_idx], subsample, feature,
-              stats[stat_idx].joint_, assign);
+              stats[stat_idx].joint_);
         ++stat_idx;
       }
+      subsample.Destroy();
     }
     auto it = std::min_element(stats.begin(), stats.end(),
                                [](const Node<T> &a, const Node<T> &b) {
@@ -301,26 +322,42 @@ class RandomForestClassifierMpi {
     if (low_entropy || is_max_depth) {
       node->left_ = nullptr;
       node->right_ = nullptr;
+      sample.Destroy();
       return;
     }
     // Calculate decision tree for subsamples
-    std::vector<size_t> left_sample, right_sample;
+    AssignT left_sample, right_sample;
+    size_t left_uuid = uuid;
+    size_t right_uuid = uuid | (1 << node->depth_);
+    std::string left_sample_name =
+        hshm::Formatter::format("{}/sample_{}_{}_{}",
+                                dir_, node->depth_ + 1,
+                                left_uuid, rank_);
+    std::string right_sample_name =
+        hshm::Formatter::format("{}/sample_{}_{}_{}",
+                                dir_, node->depth_ + 1,
+                                right_uuid, rank_);
+    left_sample.Init(left_sample_name, node->left_->count_, MM_APPEND_ONLY);
+    left_sample.BoundMemory(window_size_);
+    right_sample.Init(right_sample_name, node->right_->count_, MM_APPEND_ONLY);
+    right_sample.BoundMemory(window_size_);
     DivideSample(*node, sample,
                  left_sample, right_sample);
+    sample.Destroy();
     HILOG(kInfo, "Finished decision tree on rank {} with {} samples",
           rank_, sample.size());
     CreateDecisionTree(node->left_, node,
-                       left_sample);
+                       left_sample,
+                       left_uuid);
     CreateDecisionTree(node->right_, node,
-                       right_sample);
+                       right_sample,
+                       right_uuid);
   }
 
   void DivideSample(Node<T> &node,
-                    const std::vector<size_t> &sample,
-                    std::vector<size_t> &left,
-                    std::vector<size_t> &right) {
-    left.reserve(node.left_->count_);
-    right.reserve(node.right_->count_);
+                    AssignT &sample,
+                    AssignT &left,
+                    AssignT &right) {
     for (size_t i = 0; i < sample.size(); ++i) {
       size_t off = sample[i];
       if (data_[off].LessThan(node.joint_, node.feature_)) {
@@ -329,13 +366,16 @@ class RandomForestClassifierMpi {
         right.emplace_back(off);
       }
     }
+    left.flush_emplace(MPI_COMM_SELF, 0, 0);
+    right.flush_emplace(MPI_COMM_SELF, 0, 0);
+    left.Hint(MM_READ_ONLY);
+    right.Hint(MM_READ_ONLY);
   }
 
   void Split(Node<T> &node,
-              const std::vector<size_t> &sample,
-              int feature,
-              T &joint,
-              std::vector<size_t> &assign) {
+             AssignT &sample,
+             int feature,
+             T &joint) {
     // Group by output
     GiniT gini;
 
@@ -345,11 +385,9 @@ class RandomForestClassifierMpi {
       size_t off = sample[i];
       T &row = data_[off];
       if (row.LessThan(joint, feature)) {
-        assign[i] = 0;
         count[0] += 1;
         gini.Induct(row, 0);
       } else {
-        assign[i] = 1;
         count[1] += 1;
         gini.Induct(row, 1);
       }
