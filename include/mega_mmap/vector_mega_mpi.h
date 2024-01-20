@@ -222,7 +222,7 @@ class VectorMegaMpi {
         cur_page_ = nullptr;
       }
       data_.erase(it);
-      cur_memory_ -= elmts_per_page_ * elmt_size_;
+      cur_memory_ -= page_size_;
     }
   }
 

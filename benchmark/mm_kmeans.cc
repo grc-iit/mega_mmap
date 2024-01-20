@@ -110,39 +110,33 @@ class KmeansMpi {
             size_t window_size, int k, int max_iter = 300,
             float tol = .0001, float min_inertia = .1){
     dir_ = stdfs::path(path).parent_path();
-    data_.Init(path, MM_READ_ONLY);
-    data_.BoundMemory(window_size);
-    Bounds bounds(rank_, nprocs_, data_.size());
-    data_.Pgas(bounds.off_, bounds.size_);
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size;
     k_ = k;
     max_iter_ = max_iter;
 
-    size_t data_per_proc = data_.size() / nprocs_;
-    off_ = rank_ * data_per_proc;
-    last_ = (rank_ + 1) * data_per_proc;
-    if (last_ > data_.size()) {
-      last_ = data_.size();
-    }
+    data_.Init(path, MM_READ_ONLY);
+    data_.BoundMemory(window_size);
+    Bounds bounds(rank_, nprocs_, data_.size());
+    data_.Pgas(bounds.off_, bounds.size_);
+
+    off_ = bounds.off_;
+    last_ = bounds.off_ + bounds.size_;
     inertia_diff_ = tol;
     min_inertia_ = min_inertia;
   }
 
   void Run() {
     // Select initial centroids
-    size_t first_k = SelectFirstCenter();
-    std::vector<size_t> ks;
-    ks.emplace_back(first_k);
+    HILOG(kInfo, "{}: Selecting first center", rank_)
+    T first_k = SelectFirstCenter();
+    HILOG(kInfo, "{}: Selected first center", rank_)
+    ks_.emplace_back(first_k);
     for (int i = 1; i < k_; ++i) {
-      FindMax(ks);
+      HILOG(kInfo, "{}: Finding center {}", rank_, i)
+      FindMax(ks_);
     }
-    for (int i = 0; i < k_; ++i) {
-//      HILOG(kInfo, "Center {}: ({}, {})", i, data_[ks[i]].x_, data_[ks[i]].y_)
-      ks_.emplace_back(data_[ks[i]]);
-    }
-//    HILOG(kInfo, "");
     // Run kmeans
     KMeans();
     // Print results
@@ -162,7 +156,7 @@ class KmeansMpi {
   /** 
    * Find the point that is furthest from all current centers.
    * */
-  void FindMax(std::vector<size_t> &ks) {
+  void FindMax(std::vector<Center<T>> &ks) {
     MaxT local_maxes;
     local_maxes.Init(dir_ + "/" + "max", nprocs_, MM_WRITE_ONLY);
     local_maxes.Pgas(rank_, 1);
@@ -173,7 +167,7 @@ class KmeansMpi {
     local_maxes.Barrier(MM_READ_ONLY);
     // Find global max across processes
     LocalMax global_max = FindGlobalMax(local_maxes);
-    ks.emplace_back(global_max.idx_);
+    ks.emplace_back(data_[global_max.idx_]);
     local_maxes.Barrier();
     local_maxes.Destroy();
   }
@@ -199,10 +193,13 @@ class KmeansMpi {
    * point and all center points. This way points that are near an existing
    * center are not selected.
    * */
-  double MinOfCenterDists(T &cur_pt, std::vector<size_t> &ks) {
+  double MinOfCenterDists(T &cur_pt, std::vector<Center<T>> &ks) {
     double min_dist = std::numeric_limits<double>::max();
     for (size_t j = 0; j < ks.size(); ++j) {
-      T &center = data_[ks[j]];
+      T &center = ks[j].center_;
+      if (center == cur_pt) {
+        return 0;
+      }
       double dist = (center.Distance(cur_pt));
       if (dist < min_dist) {
         min_dist = dist;
@@ -215,15 +212,12 @@ class KmeansMpi {
    * Find the point furthest away from the current set of centers in the local
    * branch of the dataset.
    * */
-  LocalMax FindLocalMax(std::vector<size_t> &ks) {
+  LocalMax FindLocalMax(std::vector<Center<T>> &ks) {
     LocalMax local_max;
     for (size_t i = off_; i < last_; ++i) {
       T &cur_pt = data_[i];
       double dist = MinOfCenterDists(cur_pt, ks);
       if (dist > local_max.dist_) {
-        if (std::find(ks.begin(), ks.end(), i) != ks.end()) {
-          continue;
-        }
         local_max.dist_ = dist;
         local_max.idx_ = i;
       }
@@ -234,12 +228,12 @@ class KmeansMpi {
   /**
    * Select the first center to initialize kmeans++.
    * */
-  size_t SelectFirstCenter() {
+  T SelectFirstCenter() {
     hshm::UniformDistribution dist;
     dist.Seed(23582);
     dist.Shape(0, data_.size_ - 1);
     size_t first_k = dist.GetSize();
-    return first_k;
+    return data_[first_k];
   }
 
   /**
@@ -250,6 +244,7 @@ class KmeansMpi {
   void KMeans() {
     inertia_ = 1;
     for (iter_ = 0; iter_ < max_iter_; ++iter_) {
+      HILOG(kInfo, "{}: On iteration {}", rank_, iter_)
       float cur_inertia = Assignment();
       if (cur_inertia <= min_inertia_) {
         break;
