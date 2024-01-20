@@ -122,6 +122,7 @@ class KmeansMpi {
     data_.BoundMemory(window_size);
     Bounds bounds(rank_, nprocs_, data_.size());
     data_.Pgas(bounds.off_, bounds.size_);
+    HILOG(kInfo, "{}: Finished data definition", rank)
 
     off_ = bounds.off_;
     last_ = bounds.off_ + bounds.size_;
