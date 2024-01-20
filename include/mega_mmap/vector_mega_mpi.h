@@ -133,6 +133,7 @@ class VectorMegaMpi {
     page_size_ = elmts_per_page_ * elmt_size;
     page_mem_ = page_size_ + sizeof(Page<T>);
     hermes::Context ctx;
+    HILOG(kInfo, "Building stager context")
     if constexpr(!IS_COMPLEX_TYPE) {
       ctx = hermes::data_stager::BinaryFileStager::BuildContext(
           page_size_, elmt_size);
