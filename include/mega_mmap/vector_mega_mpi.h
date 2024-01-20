@@ -114,7 +114,6 @@ class VectorMegaMpi {
   /** Explicit initializer */
   void Init(const std::string &path, size_t count, size_t elmt_size,
             u32 flags) {
-    TRANSPARENT_HERMES();
     HILOG(kInfo, "Beginning mega init")
     if (data_.size()) {
       return;

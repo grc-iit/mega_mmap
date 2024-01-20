@@ -350,6 +350,7 @@ int main(int argc, char **argv) {
     kmeans.Init(path, rank, nprocs, window_size, k, max_iter);
     kmeans.Run();
   } else if (algo == "mega") {
+    TRANSPARENT_HERMES();
     KmeansMpi<
         mm::VectorMegaMpi<Row>,
         mm::VectorMegaMpi<LocalMax>,

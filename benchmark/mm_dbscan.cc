@@ -522,6 +522,7 @@ int main(int argc, char **argv) {
     dbscan.Init(path, window_size, rank, nprocs, dist);
     dbscan.Run();
   } else if (algo == "mega") {
+    TRANSPARENT_HERMES();
     DbscanMpi<
         mm::VectorMegaMpi<Row>,
         mm::VectorMegaMpi<std::unique_ptr<Node<Row>>, true>,

@@ -432,6 +432,7 @@ int main(int argc, char **argv) {
             rank, nprocs);
     rf.Run();
   } else if (algo == "mega") {
+    TRANSPARENT_HERMES();
     RandomForestClassifierMpi<
         mm::VectorMegaMpi<ClassRow>,
         mm::VectorMegaMpi<std::unique_ptr<Node<ClassRow>>, true>,
