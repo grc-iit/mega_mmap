@@ -222,7 +222,8 @@ class KmeansMpi {
     LocalMax local_max;
     for (size_t i = off_; i < last_; ++i) {
       if ((i - off_) % (256 * MM_PAGE_SIZE) == 0) {
-        HILOG(kInfo, "{}: We are {}% done", rank_, i * 100.0 / last_)
+        HILOG(kInfo, "{}: We are {}% done", rank_,
+              (i - off_) * 100.0 / (last_ - off_))
       }
       T &cur_pt = data_[i];
       double dist = MinOfCenterDists(cur_pt, ks);
