@@ -22,7 +22,7 @@ make install
 ## Hermes
 
 ```
-spack install hermes@dev-1.1
+spack install hermes@master
 ```
 
 # Install

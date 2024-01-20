@@ -339,7 +339,8 @@ int main(int argc, char **argv) {
   size_t window_size = hshm::ConfigParse::ParseSize(argv[3]);
   int k = hshm::ConfigParse::ParseSize(argv[4]);
   int max_iter = std::stoi(argv[4]);
-  HILOG(kInfo, "Running {} on {} with window size {} with {} centers", algo, path, window_size, k);
+  HILOG(kInfo, "{}: Running {} on {} with window size {} with {} centers",
+        rank, algo, path, window_size, k);
 
   if (algo == "mmap") {
     KmeansMpi<
