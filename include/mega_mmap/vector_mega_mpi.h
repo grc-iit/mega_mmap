@@ -114,7 +114,6 @@ class VectorMegaMpi {
   /** Explicit initializer */
   void Init(const std::string &path, size_t count, size_t elmt_size,
             u32 flags) {
-    HILOG(kInfo, "Beginning mega init")
     if (data_.size()) {
       return;
     }
@@ -132,14 +131,11 @@ class VectorMegaMpi {
     page_size_ = elmts_per_page_ * elmt_size;
     page_mem_ = page_size_ + sizeof(Page<T>);
     hermes::Context ctx;
-    HILOG(kInfo, "Building stager context")
     if constexpr(!IS_COMPLEX_TYPE) {
       ctx = hermes::data_stager::BinaryFileStager::BuildContext(
           page_size_, elmt_size);
     }
-    HILOG(kInfo, "Beginning mega bucket get")
     bkt_ = HERMES->GetBucket(path, ctx);
-    HILOG(kInfo, "Get mega bucket")
     off_ = 0;
     size_ = count;
     max_size_ = count;
