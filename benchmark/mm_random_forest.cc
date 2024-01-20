@@ -115,27 +115,27 @@ class RandomForestClassifierMpi {
             float tol = .0001,
             int max_depth = 5){
     dir_ = stdfs::path(train_path).parent_path();
-    // Load train data and partition
-    data_.Init(train_path, MM_READ_ONLY);
-    data_.BoundMemory(window_size);
-    Bounds bounds(rank_, nprocs_, data_.size());
-    data_.Pgas(bounds.off_, bounds.size_);
-    // Load test data and partition
-    test_data_.Init(test_path, MM_READ_ONLY);
-    test_data_.BoundMemory(window_size);
-    Bounds test_bounds(rank_, nprocs_, test_data_.size());
-    test_data_.Pgas(test_bounds.off_, test_bounds.size_);
-    // Memory bounding paramters
     rank_ = rank;
     nprocs_ = nprocs;
     window_size_ = window_size;
     num_features_ = num_features;
     max_features_ = sqrt(num_features);
     num_cols_ = num_cols;
-    num_windows_ = data_.size() / window_size_;
-    windows_per_proc_ = num_windows_ / nprocs_;
     tol_ = tol;
     max_depth_ = max_depth;
+    // Load train data and partition
+    data_.Init(train_path, MM_READ_ONLY);
+    data_.BoundMemory(window_size_);
+    Bounds bounds(rank_, nprocs_, data_.size());
+    data_.Pgas(bounds.off_, bounds.size_);
+    // Load test data and partition
+    test_data_.Init(test_path, MM_READ_ONLY);
+    test_data_.BoundMemory(window_size_);
+    Bounds test_bounds(rank_, nprocs_, test_data_.size());
+    test_data_.Pgas(test_bounds.off_, test_bounds.size_);
+    // Memory bounding paramters
+    num_windows_ = data_.size() / window_size_;
+    windows_per_proc_ = num_windows_ / nprocs_;
     // Initialize final tree data structure
     trees_per_proc_ = trees_per_proc;
     trees_.Init(dir_ + "/trees",
