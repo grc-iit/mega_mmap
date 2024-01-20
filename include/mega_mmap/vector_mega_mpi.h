@@ -54,7 +54,6 @@ class VectorMegaMpi {
   size_t page_size_ = 0;
   size_t page_mem_ = 0;
   std::string path_;
-  std::string dir_;
   int rank_, nprocs_;
   size_t window_size_ = 0;
   size_t cur_memory_ = 0;
@@ -85,7 +84,6 @@ class VectorMegaMpi {
     elmts_per_page_ = other.elmts_per_page_;
     page_size_ = other.page_size_;
     path_ = other.path_;
-    dir_ = other.dir_;
     rank_ = other.rank_;
     nprocs_ = other.nprocs_;
     window_size_ = other.window_size_;
@@ -117,11 +115,11 @@ class VectorMegaMpi {
   void Init(const std::string &path, size_t count, size_t elmt_size,
             u32 flags) {
     TRANSPARENT_HERMES();
+    HILOG(kInfo, "Beginning mega init")
     if (data_.size()) {
       return;
     }
     path_ = path;
-    dir_ = stdfs::path(path).parent_path();
     MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs_);
     if (!IS_COMPLEX_TYPE) {
@@ -139,7 +137,9 @@ class VectorMegaMpi {
       ctx = hermes::data_stager::BinaryFileStager::BuildContext(
           page_size_, elmt_size);
     }
+    HILOG(kInfo, "Beginning mega bucket get")
     bkt_ = HERMES->GetBucket(path, ctx);
+    HILOG(kInfo, "Get mega bucket")
     off_ = 0;
     size_ = count;
     max_size_ = count;
