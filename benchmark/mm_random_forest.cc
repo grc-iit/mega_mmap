@@ -151,6 +151,7 @@ class RandomForestClassifierMpi {
   void Run() {
     HILOG(kInfo, "Running random forest on rank {}", rank_);
     for (int i = 0; i < trees_per_proc_; ++i) {
+      HILOG(kInfo, "Creating tree {} on rank {}", i, rank_);
       AssignT sample = SubsampleDataset();
       std::unique_ptr<Node<T>> root = std::make_unique<Node<T>>();
       CreateDecisionTree(root, nullptr, sample, 0);
