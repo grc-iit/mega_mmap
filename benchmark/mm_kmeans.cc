@@ -109,6 +109,7 @@ class KmeansMpi {
             int rank, int nprocs,
             size_t window_size, int k, int max_iter = 300,
             float tol = .0001, float min_inertia = .1){
+    HILOG(kInfo, "{}: Initialize mm kmeans", rank)
     dir_ = stdfs::path(path).parent_path();
     rank_ = rank;
     nprocs_ = nprocs;
@@ -116,6 +117,7 @@ class KmeansMpi {
     k_ = k;
     max_iter_ = max_iter;
 
+    HILOG(kInfo, "{}: Beginning data definition", rank)
     data_.Init(path, MM_READ_ONLY);
     data_.BoundMemory(window_size);
     Bounds bounds(rank_, nprocs_, data_.size());
