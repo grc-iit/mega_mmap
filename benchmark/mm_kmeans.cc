@@ -218,6 +218,9 @@ class KmeansMpi {
   LocalMax FindLocalMax(std::vector<Center<T>> &ks) {
     LocalMax local_max;
     for (size_t i = off_; i < last_; ++i) {
+      if ((i - off_) % MM_PAGE_SIZE == 0) {
+        HILOG(kInfo, "We are {}% done", i * 1.0 / last_)
+      }
       T &cur_pt = data_[i];
       double dist = MinOfCenterDists(cur_pt, ks);
       if (dist > local_max.dist_) {
