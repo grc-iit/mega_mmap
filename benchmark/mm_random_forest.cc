@@ -407,13 +407,17 @@ int main(int argc, char **argv) {
   int rank, nprocs;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+  HILOG(kInfo, "Running random forest on rank {}", rank);
   std::string algo = argv[1];
   std::string train_path = argv[2];
   std::string test_path = argv[3];
+  HILOG(kInfo, "HERE1");
   int nfeature = std::stoi(argv[4]);
+  HILOG(kInfo, "HERE2");
   int ncol = nfeature + 1;
+  HILOG(kInfo, "HERE3");
   size_t window_size = hshm::ConfigParse::ParseSize(argv[5]);
-  HILOG(kInfo, "Running random forest on rank {}", rank);
+  HILOG(kInfo, "Parsed argument on {}", rank);
 
   if (algo == "mmap") {
     RandomForestClassifierMpi<
