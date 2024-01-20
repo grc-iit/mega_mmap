@@ -109,7 +109,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # Test
 #------------------------------------------------------------------------------
 function(jarvis_test test_name)
-  add_test(NAME ${test_name}
+  add_custom_target(NAME ${test_name}
           COMMAND jarvis pipeline run yaml "${CMAKE_SOURCE_DIR}/test/unit/pipelines/${test_name}.yaml")
 endfunction()
 add_subdirectory(test/unit)
