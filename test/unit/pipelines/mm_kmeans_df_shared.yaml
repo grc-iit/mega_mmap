@@ -5,8 +5,8 @@ pkgs:
     pkg_name: mm_kmeans_df
     path: ${HOME}/mm_data/kmeans.bin
     window_size: 1m
-    df_size: 16m
-    nprocs: 1
+    df_size: 100g
+    nprocs: 24
     ppn: 16
     type: shared
     k: 8
