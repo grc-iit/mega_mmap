@@ -79,12 +79,14 @@ struct Node {
   }
 };
 
-template<typename DataT,
-         typename TreeT,
-         typename GiniT,
-         typename AssignT,
-         typename T>
+template<typename T>
 class RandomForestClassifierMpi {
+ public:
+  using DataT = MM_VEC<T>;
+  using TreeT = MM_VEC<std::unique_ptr<Node<T>>, true>;
+  using GiniT = Gini<T>;
+  using AssignT = MM_VEC<size_t>;
+
  public:
   std::string dir_;
   DataT data_;
@@ -421,24 +423,9 @@ int main(int argc, char **argv) {
   HILOG(kInfo, "Parsed argument on {}", rank);
 
   if (algo == "mmap") {
-    RandomForestClassifierMpi<
-        mm::VectorMmapMpi<ClassRow>,
-        mm::VectorMmapMpi<std::unique_ptr<Node<ClassRow>>, true>,
-        Gini<ClassRow>,
-        mm::VectorMmapMpi<size_t>,
-        ClassRow> rf;
-    rf.Init(train_path, test_path,
-            nfeature, ncol, window_size,
-            rank, nprocs);
-    rf.Run();
   } else if (algo == "mega") {
     TRANSPARENT_HERMES();
-    RandomForestClassifierMpi<
-        mm::VectorMegaMpi<ClassRow>,
-        mm::VectorMegaMpi<std::unique_ptr<Node<ClassRow>>, true>,
-        Gini<ClassRow>,
-        mm::VectorMegaMpi<size_t>,
-        ClassRow> rf;
+    RandomForestClassifierMpi<ClassRow> rf;
     rf.Init(train_path, test_path,
             nfeature, ncol, window_size,
             rank, nprocs);

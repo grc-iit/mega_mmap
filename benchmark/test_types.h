@@ -5,6 +5,9 @@
 #ifndef MEGAMMAP_BENCHMARK_TEST_TYPES_H_
 #define MEGAMMAP_BENCHMARK_TEST_TYPES_H_
 
+#define MM_VEC mm::VectorMegaMpi
+#define MM_VEC_2 mm::VectorMmapMpi
+
 class Bounds {
  public:
   size_t off_, size_;

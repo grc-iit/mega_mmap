@@ -75,14 +75,16 @@ struct Node {
   }
 };
 
-template<typename DataT,
-    typename TreeT,
-    typename NodeT,
-    typename AssignT,
-    typename OutT,
-    typename BoolT,
-    typename T>
+template<typename T>
 class DbscanMpi {
+ public:
+  using DataT = MM_VEC<T>;
+  using TreeT = MM_VEC<std::unique_ptr<Node<T>>, true>;
+  using NodeT = MM_VEC<std::vector<Node<T>>, true>;
+  using AssignT = MM_VEC<size_t>;
+  using OutT = MM_VEC<int>;
+  using BoolT = MM_VEC<int>;
+
  public:
   std::string dir_;
   std::string output_;
@@ -511,26 +513,9 @@ int main(int argc, char **argv) {
         algo, path, window_size, dist);
 
   if (algo == "mmap") {
-    DbscanMpi<
-        mm::VectorMmapMpi<RowND<3>>,
-        mm::VectorMmapMpi<std::unique_ptr<Node<RowND<3>>>, true>,
-        mm::VectorMmapMpi<std::vector<Node<RowND<3>>>, true>,
-        mm::VectorMmapMpi<size_t>,
-        mm::VectorMmapMpi<int>,
-        mm::VectorMmapMpi<bool>,
-        RowND<3>> dbscan;
-    dbscan.Init(path, window_size, rank, nprocs, dist);
-    dbscan.Run();
   } else if (algo == "mega") {
     TRANSPARENT_HERMES();
-    DbscanMpi<
-        mm::VectorMegaMpi<Row>,
-        mm::VectorMegaMpi<std::unique_ptr<Node<Row>>, true>,
-        mm::VectorMegaMpi<std::vector<Node<Row>>, true>,
-        mm::VectorMegaMpi<size_t>,
-        mm::VectorMegaMpi<int>,
-        mm::VectorMegaMpi<int>,
-        Row> dbscan;
+    DbscanMpi<Row> dbscan;
     dbscan.Init(path, window_size, rank, nprocs, dist);
     dbscan.Run();
   } else {

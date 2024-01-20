@@ -47,13 +47,14 @@ struct LocalMax {
   }
 };
 
+template<typename T>
 struct RowSum {
-  Row row_;
+  T row_;
   size_t count_;
   float inertia_;
 
   void Zero() {
-    row_ = Row(0);
+    row_ = T(0);
     count_ = 0;
     inertia_ = 0;
   }
@@ -82,12 +83,14 @@ struct Center {
   }
 };
 
-template<typename DataT,
-         typename MaxT,
-         typename AssignT,
-         typename SumT,
-         typename T>
+template<typename T>
 class KmeansMpi {
+ public:
+  using DataT = MM_VEC<T>;
+  using MaxT = MM_VEC<LocalMax>;
+  using AssignT = MM_VEC<size_t>;
+  using SumT = MM_VEC<RowSum<T>>;
+
  public:
   std::string dir_;
   DataT data_;
@@ -218,8 +221,8 @@ class KmeansMpi {
   LocalMax FindLocalMax(std::vector<Center<T>> &ks) {
     LocalMax local_max;
     for (size_t i = off_; i < last_; ++i) {
-      if ((i - off_) % MM_PAGE_SIZE == 0) {
-        HILOG(kInfo, "{}: We are {}% done", i * 100.0 / last_)
+      if ((i - off_) % (256 * MM_PAGE_SIZE) == 0) {
+        HILOG(kInfo, "{}: We are {}% done", rank_, i * 100.0 / last_)
       }
       T &cur_pt = data_[i];
       double dist = MinOfCenterDists(cur_pt, ks);
@@ -344,22 +347,9 @@ int main(int argc, char **argv) {
         rank, algo, path, window_size, k);
 
   if (algo == "mmap") {
-    KmeansMpi<
-        mm::VectorMmapMpi<Row>,
-        mm::VectorMmapMpi<LocalMax>,
-        mm::VectorMmapMpi<size_t>,
-        mm::VectorMmapMpi<RowSum>,
-        Row> kmeans;
-    kmeans.Init(path, rank, nprocs, window_size, k, max_iter);
-    kmeans.Run();
   } else if (algo == "mega") {
     TRANSPARENT_HERMES();
-    KmeansMpi<
-        mm::VectorMegaMpi<Row>,
-        mm::VectorMegaMpi<LocalMax>,
-        mm::VectorMegaMpi<size_t>,
-        mm::VectorMegaMpi<RowSum>,
-        Row> kmeans;
+    KmeansMpi<Row> kmeans;
     kmeans.Init(path, rank, nprocs, window_size, k, max_iter);
     kmeans.Run();
   } else {
