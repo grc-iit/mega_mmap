@@ -138,11 +138,11 @@ class KmeansMpi {
     for (int i = 1; i < k_; ++i) {
       FindMax(ks);
     }
-    for (int i = 0; i < k_; ++i) {
-      HILOG(kInfo, "Center {}: ({}, {})", i, data_[ks[i]].x_, data_[ks[i]].y_)
-      ks_.emplace_back(data_[ks[i]]);
-    }
-    HILOG(kInfo, "");
+//    for (int i = 0; i < k_; ++i) {
+//      HILOG(kInfo, "Center {}: ({}, {})", i, data_[ks[i]].x_, data_[ks[i]].y_)
+//      ks_.emplace_back(data_[ks[i]]);
+//    }
+//    HILOG(kInfo, "");
     // Run kmeans
     KMeans();
     // Print results
