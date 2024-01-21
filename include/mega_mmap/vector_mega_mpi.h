@@ -29,12 +29,15 @@ class VectorMegaMpiIterator;
 
 template<typename T>
 struct Page {
+  LPointer<hrunpq::TypedPushTask<hermes::GetBlobTask>> async_;
   std::vector<T> elmts_;
   u32 id_;
 
   Page() = default;
 
-  Page(u32 id) : id_(id) {}
+  Page(u32 id) : id_(id) {
+    async_.ptr_ = nullptr;
+  }
 };
 
 /** A wrapper for mmap-based vectors */
@@ -201,13 +204,16 @@ class VectorMegaMpi {
   }
 
   /** Serialize the in-memory cache back to backend */
-  void _Evict() {
+  void _Evict(size_t bytes = 0) {
     _Flush();
     if (min_page_ == -1) {
       return;
     }
+    if (bytes == 0) {
+      bytes = 2 * page_mem_;
+    }
     for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
-      if (cur_memory_ - 2 * page_mem_ < window_size_) {
+      if (cur_memory_ + bytes < window_size_) {
         break;
       }
       auto it = data_.find(page_idx);
@@ -239,7 +245,7 @@ class VectorMegaMpi {
     if (page_idx > size_ / elmts_per_page_) {
       int rank;
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-      HILOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
+      HELOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
             rank, path_, page_idx, size_ / elmts_per_page_);
     }
     if (window_size_ > page_mem_ && cur_memory_ > window_size_ - page_mem_) {
@@ -274,6 +280,53 @@ class VectorMegaMpi {
     return &page;
   }
 
+  /** Create an async fault */
+  void _AsyncFaultBegin(size_t page_idx) {
+    if (page_idx > size_ / elmts_per_page_) {
+      int rank;
+      MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+      HELOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
+            rank, path_, page_idx, size_ / elmts_per_page_);
+    }
+    hermes::Context ctx;
+    data_.emplace(page_idx, Page<T>(page_idx));
+    Page<T> &page = data_[page_idx];
+    page.elmts_.resize(elmts_per_page_);
+    std::string page_name =
+        hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
+    if constexpr (!IS_COMPLEX_TYPE) {
+      ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+      hermes::Blob blob((char*)page.elmts_.data(), page_size_);
+      page.async_ = bkt_.AsyncGet(page_name, blob, ctx);
+    } else {
+      throw std::runtime_error(
+          "Async not supported for serialized types at this time.");
+    }
+    cur_memory_ += page_mem_;
+    return &page;
+  }
+
+  /** Finish inducting a page */
+  void _AsyncFaultEnd(Page<T> &page) {
+    if (window_size_ > page_mem_ && cur_memory_ > window_size_ - page_mem_) {
+      _Evict();
+    }
+    size_t page_idx = page.id_;
+    page.async_->Wait();
+    HRUN_CLIENT->DelTask(page.async_);
+    page.async_.ptr_ = nullptr;
+    if (min_page_ == -1 || max_page_ == -1) {
+      min_page_ = page_idx;
+      max_page_ = page_idx;
+    }
+    if (page_idx < min_page_) {
+      min_page_ = page_idx;
+    }
+    if (page_idx > max_page_) {
+      max_page_ = page_idx;
+    }
+  }
+
   /** Index operator */
   T& operator[](size_t idx) {
     size_t page_idx = idx / elmts_per_page_;
@@ -285,8 +338,11 @@ class VectorMegaMpi {
       auto it = data_.find(page_idx);
       if (it == data_.end()) {
         page_ptr = _Fault(page_idx);
+      } else if (page_ptr->async_.ptr_ == nullptr) {
+        page_ptr = &it->second;
       } else {
         page_ptr = &it->second;
+        _AsyncFaultEnd(*page_ptr);
       }
     }
     Page<T> &page = *page_ptr;
@@ -376,101 +432,14 @@ class VectorMegaMpi {
     size_ = new_size;
     Hint(MM_READ_ONLY);
   }
-};
 
-///** Iterator for VectorMegaMpi */
-//template<typename T, bool IS_COMPLEX_TYPE>
-//class VectorMegaMpiIterator {
-// public:
-//  VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr_;
-//  size_t idx_;
-//
-// public:
-//  VectorMegaMpiIterator() : idx_(0) {}
-//  ~VectorMegaMpiIterator() = default;
-//
-//  /** Constructor */
-//  VectorMegaMpiIterator(VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr, size_t idx) {
-//    ptr_ = ptr;
-//    idx_ = idx;
-//  }
-//
-//  /** Copy constructor */
-//  VectorMegaMpiIterator(const VectorMegaMpiIterator &other) {
-//    ptr_ = other.ptr_;
-//    idx_ = other.idx_;
-//  }
-//
-//  /** Assignment operator */
-//  VectorMegaMpiIterator& operator=(const VectorMegaMpiIterator &other) {
-//    ptr_ = other.ptr_;
-//    idx_ = other.idx_;
-//    return *this;
-//  }
-//
-//  /** Equality operator */
-//  bool operator==(const VectorMegaMpiIterator &other) const {
-//    return ptr_ == other.ptr_ && idx_ == other.idx_;
-//  }
-//
-//  /** Inequality operator */
-//  bool operator!=(const VectorMegaMpiIterator &other) const {
-//    return ptr_ != other.ptr_ || idx_ != other.idx_;
-//  }
-//
-//  /** Dereference operator */
-//  T& operator*() {
-//    return (*ptr_)[idx_];
-//  }
-//
-//  /** Prefix increment operator */
-//  VectorMegaMpiIterator& operator++() {
-//    ++idx_;
-//    return *this;
-//  }
-//
-//  /** Postfix increment operator */
-//  VectorMegaMpiIterator operator++(int) {
-//    VectorMegaMpiIterator tmp(*this);
-//    ++idx_;
-//    return tmp;
-//  }
-//
-//  /** Prefix decrement operator */
-//  VectorMegaMpiIterator& operator--() {
-//    --idx_;
-//    return *this;
-//  }
-//
-//  /** Postfix decrement operator */
-//  VectorMegaMpiIterator operator--(int) {
-//    VectorMegaMpiIterator tmp(*this);
-//    --idx_;
-//    return tmp;
-//  }
-//
-//  /** Addition operator */
-//  VectorMegaMpiIterator operator+(size_t idx) {
-//    return VectorMegaMpiIterator(ptr_, idx_ + idx);
-//  }
-//
-//  /** Addition assign operator */
-//  VectorMegaMpiIterator& operator+=(size_t idx) {
-//    idx_ += idx;
-//    return *this;
-//  }
-//
-//  /** Subtraction operator */
-//  VectorMegaMpiIterator operator-(size_t idx) {
-//    return VectorMegaMpiIterator(ptr_, idx_ - idx);
-//  }
-//
-//  /** Subtraction assign operator */
-//  VectorMegaMpiIterator& operator-=(size_t idx) {
-//    idx_ -= idx;
-//    return *this;
-//  }
-//};
+  void Prefetch(const std::vector<size_t> &next_pages) {
+    _Evict(next_pages.size() * page_size_);
+    for (size_t page_idx : next_pages) {
+      _AsyncFaultBegin(page_idx);
+    }
+  }
+};
 
 }  // namespace mm
 
