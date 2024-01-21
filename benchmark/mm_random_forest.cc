@@ -128,12 +128,12 @@ class RandomForestClassifierMpi {
     tol_ = tol;
     max_depth_ = max_depth;
     // Load train data and partition
-    data_.Init(world_, train_path, MM_READ_ONLY);
+    data_.Init(train_path, MM_READ_ONLY);
     data_.BoundMemory(window_size_);
     Bounds bounds(rank_, nprocs_, data_.size());
     data_.Pgas(bounds.off_, bounds.size_);
     // Load test data and partition
-    test_data_.Init(world_, test_path, MM_READ_ONLY);
+    test_data_.Init(test_path, MM_READ_ONLY);
     test_data_.BoundMemory(window_size_);
     Bounds test_bounds(rank_, nprocs_, test_data_.size());
     test_data_.Pgas(test_bounds.off_, test_bounds.size_);
@@ -142,7 +142,7 @@ class RandomForestClassifierMpi {
     windows_per_proc_ = num_windows_ / nprocs_;
     // Initialize final tree data structure
     trees_per_proc_ = trees_per_proc;
-    trees_.Init(world_, dir_ + "/trees",
+    trees_.Init(dir_ + "/trees",
                 trees_per_proc_ * nprocs_,
                 KILOBYTES(256),
                 MM_WRITE_ONLY);
@@ -170,7 +170,7 @@ class RandomForestClassifierMpi {
 
   float Predict(DataT &data) {
     AssignT preds;
-    preds.Init(world_, dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
+    preds.Init(dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
     Bounds bounds(rank_, nprocs_, data.size());
     preds.Pgas(bounds.off_, bounds.size_);
     size_t err_count = 0;
@@ -231,7 +231,7 @@ class RandomForestClassifierMpi {
         hshm::Formatter::format("{}/sample_{}_{}_{}",
                                 dir_, 0, 0, rank_);
     AssignT sample;
-    sample.Init(world_, sample_name, bounds.size_, MM_WRITE_ONLY);
+    sample.Init(sample_name, bounds.size_, MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
     sample.Pgas(0, data_.size());
     size_t off = 0;
@@ -268,7 +268,7 @@ class RandomForestClassifierMpi {
         hshm::Formatter::format("{}/subsample_{}_{}_{}",
                                 dir_, uuid, depth, rank_);
     AssignT new_sample;
-    new_sample.Init(world_, new_sample_name, new_size, MM_WRITE_ONLY);
+    new_sample.Init(new_sample_name, new_size, MM_WRITE_ONLY);
     new_sample.BoundMemory(window_size_);
     new_sample.Pgas(0, new_size);
     mm::UniformSampler sampler(MM_PAGE_SIZE,
@@ -343,10 +343,10 @@ class RandomForestClassifierMpi {
         hshm::Formatter::format("{}/sample_{}_{}_{}",
                                 dir_, node->depth_ + 1,
                                 right_uuid, rank_);
-    left_sample.Init(world_, left_sample_name,
+    left_sample.Init(left_sample_name,
                      node->left_->count_, MM_APPEND_ONLY);
     left_sample.BoundMemory(window_size_);
-    right_sample.Init(world_, right_sample_name,
+    right_sample.Init(right_sample_name,
                       node->right_->count_, MM_APPEND_ONLY);
     right_sample.BoundMemory(window_size_);
     DivideSample(*node, sample,

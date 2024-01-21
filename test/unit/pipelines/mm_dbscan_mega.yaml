@@ -11,9 +11,9 @@ pkgs:
     pkg_name: mm_dbscan
     path: ${HOME}/mm_data/kmeans.bin
     window_size: 2m
-    nprocs: 4
+    nprocs: 2
     ppn: 16
     api: mega
     dist: 6
-    do_dbg: False
+    do_dbg: True
     dbg_port: 4001

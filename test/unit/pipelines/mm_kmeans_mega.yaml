@@ -11,8 +11,8 @@ pkgs:
     pkg_name: mm_kmeans
     path: ${HOME}/mm_data/kmeans.bin
     window_size: 256m
-    nprocs: 4
-    ppn: 2
+    nprocs: 16
+    ppn: 16
     api: mega
     max_iter: 30
     k: 8

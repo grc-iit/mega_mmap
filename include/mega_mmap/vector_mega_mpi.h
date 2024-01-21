@@ -46,7 +46,6 @@ class VectorMegaMpi {
   Page<T> *cur_page_ = nullptr;
   hermes::Bucket bkt_;
   hermes::Bucket append_;
-  size_t off_ = 0;
   size_t size_ = 0;
   size_t max_size_ = 0;
   size_t elmt_size_ = 0;
@@ -54,71 +53,41 @@ class VectorMegaMpi {
   size_t page_size_ = 0;
   size_t page_mem_ = 0;
   std::string path_;
-  int rank_, nprocs_;
   size_t window_size_ = 0;
   size_t cur_memory_ = 0;
   size_t min_page_ = -1, max_page_ = -1;
   bitfield32_t flags_;
   PGAS pgas_;
-  MPI_Comm world_;
+  PGAS pgas_elmt_;
 
  public:
   VectorMegaMpi() = default;
   ~VectorMegaMpi() = default;
 
-  /** Copy constructor */
-  VectorMegaMpi(const VectorMegaMpi<T> &other) {
-    data_ = other.data_;
-    cur_page_ = other.cur_page_;
-    bkt_ = other.bkt_;
-    off_ = other.off_;
-    size_ = other.size_;
-    max_size_ = other.max_size_;
-    elmt_size_ = other.elmt_size_;
-    elmts_per_page_ = other.elmts_per_page_;
-    page_size_ = other.page_size_;
-    path_ = other.path_;
-    rank_ = other.rank_;
-    nprocs_ = other.nprocs_;
-    window_size_ = other.window_size_;
-    cur_memory_ = other.cur_memory_;
-    min_page_ = other.min_page_;
-    max_page_ = other.max_page_;
-    flags_ = other.flags_;
-    pgas_ = other.pgas_;
-  }
-
   /** Explicit initializer */
-  void Init(MPI_Comm world,
-            const std::string &path,
+  void Init(const std::string &path,
             u32 flags) {
     size_t data_size = 0;
     if (stdfs::exists(path)) {
       data_size = stdfs::file_size(path);
     }
     size_t size = data_size / sizeof(T);
-    Init(world, path, size, flags);
+    Init(path, size, flags);
   }
 
   /** Explicit initializer */
-  void Init(MPI_Comm world,
-            const std::string &path, size_t count,
+  void Init(const std::string &path, size_t count,
             u32 flags) {
-    Init(world, path, count, sizeof(T), flags);
+    Init(path, count, sizeof(T), flags);
   }
 
   /** Explicit initializer */
-  void Init(MPI_Comm world,
-            const std::string &path, size_t count,
+  void Init(const std::string &path, size_t count,
             size_t elmt_size, u32 flags) {
     if (data_.size()) {
       return;
     }
-    world_ = world;
     path_ = path;
-    MPI_Comm_rank(world_, &rank_);
-    MPI_Comm_size(world_, &nprocs_);
-    off_ = 0;
     size_ = count;
     max_size_ = count;
     elmt_size_ = elmt_size;
@@ -128,11 +97,15 @@ class VectorMegaMpi {
     }
     pgas_.off_ = 0;
     pgas_.size_ = 0;
+    pgas_elmt_.off_ = 0;
+    pgas_elmt_.size_ = 0;
     SetPageSize(MM_PAGE_SIZE);
   }
 
   /** Resize this DSM */
   void Resize(size_t count) {
+    size_ = count;
+    max_size_ = count;
   }
 
   /** Ensure this DSM doesn't exceed DRAM capacity */
@@ -169,6 +142,9 @@ class VectorMegaMpi {
     pgas_.Init(off * elmt_size_,
                count * elmt_size_,
                page_size_);
+    pgas_elmt_.Init(off,
+                    count,
+                    elmts_per_page_);
   }
 
   /** Evenly split DSM among processes */
@@ -191,14 +167,6 @@ class VectorMegaMpi {
     }
     bkt_ = HERMES->GetBucket(path_, ctx);
     append_data_.reserve(elmts_per_page_);
-  }
-
-  /** Get a view of this DSM */
-  VectorMegaMpi Subset(size_t off, size_t size) {
-    VectorMegaMpi mmap(*this);
-    mmap.off_ = off;
-    mmap.size_ = size;
-    return mmap;
   }
 
   /** Flush data to backend */
@@ -268,6 +236,12 @@ class VectorMegaMpi {
 
   /** Induct a page */
   Page<T>* _Fault(size_t page_idx) {
+    if (page_idx > size_ / elmts_per_page_) {
+      int rank;
+      MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+      HILOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
+            rank, path_, page_idx, size_ / elmts_per_page_);
+    }
     if (window_size_ > page_mem_ && cur_memory_ > window_size_ - page_mem_) {
       _Evict();
     }
@@ -320,30 +294,6 @@ class VectorMegaMpi {
     return page.elmts_[page_off];
   }
 
-  /** Addition operator */
-  VectorMegaMpi<T> operator+(size_t idx) {
-    return Subset(off_ + idx, size_ - idx);
-  }
-
-  /** Addition assign operator */
-  VectorMegaMpi<T>& operator+=(size_t idx) {
-    off_ += idx;
-    size_ -= idx;
-    return *this;
-  }
-
-  /** Subtraction operator */
-  VectorMegaMpi<T> operator-(size_t idx) {
-    return Subset(off_ - idx, size_ + idx);
-  }
-
-  /** Subtraction assign operator */
-  VectorMegaMpi<T>& operator-=(size_t idx) {
-    off_ -= idx;
-    size_ += idx;
-    return *this;
-  }
-
   /** check if sorted */
   bool IsSorted(size_t off, size_t size) {
     return std::is_sorted(begin() + off,
@@ -359,6 +309,16 @@ class VectorMegaMpi {
   /** Size */
   size_t size() const {
     return size_;
+  }
+
+  /** Size of PGAS region */
+  size_t local_size() const {
+    return pgas_elmt_.size_;
+  }
+
+  /** Offset of PGAS region */
+  size_t local_off() const {
+    return pgas_elmt_.off_;
   }
 
   /** Begin iterator */
@@ -414,102 +374,103 @@ class VectorMegaMpi {
     new_size = new_size / elmt_size_;
     Resize(new_size);
     size_ = new_size;
+    Hint(MM_READ_ONLY);
   }
 };
 
-/** Iterator for VectorMegaMpi */
-template<typename T, bool IS_COMPLEX_TYPE>
-class VectorMegaMpiIterator {
- public:
-  VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr_;
-  size_t idx_;
-
- public:
-  VectorMegaMpiIterator() : idx_(0) {}
-  ~VectorMegaMpiIterator() = default;
-
-  /** Constructor */
-  VectorMegaMpiIterator(VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr, size_t idx) {
-    ptr_ = ptr;
-    idx_ = idx;
-  }
-
-  /** Copy constructor */
-  VectorMegaMpiIterator(const VectorMegaMpiIterator &other) {
-    ptr_ = other.ptr_;
-    idx_ = other.idx_;
-  }
-
-  /** Assignment operator */
-  VectorMegaMpiIterator& operator=(const VectorMegaMpiIterator &other) {
-    ptr_ = other.ptr_;
-    idx_ = other.idx_;
-    return *this;
-  }
-
-  /** Equality operator */
-  bool operator==(const VectorMegaMpiIterator &other) const {
-    return ptr_ == other.ptr_ && idx_ == other.idx_;
-  }
-
-  /** Inequality operator */
-  bool operator!=(const VectorMegaMpiIterator &other) const {
-    return ptr_ != other.ptr_ || idx_ != other.idx_;
-  }
-
-  /** Dereference operator */
-  T& operator*() {
-    return (*ptr_)[idx_];
-  }
-
-  /** Prefix increment operator */
-  VectorMegaMpiIterator& operator++() {
-    ++idx_;
-    return *this;
-  }
-
-  /** Postfix increment operator */
-  VectorMegaMpiIterator operator++(int) {
-    VectorMegaMpiIterator tmp(*this);
-    ++idx_;
-    return tmp;
-  }
-
-  /** Prefix decrement operator */
-  VectorMegaMpiIterator& operator--() {
-    --idx_;
-    return *this;
-  }
-
-  /** Postfix decrement operator */
-  VectorMegaMpiIterator operator--(int) {
-    VectorMegaMpiIterator tmp(*this);
-    --idx_;
-    return tmp;
-  }
-
-  /** Addition operator */
-  VectorMegaMpiIterator operator+(size_t idx) {
-    return VectorMegaMpiIterator(ptr_, idx_ + idx);
-  }
-
-  /** Addition assign operator */
-  VectorMegaMpiIterator& operator+=(size_t idx) {
-    idx_ += idx;
-    return *this;
-  }
-
-  /** Subtraction operator */
-  VectorMegaMpiIterator operator-(size_t idx) {
-    return VectorMegaMpiIterator(ptr_, idx_ - idx);
-  }
-
-  /** Subtraction assign operator */
-  VectorMegaMpiIterator& operator-=(size_t idx) {
-    idx_ -= idx;
-    return *this;
-  }
-};
+///** Iterator for VectorMegaMpi */
+//template<typename T, bool IS_COMPLEX_TYPE>
+//class VectorMegaMpiIterator {
+// public:
+//  VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr_;
+//  size_t idx_;
+//
+// public:
+//  VectorMegaMpiIterator() : idx_(0) {}
+//  ~VectorMegaMpiIterator() = default;
+//
+//  /** Constructor */
+//  VectorMegaMpiIterator(VectorMegaMpi<T, IS_COMPLEX_TYPE> *ptr, size_t idx) {
+//    ptr_ = ptr;
+//    idx_ = idx;
+//  }
+//
+//  /** Copy constructor */
+//  VectorMegaMpiIterator(const VectorMegaMpiIterator &other) {
+//    ptr_ = other.ptr_;
+//    idx_ = other.idx_;
+//  }
+//
+//  /** Assignment operator */
+//  VectorMegaMpiIterator& operator=(const VectorMegaMpiIterator &other) {
+//    ptr_ = other.ptr_;
+//    idx_ = other.idx_;
+//    return *this;
+//  }
+//
+//  /** Equality operator */
+//  bool operator==(const VectorMegaMpiIterator &other) const {
+//    return ptr_ == other.ptr_ && idx_ == other.idx_;
+//  }
+//
+//  /** Inequality operator */
+//  bool operator!=(const VectorMegaMpiIterator &other) const {
+//    return ptr_ != other.ptr_ || idx_ != other.idx_;
+//  }
+//
+//  /** Dereference operator */
+//  T& operator*() {
+//    return (*ptr_)[idx_];
+//  }
+//
+//  /** Prefix increment operator */
+//  VectorMegaMpiIterator& operator++() {
+//    ++idx_;
+//    return *this;
+//  }
+//
+//  /** Postfix increment operator */
+//  VectorMegaMpiIterator operator++(int) {
+//    VectorMegaMpiIterator tmp(*this);
+//    ++idx_;
+//    return tmp;
+//  }
+//
+//  /** Prefix decrement operator */
+//  VectorMegaMpiIterator& operator--() {
+//    --idx_;
+//    return *this;
+//  }
+//
+//  /** Postfix decrement operator */
+//  VectorMegaMpiIterator operator--(int) {
+//    VectorMegaMpiIterator tmp(*this);
+//    --idx_;
+//    return tmp;
+//  }
+//
+//  /** Addition operator */
+//  VectorMegaMpiIterator operator+(size_t idx) {
+//    return VectorMegaMpiIterator(ptr_, idx_ + idx);
+//  }
+//
+//  /** Addition assign operator */
+//  VectorMegaMpiIterator& operator+=(size_t idx) {
+//    idx_ += idx;
+//    return *this;
+//  }
+//
+//  /** Subtraction operator */
+//  VectorMegaMpiIterator operator-(size_t idx) {
+//    return VectorMegaMpiIterator(ptr_, idx_ - idx);
+//  }
+//
+//  /** Subtraction assign operator */
+//  VectorMegaMpiIterator& operator-=(size_t idx) {
+//    idx_ -= idx;
+//    return *this;
+//  }
+//};
 
 }  // namespace mm
 

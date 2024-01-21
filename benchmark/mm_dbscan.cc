@@ -93,6 +93,7 @@ class DbscanMpi {
   int rank_;
   int nprocs_;
   size_t window_size_;
+  size_t window_size_elmt_;
   size_t num_windows_;
   size_t windows_per_proc_;
   int num_features_;
@@ -115,22 +116,28 @@ class DbscanMpi {
     MPI_Comm_size(world_, &nprocs_);
     dir_ = stdfs::path(path).parent_path();
     output_ = dir_ + "/output.bin";
-    data_.Init(world_, path, MM_READ_ONLY);
-    data_.BoundMemory(window_size);
-    window_size_ = window_size / sizeof(T);
-    num_features_ = data_[0].GetNumFeatures();
-    num_windows_ = data_.size() / window_size_;
-    windows_per_proc_ = num_windows_ / nprocs_;
+    window_size_ = window_size;
+    window_size_elmt_ = window_size / sizeof(T);
     dist_ = dist;
-    trees_.Init(world_,
-                dir_ + "/trees",
+    path_ = path;
+    max_depth_ = 16;
+    // Create data vector
+    data_.Init(path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
+    data_.BoundMemory(window_size);
+    data_.EvenPgas(rank_, nprocs_, data_.size());
+    data_.Allocate();
+    // Window size
+    num_features_ = data_[0].GetNumFeatures();
+    num_windows_ = data_.size() / window_size_elmt_;
+    windows_per_proc_ = num_windows_ / nprocs_;
+    // Create tree vector
+    trees_.Init(dir_ + "/trees",
                 nprocs_,
                 KILOBYTES(512),
                 MM_WRITE_ONLY);
     trees_.BoundMemory(window_size_);
     trees_.Pgas(rank_, 1);
-    path_ = path;
-    max_depth_ = 16;
+    trees_.Allocate();
   }
 
   AssignT RootSample() {
@@ -139,9 +146,10 @@ class DbscanMpi {
     HILOG(kInfo, "BOUNDS: {} {} {}", bounds.off_, bounds.size_, data_.size_)
     std::string sample_name =
         hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0);
-    sample.Init(world_, sample_name, data_.size(), MM_WRITE_ONLY);
+    sample.Init(sample_name, data_.size(), MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
     sample.Pgas(bounds.off_, bounds.size_);
+    sample.Allocate();
     for (size_t i = 0; i < bounds.size_; ++i) {
       sample[bounds.off_ + i] = bounds.off_ + i;
     }
@@ -168,12 +176,12 @@ class DbscanMpi {
                           MPI_Comm comm, int proc_off, int nprocs) {
     HILOG(kInfo, "{}: Beginning tree proc_off={} nprocs={} uuid={} depth={}",
           rank_, proc_off, nprocs, uuid, node->depth_);
+    // Create process sample
     Bounds proc_bounds(rank_ - proc_off, nprocs,
                        sample.size());
-    AssignT proc_sample = sample.Subset(proc_bounds.off_, proc_bounds.size_);
-    proc_sample.Pgas(proc_bounds.off_, proc_bounds.size_);
+    sample.Pgas(proc_bounds.off_, proc_bounds.size_);
     // Decide the feature to split on
-    FindGlobalMedianAndFeature(*node, proc_sample,
+    FindGlobalMedianAndFeature(*node, sample,
                                node->depth_, uuid,
                                comm, proc_off, nprocs);
     node->left_ = std::make_unique<Node<T>>();
@@ -187,23 +195,28 @@ class DbscanMpi {
       sample.Destroy();
       return;
     }
-    // Divide subsamples to left and right
-    AssignT left_sample, right_sample;
+    // Create left sample vec
+    AssignT left_sample;
     size_t left_uuid = uuid;
-    size_t right_uuid = uuid | (1 << node->depth_);
     std::string left_sample_name =
         hshm::Formatter::format("{}/sample_{}_{}",
                                 dir_, node->depth_ + 1,
                                 left_uuid);
+    left_sample.Init(left_sample_name, sample.size(), MM_APPEND_ONLY);
+    left_sample.BoundMemory(window_size_);
+    left_sample.Allocate();
+    // Create right sample vec
+    AssignT right_sample;
+    size_t right_uuid = uuid | (1 << node->depth_);
     std::string right_sample_name =
         hshm::Formatter::format("{}/sample_{}_{}",
                                 dir_, node->depth_ + 1,
                                 right_uuid);
-    left_sample.Init(world_, left_sample_name, sample.size(), MM_APPEND_ONLY);
-    left_sample.BoundMemory(window_size_);
-    right_sample.Init(world_, right_sample_name, sample.size(), MM_APPEND_ONLY);
+    right_sample.Init(right_sample_name, sample.size(), MM_APPEND_ONLY);
     right_sample.BoundMemory(window_size_);
-    DivideSample(*node, proc_sample,
+    right_sample.Allocate();
+    // Partition the samples
+    DivideSample(*node, sample,
                  left_sample, right_sample,
                  comm, proc_off, nprocs);
     sample.Barrier(0, comm);
@@ -225,49 +238,55 @@ class DbscanMpi {
     }
     HILOG(kInfo, "{}: Finished tree proc_off={} nprocs={} uuid={} depth={}",
           rank_, proc_off, nprocs, uuid, node->depth_);
-    if (left_sample.size() > window_size_ * nprocs) {
+    MpiComm left_subcomm(comm, left_off, left_proc);
+    MpiComm right_subcomm(comm, right_off, right_proc);
+    if (left_sample.size() > window_size_elmt_ * nprocs) {
       if (left_off <= rank_ && rank_ < left_off + nprocs) {
-        Bounds bounds(rank_ - proc_off, nprocs, left_sample.size());
-        left_sample = left_sample.Subset(bounds.off_, bounds.size_);
+        HILOG(kInfo, "{}: Split A", rank_)
         CreateDecisionTree(node->left_,
                            left_sample,
                            left_uuid,
                            comm, left_off, nprocs);
+      } else {
+        HILOG(kInfo, "{}: Split B", rank_)
       }
     } else if (left_sample.size() > min_pts_) {
-      MpiComm subcomm(comm, left_off, left_proc);
       if (left_off <= rank_ && rank_ < left_off + left_proc) {
-        Bounds bounds(rank_ - left_off, left_proc, left_sample.size());
-        left_sample = left_sample.Subset(bounds.off_, bounds.size_);
+        HILOG(kInfo, "{}: Split C", rank_)
         CreateDecisionTree(node->left_,
                            left_sample,
                            left_uuid,
-                           subcomm.comm_, left_off, left_proc);
+                           left_subcomm.comm_, left_off, left_proc);
+      } else {
+        HILOG(kInfo, "{}: Split D", rank_)
       }
     } else {
+      HILOG(kInfo, "{}: Split E", rank_)
       node->left_ = nullptr;
       left_sample.Destroy();
     }
-    if (right_sample.size() > window_size_ * nprocs) {
+    if (right_sample.size() > window_size_elmt_ * nprocs) {
       if (left_off <= rank_ && rank_ < left_off + nprocs) {
-        Bounds bounds(rank_ - proc_off, nprocs, right_sample.size());
-        right_sample = right_sample.Subset(bounds.off_, bounds.size_);
+        HILOG(kInfo, "{}: Split F", rank_)
         CreateDecisionTree(node->right_,
                            right_sample,
                            right_uuid,
                            comm, left_off, nprocs);
+      } else {
+        HILOG(kInfo, "{}: Split G", rank_)
       }
     } else if (right_sample.size() > min_pts_) {
-      MpiComm subcomm(comm, right_off, right_proc);
       if (right_off <= rank_ && rank_ < right_off + right_proc) {
-        Bounds bounds(rank_ - right_off, right_proc, right_sample.size());
-        right_sample = right_sample.Subset(bounds.off_, bounds.size_);
+        HILOG(kInfo, "{}: Split H", rank_)
         CreateDecisionTree(node->right_,
                            right_sample,
                            right_uuid,
-                           subcomm.comm_, right_off, right_proc);
+                           right_subcomm.comm_, right_off, right_proc);
+      } else {
+        HILOG(kInfo, "{}: Split I", rank_)
       }
     } else {
+      HILOG(kInfo, "{}: Split J", rank_)
       node->right_ = nullptr;
       right_sample.Destroy();
     }
@@ -282,8 +301,10 @@ class DbscanMpi {
     std::string should_splits_name =
         hshm::Formatter::format("{}/should_split_{}_{}",
                                 dir_, node.depth_, uuid);
-    should_splits.Init(world_, should_splits_name, nprocs, MM_WRITE_ONLY);
+    should_splits.Init(should_splits_name, nprocs, MM_WRITE_ONLY);
+    should_splits.BoundMemory(window_size_);
     should_splits.Pgas(rank_ - proc_off, 1);
+    should_splits.Allocate();
     should_splits[rank_ - proc_off] = !(low_entropy || is_max_depth);
     should_splits.Barrier(MM_READ_ONLY, comm);
     bool ret = false;
@@ -301,12 +322,14 @@ class DbscanMpi {
   void FindGlobalMedianAndFeature(Node<T> &node, AssignT &sample,
                                   int depth, uint64_t uuid,
                                   MPI_Comm comm, int proc_off, int nprocs) {
+    // Create all_nodes vector
     NodeT all_nodes;
     std::string all_nodes_name =
         hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid);
-    all_nodes.Init(world_, all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
+    all_nodes.Init(all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
     all_nodes.BoundMemory(window_size_);
     all_nodes.Pgas(rank_ - proc_off, 1);
+    all_nodes.Allocate();
     int subrank = rank_ - proc_off;
     all_nodes[subrank].resize(num_features_);
     FindLocalEntropy(all_nodes[subrank], sample);
@@ -349,17 +372,17 @@ class DbscanMpi {
   void FindLocalEntropy(std::vector<Node<T>> &nodes, AssignT &sample) {
     hshm::UniformDistribution dist;
     dist.Seed(SEED * (rank_ + 1));
-    dist.Shape(0, sample.size() - 1);
+    dist.Shape(0, sample.local_size() - 1);
     // Randomly sample rows
     int subsample_size = 1024;
-    if (subsample_size > sample.size()) {
-      subsample_size = sample.size();
+    if (subsample_size > sample.local_size()) {
+      subsample_size = sample.local_size();
     }
     std::vector<T> subsample;
     subsample.reserve(subsample_size);
     for (size_t i = 0; i < subsample_size; ++i) {
       size_t idx = dist.GetSize();
-      size_t off = sample[idx];
+      size_t off = sample[sample.local_off() + idx];
       subsample.emplace_back(data_[off]);
     }
     // Calculate the median of each feature
@@ -387,8 +410,8 @@ class DbscanMpi {
                     AssignT &sample,
                     AssignT &left, AssignT &right,
                     MPI_Comm comm, int proc_off, int nprocs) {
-    for (size_t i = 0; i < sample.size(); ++i) {
-      size_t off = sample[i];
+    for (size_t i = 0; i < sample.local_size(); ++i) {
+      size_t off = sample[sample.local_off() + i];
       if (data_[off].LessThan(node.joint_, node.feature_)) {
         left.emplace_back(off);
       } else {
@@ -402,7 +425,8 @@ class DbscanMpi {
   std::unordered_set<T, T> CombineDecisionTrees() {
     std::unordered_set<T, T> joints;
     root_ = std::make_unique<Node<T>>(*trees_[0]);
-    for (std::unique_ptr<Node<T>> &node : trees_) {
+    for (int i = 1; i < trees_.size(); ++i) {
+      std::unique_ptr<Node<T>> &node = trees_[i];
       CombineDecisionTree(root_, *node, joints);
     }
     return joints;
@@ -475,11 +499,14 @@ class DbscanMpi {
   }
 
   void Predict() {
+    // Create preds vector
     OutT preds;
-    preds.Init(world_, output_, data_.size());
+    preds.Init(output_, data_.size());
     preds.BoundMemory(window_size_);
     Bounds bounds(rank_, nprocs_, data_.size());
     preds.Pgas(bounds.off_, bounds.size_);
+    preds.Allocate();
+    // Predict using dbscan tree
     size_t size_pp = data_.size() / nprocs_;
     size_t off = size_pp * rank_;
     size_t end = off + size_pp;

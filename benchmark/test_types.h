@@ -22,7 +22,11 @@ class MpiComm {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     bool color = rank >= proc_off && rank < proc_off + nprocs;
-    MPI_Comm_split(comm, color, rank, &comm_);
+    int ret = MPI_Comm_split(comm, color, rank, &comm_);
+    if (ret != MPI_SUCCESS) {
+        HILOG(kFatal, "Failed to split comm: {} - {}", proc_off, nprocs);
+        exit(1);
+    }
   }
 
   ~MpiComm() {

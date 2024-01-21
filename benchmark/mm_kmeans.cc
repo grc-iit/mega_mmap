@@ -126,7 +126,7 @@ class KMeans {
     max_iter_ = max_iter;
 
     HILOG(kInfo, "{}: Beginning data definition", rank_)
-    data_.Init(world_, path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
+    data_.Init(path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
     data_.BoundMemory(window_size);
     Bounds bounds(rank_, nprocs_, data_.size());
     data_.Pgas(bounds.off_, bounds.size_);
@@ -191,7 +191,7 @@ class KMeans {
   float Assignment() {
     // Initialize assign vector
     AssignT assign;
-    assign.Init(world_, dir_ + "/" + "assign", data_.size(), MM_WRITE_ONLY);
+    assign.Init(dir_ + "/" + "assign", data_.size(), MM_WRITE_ONLY);
     assign.BoundMemory(window_size_);
     Bounds assign_bounds(rank_, nprocs_, data_.size());
     assign.Pgas(assign_bounds.off_, assign_bounds.size_);
@@ -199,7 +199,7 @@ class KMeans {
 
     // Initialize sum vector
     SumT sum;
-    sum.Init(world_, dir_ + "/" + "sum", nprocs_ * k_, MM_WRITE_ONLY);
+    sum.Init(dir_ + "/" + "sum", nprocs_ * k_, MM_WRITE_ONLY);
     sum.Pgas(rank_ * k_, k_, k_);
     sum.Allocate();
 
@@ -310,7 +310,7 @@ class KMeansPpMpi : public KMeans<T> {
   void FindMax(std::vector<Center<T>> &ks) {
     // Initialize local max vector
     MaxT local_maxes;
-    local_maxes.Init(world_, dir_ + "/" + "max", nprocs_, MM_WRITE_ONLY);
+    local_maxes.Init(dir_ + "/" + "max", nprocs_, MM_WRITE_ONLY);
     local_maxes.Pgas(rank_, 1, 1);
     local_maxes.Allocate();
     // Find point furthest away from all existing Ks
@@ -432,6 +432,7 @@ class KmeansLlMpi : public KMeans<T> {
 
  public:
   void Run() {
+    HILOG(kInfo, "Running KMeansLL")
     T first_k = SelectFirstCenter();
     ks_.emplace_back(first_k);
     DataStat stat = LocalStatPoints();
@@ -476,9 +477,10 @@ class KmeansLlMpi : public KMeans<T> {
    * */
   DataT SelectSubcluster(DataStat &stat,
                          size_t count, size_t l) {
+    HILOG(kInfo, "Selecting subclusters")
     // Initialize center vector
     DataT centers;
-    centers.Init(world_, dir_ + "/" + "centers",
+    centers.Init(dir_ + "/" + "centers",
                  nprocs_ * l * count, MM_WRITE_ONLY);
     centers.EvenPgas(rank_, nprocs_, nprocs_ * l * count, l * count);
     centers.Allocate();
@@ -488,6 +490,8 @@ class KmeansLlMpi : public KMeans<T> {
     rand_page.Seed(SEED);
     rand_page.Shape(off_, last_);
     for (size_t i = 0; i < count; ++i) {
+      HILOG(kInfo, "Selecting {} points for cluster {}",
+            l, i);
       hshm::UniformDistribution rand_dist;
       rand_dist.Seed(SEED);
       rand_dist.Shape(0, sqrt(l * stat.max_ * stat.max_ / stat.sum_));
@@ -543,7 +547,12 @@ class KmeansLlMpi : public KMeans<T> {
    * */
   DataStat LocalStatPoints() {
     DataStat stat;
+    HILOG(kInfo, "Collecting local statistics of chunk")
     for (size_t i = off_; i < last_; ++i) {
+      if ((i - off_) % (256 * MM_PAGE_SIZE) == 0) {
+        HILOG(kInfo, "{}: We are {}% done", rank_,
+              (i - off_) * 100.0 / (last_ - off_))
+      }
       T &cur_pt = data_[i];
       double dist = MinOfCenterDists(cur_pt, ks_);
       stat.sum_ += dist;
@@ -554,6 +563,7 @@ class KmeansLlMpi : public KMeans<T> {
         stat.max_ = dist;
       }
     }
+    HILOG(kInfo, "Finished collecting local statistics of chunk")
     return stat;
   }
 
