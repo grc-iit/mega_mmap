@@ -338,11 +338,11 @@ class VectorMegaMpi {
       auto it = data_.find(page_idx);
       if (it == data_.end()) {
         page_ptr = _Fault(page_idx);
-      } else if (page_ptr->async_.ptr_ == nullptr) {
-        page_ptr = &it->second;
       } else {
         page_ptr = &it->second;
-        _AsyncFaultEnd(*page_ptr);
+        if (page_ptr->async_.ptr_ != nullptr) {
+          _AsyncFaultEnd(*page_ptr);
+        }
       }
     }
     Page<T> &page = *page_ptr;
