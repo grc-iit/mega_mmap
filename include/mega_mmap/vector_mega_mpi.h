@@ -187,7 +187,7 @@ class VectorMegaMpi {
         Page<T> &page = it->second;
         size_t page_off, page_size;
         if constexpr (!IS_COMPLEX_TYPE) {
-          pgas_.GetModBounds(page_idx, page_off, page_size);
+          pgas_.GetPageBounds(page_idx, page_off, page_size);
           std::string page_name =
               hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
           ctx.flags_.SetBits(HERMES_SHOULD_STAGE);

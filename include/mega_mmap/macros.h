@@ -71,7 +71,7 @@ struct PGAS {
     page_size_ = page_size;
   }
 
-  void GetModBounds(size_t page_idx, size_t &page_off, size_t &page_size) {
+  void GetPageBounds(size_t page_idx, size_t &page_off, size_t &page_size) {
     if (page_idx == min_page_idx_) {
       page_off = min_page_off_;
       page_size = page_size_ - min_page_off_;

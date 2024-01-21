@@ -516,7 +516,7 @@ class KmeansLlMpi : public KMeans<T> {
     }
     // Broadcast centers
     for (size_t i = 0; i < ks_.size(); ++i) {
-      centers[i + centers.pgas_.off_] = ks_[i].center_;
+      centers[i + centers.local_off()] = ks_[i].center_;
     }
     centers.Barrier(MM_READ_ONLY, world_);
     ks_.clear();
