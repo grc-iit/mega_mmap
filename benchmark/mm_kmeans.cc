@@ -407,7 +407,7 @@ struct DataStat {
 };
 
 template<typename T>
-class KmeansLLMpi : public KMeans<T> {
+class KmeansLlMpi : public KMeans<T> {
  public:
   using CenterT = MM_VEC<T>;
   using DataT = MM_VEC<T>;
@@ -608,7 +608,7 @@ int main(int argc, char **argv) {
   if (algo == "mmap") {
   } else if (algo == "mega") {
     TRANSPARENT_HERMES();
-    KmeansLLMpi<Row> kmeans;
+    KmeansLlMpi<Row> kmeans;
     kmeans.Init(MPI_COMM_WORLD, path, window_size, k, max_iter);
     kmeans.Run();
     kmeans.Print();
