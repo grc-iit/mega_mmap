@@ -209,6 +209,10 @@ class KMeans {
       sum[i].Zero();
     }
     for (size_t i = off; i < last; ++i) {
+      if ((i - off) % (256 * MM_PAGE_SIZE) == 0) {
+          HILOG(kInfo, "{}: We are {}% done", rank_,
+              (i - off) * 100.0 / (last - off))
+      }
       T row = data_[i];
       assign[i] = FindClosestCenter(row);
       sum[rank_ * k_ + assign[i]].row_ += row;
