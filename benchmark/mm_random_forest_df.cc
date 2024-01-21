@@ -41,8 +41,8 @@ class RandomForestDf {
       ClassRow.class_ = i;
       centers_.emplace_back(ClassRow);
     }
-    dist_.Seed(2354235);
-    dist2_.Seed(2354235);
+    dist_.Seed(SEED);
+    dist2_.Seed(SEED);
     dist_.Shape(0, (int)centers_.size() - 1);
     dist2_.Shape(0, 5);
   }

@@ -5,42 +5,13 @@
 #ifndef MEGAMMAP_BENCHMARK_TEST_TYPES_H_
 #define MEGAMMAP_BENCHMARK_TEST_TYPES_H_
 
+#include "mega_mmap/macros.h"
+
 #define MM_VEC mm::VectorMegaMpi
 #define MM_VEC_2 mm::VectorMmapMpi
+#define SEED 23425323
 
-class Bounds {
- public:
-  size_t off_, size_;
- public:
-  Bounds() = default;
-
-  Bounds(size_t off, size_t size) : off_(off), size_(size) {}
-
-  Bounds(const Bounds &other) {
-    off_ = other.off_;
-    size_ = other.size_;
-  }
-
-  Bounds &operator=(const Bounds &other) {
-    off_ = other.off_;
-    size_ = other.size_;
-    return *this;
-  }
-
-  explicit Bounds(int rank, int nprocs,
-                  size_t max_size) {
-    EvenSplit(rank, nprocs, max_size);
-  }
-
-  void EvenSplit(int rank, int nprocs,
-                 size_t max_size) {
-    size_ = max_size / nprocs;
-    if (rank == nprocs - 1) {
-      size_ += max_size % nprocs;
-    }
-    off_ = rank * (max_size / nprocs);
-  }
-};
+using mm::Bounds;
 
 class MpiComm {
  public:

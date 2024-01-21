@@ -12,10 +12,45 @@
 #define MM_WRITE_ONLY BIT_OPT(u32, 1)
 #define MM_APPEND_ONLY BIT_OPT(u32, 2)
 #define MM_READ_WRITE BIT_OPT(u32, 3)
+#define MM_STAGE_READ_FROM_BACKEND BIT_OPT(u32, 4)
 
 namespace mm {
 
 using hshm::bitfield32_t;
+
+class Bounds {
+ public:
+  size_t off_, size_;
+ public:
+  Bounds() = default;
+
+  Bounds(size_t off, size_t size) : off_(off), size_(size) {}
+
+  Bounds(const Bounds &other) {
+    off_ = other.off_;
+    size_ = other.size_;
+  }
+
+  Bounds &operator=(const Bounds &other) {
+    off_ = other.off_;
+    size_ = other.size_;
+    return *this;
+  }
+
+  explicit Bounds(int rank, int nprocs,
+                  size_t max_size) {
+    EvenSplit(rank, nprocs, max_size);
+  }
+
+  void EvenSplit(int rank, int nprocs,
+                 size_t max_size) {
+    size_ = max_size / nprocs;
+    if (rank == nprocs - 1) {
+      size_ += max_size % nprocs;
+    }
+    off_ = rank * (max_size / nprocs);
+  }
+};
 
 struct PGAS {
   size_t off_;

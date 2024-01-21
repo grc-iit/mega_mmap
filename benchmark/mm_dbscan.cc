@@ -103,24 +103,27 @@ class DbscanMpi {
   std::unique_ptr<Node<T>> root_;
   int num_clusters_;
   std::unordered_map<T, int, T> agglo_;
+  MPI_Comm world_;
 
  public:
-  void Init(const std::string &path,
+  void Init(MPI_Comm world,
+            const std::string &path,
             size_t window_size,
-            int rank, int nprocs,
             float dist){
+    world_ = world;
+    MPI_Comm_rank(world_, &rank_);
+    MPI_Comm_size(world_, &nprocs_);
     dir_ = stdfs::path(path).parent_path();
     output_ = dir_ + "/output.bin";
-    data_.Init(path, MM_READ_ONLY);
+    data_.Init(world_, path, MM_READ_ONLY);
     data_.BoundMemory(window_size);
-    rank_ = rank;
-    nprocs_ = nprocs;
     window_size_ = window_size / sizeof(T);
     num_features_ = data_[0].GetNumFeatures();
     num_windows_ = data_.size() / window_size_;
     windows_per_proc_ = num_windows_ / nprocs_;
     dist_ = dist;
-    trees_.Init(dir_ + "/trees",
+    trees_.Init(world_,
+                dir_ + "/trees",
                 nprocs_,
                 KILOBYTES(512),
                 MM_WRITE_ONLY);
@@ -136,13 +139,13 @@ class DbscanMpi {
     HILOG(kInfo, "BOUNDS: {} {} {}", bounds.off_, bounds.size_, data_.size_)
     std::string sample_name =
         hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0);
-    sample.Init(sample_name, data_.size(), MM_WRITE_ONLY);
+    sample.Init(world_, sample_name, data_.size(), MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
     sample.Pgas(bounds.off_, bounds.size_);
     for (size_t i = 0; i < bounds.size_; ++i) {
       sample[bounds.off_ + i] = bounds.off_ + i;
     }
-    sample.Barrier(MM_READ_ONLY);
+    sample.Barrier(MM_READ_ONLY, world_);
     return sample;
   }
 
@@ -153,7 +156,7 @@ class DbscanMpi {
                        MPI_COMM_WORLD, 0, nprocs_);
     HILOG(kInfo, "Created decision tree")
     trees_[rank_] = std::move(root);
-    trees_.Barrier(MM_READ_ONLY);
+    trees_.Barrier(MM_READ_ONLY, world_);
     std::unordered_set<T, T> joints = CombineDecisionTrees();
     Agglomerate(joints);
     Predict();
@@ -196,9 +199,9 @@ class DbscanMpi {
         hshm::Formatter::format("{}/sample_{}_{}",
                                 dir_, node->depth_ + 1,
                                 right_uuid);
-    left_sample.Init(left_sample_name, sample.size(), MM_APPEND_ONLY);
+    left_sample.Init(world_, left_sample_name, sample.size(), MM_APPEND_ONLY);
     left_sample.BoundMemory(window_size_);
-    right_sample.Init(right_sample_name, sample.size(), MM_APPEND_ONLY);
+    right_sample.Init(world_, right_sample_name, sample.size(), MM_APPEND_ONLY);
     right_sample.BoundMemory(window_size_);
     DivideSample(*node, proc_sample,
                  left_sample, right_sample,
@@ -279,7 +282,7 @@ class DbscanMpi {
     std::string should_splits_name =
         hshm::Formatter::format("{}/should_split_{}_{}",
                                 dir_, node.depth_, uuid);
-    should_splits.Init(should_splits_name, nprocs, MM_WRITE_ONLY);
+    should_splits.Init(world_, should_splits_name, nprocs, MM_WRITE_ONLY);
     should_splits.Pgas(rank_ - proc_off, 1);
     should_splits[rank_ - proc_off] = !(low_entropy || is_max_depth);
     should_splits.Barrier(MM_READ_ONLY, comm);
@@ -301,7 +304,7 @@ class DbscanMpi {
     NodeT all_nodes;
     std::string all_nodes_name =
         hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid);
-    all_nodes.Init(all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
+    all_nodes.Init(world_, all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
     all_nodes.BoundMemory(window_size_);
     all_nodes.Pgas(rank_ - proc_off, 1);
     int subrank = rank_ - proc_off;
@@ -345,7 +348,7 @@ class DbscanMpi {
 
   void FindLocalEntropy(std::vector<Node<T>> &nodes, AssignT &sample) {
     hshm::UniformDistribution dist;
-    dist.Seed(2354235 * (rank_ + 1));
+    dist.Seed(SEED * (rank_ + 1));
     dist.Shape(0, sample.size() - 1);
     // Randomly sample rows
     int subsample_size = 1024;
@@ -473,7 +476,7 @@ class DbscanMpi {
 
   void Predict() {
     OutT preds;
-    preds.Init(output_, data_.size());
+    preds.Init(world_, output_, data_.size());
     preds.BoundMemory(window_size_);
     Bounds bounds(rank_, nprocs_, data_.size());
     preds.Pgas(bounds.off_, bounds.size_);
@@ -491,7 +494,7 @@ class DbscanMpi {
       }
       preds[i] = cluster;
     }
-    preds.Barrier();
+    preds.Barrier(0, world_);
     preds.Close();
   }
 };
@@ -516,7 +519,7 @@ int main(int argc, char **argv) {
   } else if (algo == "mega") {
     TRANSPARENT_HERMES();
     DbscanMpi<Row> dbscan;
-    dbscan.Init(path, window_size, rank, nprocs, dist);
+    dbscan.Init(MPI_COMM_WORLD, path, window_size, dist);
     dbscan.Run();
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);

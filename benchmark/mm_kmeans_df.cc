@@ -37,8 +37,8 @@ class KmeansDf {
     for (int i = 0; i < k; ++i) {
       ks_.emplace_back((float) i * 10, (float) i * 10);
     }
-    dist_.Seed(2354235);
-    dist2_.Seed(2354235);
+    dist_.Seed(SEED);
+    dist2_.Seed(SEED);
     dist_.Shape(0, (int)ks_.size() - 1);
     dist2_.Shape(0, 2);
   }

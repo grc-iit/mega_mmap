@@ -60,17 +60,11 @@ class VectorMegaMpi {
   size_t min_page_ = -1, max_page_ = -1;
   bitfield32_t flags_;
   PGAS pgas_;
+  MPI_Comm world_;
 
  public:
   VectorMegaMpi() = default;
   ~VectorMegaMpi() = default;
-
-  /** Constructor */
-  VectorMegaMpi(const std::string &path,
-                size_t count,
-                u32 flags) {
-    Init(path, count, flags);
-  }
 
   /** Copy constructor */
   VectorMegaMpi(const VectorMegaMpi<T> &other) {
@@ -95,47 +89,35 @@ class VectorMegaMpi {
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path,
+  void Init(MPI_Comm world,
+            const std::string &path,
             u32 flags) {
     size_t data_size = 0;
     if (stdfs::exists(path)) {
       data_size = stdfs::file_size(path);
     }
     size_t size = data_size / sizeof(T);
-    Init(path, size, flags);
+    Init(world, path, size, flags);
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path, size_t count,
+  void Init(MPI_Comm world,
+            const std::string &path, size_t count,
             u32 flags) {
-    Init(path, count, sizeof(T), flags);
+    Init(world, path, count, sizeof(T), flags);
   }
 
   /** Explicit initializer */
-  void Init(const std::string &path, size_t count, size_t elmt_size,
-            u32 flags) {
+  void Init(MPI_Comm world,
+            const std::string &path, size_t count,
+            size_t elmt_size, u32 flags) {
     if (data_.size()) {
       return;
     }
+    world_ = world;
     path_ = path;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank_);
-    MPI_Comm_size(MPI_COMM_WORLD, &nprocs_);
-    if (!IS_COMPLEX_TYPE) {
-      elmts_per_page_ = MM_PAGE_SIZE / elmt_size;
-      if (elmts_per_page_ == 0) {
-        elmts_per_page_ = 1;
-      }
-    } else {
-      elmts_per_page_ = 1;
-    }
-    page_size_ = elmts_per_page_ * elmt_size;
-    page_mem_ = page_size_ + sizeof(Page<T>);
-    hermes::Context ctx;
-    if constexpr(!IS_COMPLEX_TYPE) {
-      ctx = hermes::data_stager::BinaryFileStager::BuildContext(
-          page_size_, elmt_size);
-    }
-    bkt_ = HERMES->GetBucket(path, ctx);
+    MPI_Comm_rank(world_, &rank_);
+    MPI_Comm_size(world_, &nprocs_);
     off_ = 0;
     size_ = count;
     max_size_ = count;
@@ -146,22 +128,72 @@ class VectorMegaMpi {
     }
     pgas_.off_ = 0;
     pgas_.size_ = 0;
-    append_data_.reserve(elmts_per_page_);
+    SetPageSize(MM_PAGE_SIZE);
   }
 
+  /** Resize this DSM */
   void Resize(size_t count) {
   }
 
+  /** Ensure this DSM doesn't exceed DRAM capacity */
   void BoundMemory(size_t window_size) {
     window_size_ = window_size;
   }
 
-  void Pgas(size_t off, size_t count) {
+  /** Set the exact size in bytes of a DSM page */
+  void SetPageSize(size_t page_size) {
+    if (!IS_COMPLEX_TYPE) {
+      elmts_per_page_ = page_size / elmt_size_;
+      if (elmts_per_page_ == 0) {
+        elmts_per_page_ = 1;
+      }
+    } else {
+      elmts_per_page_ = 1;
+    }
+    page_size_ = elmts_per_page_ * elmt_size_;
+    page_mem_ = page_size_ + sizeof(Page<T>);
+  }
+
+  /** Set the expected number of elements stored in a DSM page */
+  void SetElmtsPerPage(size_t count) {
+    elmts_per_page_ = count;
+    page_size_ = elmts_per_page_ * elmt_size_;
+    page_mem_ = page_size_ + sizeof(Page<T>);
+  }
+
+  /** Split DSM among processes */
+  void Pgas(size_t off, size_t count, size_t count_per_page = 0) {
+    if (count_per_page != 0) {
+      SetElmtsPerPage(count_per_page);
+    }
     pgas_.Init(off * elmt_size_,
                count * elmt_size_,
                page_size_);
   }
 
+  /** Evenly split DSM among processes */
+  void EvenPgas(int rank, int nprocs, size_t max_count,
+                size_t count_per_page = 0) {
+    Bounds bounds(rank, nprocs, max_count);
+    Pgas(bounds.off_, bounds.size_, count_per_page);
+  }
+
+  /** Allocate the DSM */
+  void Allocate() {
+    hermes::Context ctx;
+    if constexpr(!IS_COMPLEX_TYPE) {
+      bitfield32_t flags;
+      if (!flags_.Any(MM_STAGE_READ_FROM_BACKEND)) {
+        flags.SetBits(HERMES_STAGE_NO_READ);
+      }
+      ctx = hermes::data_stager::BinaryFileStager::BuildContext(
+          page_size_, flags.bits_, elmt_size_);
+    }
+    bkt_ = HERMES->GetBucket(path_, ctx);
+    append_data_.reserve(elmts_per_page_);
+  }
+
+  /** Get a view of this DSM */
   VectorMegaMpi Subset(size_t off, size_t size) {
     VectorMegaMpi mmap(*this);
     mmap.off_ = off;
@@ -223,7 +255,7 @@ class VectorMegaMpi {
   }
 
   /** Lock a region */
-  void Barrier(u32 flags = 0, MPI_Comm comm = MPI_COMM_WORLD) {
+  void Barrier(u32 flags, MPI_Comm comm) {
     _Flush();
     MPI_Barrier(comm);
     flags_.SetBits(flags);

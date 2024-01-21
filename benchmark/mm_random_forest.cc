@@ -105,20 +105,22 @@ class RandomForestClassifierMpi {
   std::vector<size_t> my_windows_;
   float tol_;
   int max_depth_;
+  MPI_Comm world_;
 
  public:
-  void Init(const std::string &train_path,
+  void Init(MPI_Comm world,
+            const std::string &train_path,
             const std::string &test_path,
             int num_features,
             int num_cols,
             size_t window_size,
-            int rank, int nprocs,
             int trees_per_proc = 4,
             float tol = .0001,
             int max_depth = 5){
+    world_ = world;
+    MPI_Comm_rank(world_, &rank_);
+    MPI_Comm_size(world_, &nprocs_);
     dir_ = stdfs::path(train_path).parent_path();
-    rank_ = rank;
-    nprocs_ = nprocs;
     window_size_ = window_size;
     num_features_ = num_features;
     max_features_ = sqrt(num_features);
@@ -126,12 +128,12 @@ class RandomForestClassifierMpi {
     tol_ = tol;
     max_depth_ = max_depth;
     // Load train data and partition
-    data_.Init(train_path, MM_READ_ONLY);
+    data_.Init(world_, train_path, MM_READ_ONLY);
     data_.BoundMemory(window_size_);
     Bounds bounds(rank_, nprocs_, data_.size());
     data_.Pgas(bounds.off_, bounds.size_);
     // Load test data and partition
-    test_data_.Init(test_path, MM_READ_ONLY);
+    test_data_.Init(world_, test_path, MM_READ_ONLY);
     test_data_.BoundMemory(window_size_);
     Bounds test_bounds(rank_, nprocs_, test_data_.size());
     test_data_.Pgas(test_bounds.off_, test_bounds.size_);
@@ -140,13 +142,13 @@ class RandomForestClassifierMpi {
     windows_per_proc_ = num_windows_ / nprocs_;
     // Initialize final tree data structure
     trees_per_proc_ = trees_per_proc;
-    trees_.Init(dir_ + "/trees",
+    trees_.Init(world_, dir_ + "/trees",
                 trees_per_proc_ * nprocs_,
                 KILOBYTES(256),
                 MM_WRITE_ONLY);
     trees_.Pgas(rank_ * trees_per_proc_, trees_per_proc_);
     // Initialize RNG
-    feature_dist_.Seed(2354235);
+    feature_dist_.Seed(SEED);
     feature_dist_.Shape(0, num_features_ - 1);
   }
 
@@ -159,7 +161,7 @@ class RandomForestClassifierMpi {
       CreateDecisionTree(root, nullptr, sample, 0);
       trees_[rank_ * trees_per_proc_ + i] = std::move(root);
     }
-    trees_.Barrier(MM_READ_ONLY);
+    trees_.Barrier(MM_READ_ONLY, world_);
     float error = Predict(test_data_);
     if (rank_ == 0) {
       HILOG(kInfo, "Prediction Accuracy: {}", 1 - error);
@@ -168,7 +170,7 @@ class RandomForestClassifierMpi {
 
   float Predict(DataT &data) {
     AssignT preds;
-    preds.Init(dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
+    preds.Init(world_, dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
     Bounds bounds(rank_, nprocs_, data.size());
     preds.Pgas(bounds.off_, bounds.size_);
     size_t err_count = 0;
@@ -181,7 +183,7 @@ class RandomForestClassifierMpi {
     // Predict and calculate classification error
     PredictLocal(data, off, size_pp, err_count);
     preds[rank_] = err_count;
-    preds.Barrier(MM_READ_ONLY);
+    preds.Barrier(MM_READ_ONLY, world_);
     float err = 0;
     for (int i = 0; i < nprocs_; ++i) {
       err += preds[i];
@@ -229,7 +231,7 @@ class RandomForestClassifierMpi {
         hshm::Formatter::format("{}/sample_{}_{}_{}",
                                 dir_, 0, 0, rank_);
     AssignT sample;
-    sample.Init(sample_name, bounds.size_, MM_WRITE_ONLY);
+    sample.Init(world_, sample_name, bounds.size_, MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
     sample.Pgas(0, data_.size());
     size_t off = 0;
@@ -265,7 +267,8 @@ class RandomForestClassifierMpi {
     std::string new_sample_name =
         hshm::Formatter::format("{}/subsample_{}_{}_{}",
                                 dir_, uuid, depth, rank_);
-    AssignT new_sample(new_sample_name, new_size, MM_WRITE_ONLY);
+    AssignT new_sample;
+    new_sample.Init(world_, new_sample_name, new_size, MM_WRITE_ONLY);
     new_sample.BoundMemory(window_size_);
     new_sample.Pgas(0, new_size);
     mm::UniformSampler sampler(MM_PAGE_SIZE,
@@ -289,7 +292,7 @@ class RandomForestClassifierMpi {
     size_t num_bootstrap_samples = 30;
     std::vector<Node<T>> stats(max_features_ * num_bootstrap_samples);
     hshm::UniformDistribution sample_dist;
-    sample_dist.Seed(2354235 * (rank_ + 1));
+    sample_dist.Seed(SEED * (rank_ + 1));
     size_t stat_idx = 0;
     for (int i = 0; i < num_bootstrap_samples; ++i) {
       std::vector<int> features = SubsampleFeatures();
@@ -340,9 +343,11 @@ class RandomForestClassifierMpi {
         hshm::Formatter::format("{}/sample_{}_{}_{}",
                                 dir_, node->depth_ + 1,
                                 right_uuid, rank_);
-    left_sample.Init(left_sample_name, node->left_->count_, MM_APPEND_ONLY);
+    left_sample.Init(world_, left_sample_name,
+                     node->left_->count_, MM_APPEND_ONLY);
     left_sample.BoundMemory(window_size_);
-    right_sample.Init(right_sample_name, node->right_->count_, MM_APPEND_ONLY);
+    right_sample.Init(world_, right_sample_name,
+                      node->right_->count_, MM_APPEND_ONLY);
     right_sample.BoundMemory(window_size_);
     DivideSample(*node, sample,
                  left_sample, right_sample);
@@ -426,9 +431,9 @@ int main(int argc, char **argv) {
   } else if (algo == "mega") {
     TRANSPARENT_HERMES();
     RandomForestClassifierMpi<ClassRow> rf;
-    rf.Init(train_path, test_path,
-            nfeature, ncol, window_size,
-            rank, nprocs);
+    rf.Init(MPI_COMM_WORLD,
+            train_path, test_path,
+            nfeature, ncol, window_size);
     rf.Run();
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
