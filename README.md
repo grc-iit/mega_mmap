@@ -57,5 +57,6 @@ module load arrow
 module load hermes_run
 module load mega_mmap
 spack load hermes_shm
-jarvis env build mega_mmap +MM_PATH
+module load spark
+jarvis env build mega_mmap +MM_PATH +SPARK_SCRIPTS
 ```

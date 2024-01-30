@@ -1,12 +1,12 @@
-name: mm_kmeans_df_mpiio
+name: mm_kmeans_df_parquet
 env: mega_mmap
 pkgs:
   - pkg_type: mm_kmeans_df
     pkg_name: mm_kmeans_df
-    path: ${HOME}/mm_data/kmeans.bin
-    window_size: 16m
-    df_size: 16m
-    nprocs: 1
+    path: ${HOME}/mm_data/parquet/kmeans.parquet
+    window_size: 1m
+    df_size: 1g
+    nprocs: 4
     ppn: 16
     type: parquet
     k: 8

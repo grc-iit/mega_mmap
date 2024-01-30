@@ -1,0 +1,14 @@
+name: mm_kmeans_spark
+env: mega_mmap
+pkgs:
+  - pkg_type: spark_cluster
+    pkg_name: spark_cluster
+  - pkg_type: mm_kmeans
+    pkg_name: mm_kmeans
+    path: ${HOME}/mm_data/parquet2/kmeans.parquet
+    window_size: 4g
+    api: spark
+    max_iter: 2
+    k: 8
+    do_dbg: False
+    dbg_port: 4001

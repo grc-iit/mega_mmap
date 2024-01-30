@@ -101,8 +101,6 @@ class KMeans {
   int k_;
   std::vector<Center<T>> ks_;
   int max_iter_;
-  size_t off_;
-  size_t last_;
   size_t iter_;
   double inertia_;
   float min_inertia_;
@@ -128,13 +126,9 @@ class KMeans {
     HILOG(kInfo, "{}: Beginning data definition", rank_)
     data_.Init(path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
     data_.BoundMemory(window_size);
-    Bounds bounds(rank_, nprocs_, data_.size());
-    data_.Pgas(bounds.off_, bounds.size_);
+    data_.EvenPgas(rank_, nprocs_, data_.size());
     data_.Allocate();
     HILOG(kInfo, "{}: Finished data definition", rank_)
-
-    off_ = bounds.off_;
-    last_ = bounds.off_ + bounds.size_;
     tol_ = tol;
     min_inertia_ = min_inertia;
   }
@@ -158,10 +152,7 @@ class KMeans {
     max_iter_ = max_iter;
     tol_ = tol;
     min_inertia_ = min_inertia;
-
-    Bounds bounds(rank_, nprocs_, data_.size());
-    off_ = bounds.off_;
-    last_ = bounds.off_ + bounds.size_;
+    data_.EvenPgas(rank_, nprocs_, data_.size());
   }
 
   /**
@@ -193,50 +184,78 @@ class KMeans {
     AssignT assign;
     assign.Init(dir_ + "/" + "assign", data_.size(), MM_WRITE_ONLY);
     assign.BoundMemory(window_size_);
-    Bounds assign_bounds(rank_, nprocs_, data_.size());
-    assign.Pgas(assign_bounds.off_, assign_bounds.size_);
+    assign.EvenPgas(rank_, nprocs_, data_.size());
     assign.Allocate();
 
     // Initialize sum vector
     SumT sum;
     sum.Init(dir_ + "/" + "sum", nprocs_ * k_, MM_WRITE_ONLY);
-    sum.Pgas(rank_ * k_, k_, k_);
+    sum.EvenPgas(rank_, nprocs_, nprocs_ * k_);
     sum.Allocate();
 
-    // Calculate local assignment
-    size_t off = off_, last = last_;
-    for (size_t i = rank_ * k_; i < (rank_ + 1) * k_; ++i) {
-      sum[i].Zero();
-    }
-    for (size_t i = off; i < last; ++i) {
-      if ((i - off) % (256 * MM_PAGE_SIZE) == 0) {
-          HILOG(kInfo, "{}: We are {}% done", rank_,
-              (i - off) * 100.0 / (last - off))
+    // Zero out sums
+    {
+      auto tx = sum.SeqTxBegin(sum.local_off(), sum.local_size(), MM_WRITE_ONLY);
+      for (size_t i = 0; i < sum.local_size(); ++i) {
+        (*tx).Zero();
+        ++tx;
       }
-      T row = data_[i];
-      assign[i] = FindClosestCenter(row);
-      sum[rank_ * k_ + assign[i]].row_ += row;
-      sum[rank_ * k_ + assign[i]].count_ += 1;
-      sum[rank_ * k_ + assign[i]].inertia_ +=
-          pow(row.Distance(ks_[assign[i]].center_), 2);
+      sum.TxEnd(tx);
+    }
+
+    // Calculate local assignment
+    {
+      auto data_tx = data_.SeqTxBegin(data_.local_off(),
+                                      data_.local_size(),
+                                      MM_READ_ONLY);
+      auto sum_tx = sum.SeqTxBegin(sum.local_off(),
+                                   sum.local_size(),
+                                   MM_WRITE_ONLY);
+      auto assign_tx = assign.SeqTxBegin(assign.local_off(),
+                                         assign.local_size(),
+                                         MM_WRITE_ONLY);
+      size_t off = data_.local_off();
+      for (size_t i = off; i < data_.local_last(); ++i) {
+        if ((i - off) % (16 * MM_PAGE_SIZE) == 0) {
+          HILOG(kInfo, "{}: We are {}% done", rank_,
+                (i - off) * 100.0 / data_.local_size())
+        }
+        T &row = *data_tx;
+        size_t &assign_i = *assign_tx;
+        assign_i = FindClosestCenter(row);
+        sum[sum.local_off() + assign_i].row_ += row;
+        sum[sum.local_off() + assign_i].count_ += 1;
+        sum[sum.local_off() + assign_i].inertia_ +=
+            pow(row.Distance(ks_[assign_i].center_), 2);
+
+        ++assign_tx;
+        ++data_tx;
+      }
+      data_.TxEnd(data_tx);
+      sum.TxEnd(sum_tx);
+      assign.TxEnd(assign_tx);
     }
     sum.Barrier(MM_READ_ONLY, world_);
     // Calculate global statistics from each local assignment
     float inertia = 0;
-    for (int i = 0; i < ks_.size(); ++i) {
-      T avg(0);
-      size_t count = 0;
-      float k_inertia = 0;
-      for (int j = 0; j < nprocs_; ++j) {
-        avg += sum[j * k_ + i].row_;
-        count += sum[j * k_ + i].count_;
-        k_inertia += sum[j * k_ + i].inertia_;
+    {
+      auto sum_tx = sum.SeqTxBegin(0, sum.size(), MM_READ_ONLY);
+      for (int i = 0; i < ks_.size(); ++i) {
+        T avg(0);
+        size_t count = 0;
+        float k_inertia = 0;
+        for (int j = 0; j < nprocs_; ++j) {
+          avg += sum[j * k_ + i].row_;
+          count += sum[j * k_ + i].count_;
+          k_inertia += sum[j * k_ + i].inertia_;
+        }
+        inertia += k_inertia;
+        avg /= count;
+        ks_[i].count_ = count;
+        ks_[i].inertia_ = k_inertia;
+        ks_[i].center_ = avg;
       }
-      inertia += k_inertia;
-      avg /= count;
-      ks_[i].count_ = count;
-      ks_[i].inertia_ = k_inertia;
-      ks_[i].center_ = avg;
+      sum.TxEnd(sum_tx);
     }
     sum.Barrier(0, world_);
     return inertia;
@@ -289,8 +308,6 @@ class KMeansPpMpi : public KMeans<T> {
   using KMeans<T>::min_inertia_;
   using KMeans<T>::Print;
   using KMeans<T>::Fit;
-  using KMeans<T>::off_;
-  using KMeans<T>::last_;
   using KMeans<T>::world_;
 
  public:
@@ -315,12 +332,16 @@ class KMeansPpMpi : public KMeans<T> {
     // Initialize local max vector
     MaxT local_maxes;
     local_maxes.Init(dir_ + "/" + "max", nprocs_, MM_WRITE_ONLY);
-    local_maxes.Pgas(rank_, 1, 1);
+    local_maxes.EvenPgas(rank_, nprocs_, nprocs_);
     local_maxes.Allocate();
     // Find point furthest away from all existing Ks
     LocalMax local_max = FindLocalMax(ks);
     // Wait for all processes to complete
-    local_maxes[rank_] = local_max;
+    {
+      auto tx = local_maxes.SeqTxBegin(rank_, 1, MM_WRITE_ONLY);
+      local_maxes[rank_] = local_max;
+      local_maxes.TxEnd(tx);
+    }
     local_maxes.Barrier(MM_READ_ONLY, world_);
     // Find global max across processes
     LocalMax global_max = FindGlobalMax(local_maxes);
@@ -336,12 +357,15 @@ class KMeansPpMpi : public KMeans<T> {
    * */
   LocalMax FindGlobalMax(MaxT &local_maxes) {
     LocalMax max;
+    auto tx = local_maxes.SeqTxBegin(0, local_maxes.size(), MM_READ_ONLY);
     for (int i = 0; i < nprocs_; ++i) {
       LocalMax &cur_max = local_maxes[i];
       if (cur_max.dist_ > max.dist_) {
         max = cur_max;
       }
+      ++tx;
     }
+    local_maxes.TxEnd(tx);
     return max;
   }
 
@@ -371,18 +395,23 @@ class KMeansPpMpi : public KMeans<T> {
    * */
   LocalMax FindLocalMax(std::vector<Center<T>> &ks) {
     LocalMax local_max;
-    for (size_t i = off_; i < last_; ++i) {
-      if ((i - off_) % (256 * MM_PAGE_SIZE) == 0) {
+    size_t off = data_.local_off();
+    size_t last = data_.local_last();
+    auto tx = data_.SeqTxBegin(off, last - off, MM_READ_ONLY);
+    for (size_t i = off; i < last; ++i) {
+      if ((i - off) % (256 * MM_PAGE_SIZE) == 0) {
         HILOG(kInfo, "{}: We are {}% done", rank_,
-              (i - off_) * 100.0 / (last_ - off_))
+              (i - off) * 100.0 / (last - off))
       }
-      T &cur_pt = data_[i];
+      T &cur_pt = *tx;
       double dist = MinOfCenterDists(cur_pt, ks);
       if (dist > local_max.dist_) {
         local_max.dist_ = dist;
         local_max.idx_ = i;
       }
+      ++tx;
     }
+    data_.TxEnd(tx);
     return local_max;
   }
 
@@ -394,7 +423,10 @@ class KMeansPpMpi : public KMeans<T> {
     dist.Seed(SEED);
     dist.Shape(0, data_.size_ - 1);
     size_t first_k = dist.GetSize();
-    return data_[first_k];
+    auto tx = data_.SeqTxBegin(first_k, 1, MM_READ_ONLY);
+    T& pt = data_[first_k];
+    data_.TxEnd(tx);
+    return pt;
   }
 };
 
@@ -430,8 +462,6 @@ class KmeansLlMpi : public KMeans<T> {
   using KMeans<T>::min_inertia_;
   using KMeans<T>::Print;
   using KMeans<T>::Fit;
-  using KMeans<T>::off_;
-  using KMeans<T>::last_;
   using KMeans<T>::world_;
 
  public:
@@ -465,16 +495,27 @@ class KmeansLlMpi : public KMeans<T> {
                       tol_,
                       min_inertia_);
       agg_kmeans.Run();
+
+      auto tx = centers.SeqTxBegin(0, centers.size(), MM_WRITE_ONLY);
       for (int i = 0; i < k_; ++i) {
         centers[i] = agg_kmeans.ks_[i].center_;
+        ++tx;
       }
+      centers.TxEnd(tx);
     }
     centers.Barrier(MM_READ_ONLY, world_);
     ks_.clear();
-    for (int i = 0; i < k_; ++i) {
-      ks_.emplace_back(centers[i]);
+    {
+      auto tx = centers.SeqTxBegin(0, centers.size(), MM_READ_ONLY);
+      for (int i = 0; i < k_; ++i) {
+        ks_.emplace_back(centers[i]);
+        ++tx;
+      }
+      centers.TxEnd(tx);
     }
   }
+
+#define NEAR_COUNT_PER_ITER 16
 
   /**
    * Locate a subset of data points that match the probability distribution
@@ -485,44 +526,58 @@ class KmeansLlMpi : public KMeans<T> {
     // Initialize center vector
     DataT centers;
     centers.Init(dir_ + "/" + "centers",
-                 nprocs_ * l * count, MM_WRITE_ONLY);
-    centers.EvenPgas(rank_, nprocs_, nprocs_ * l * count, l * count);
+                 nprocs_ * (l * count + 1), MM_WRITE_ONLY);
+    centers.EvenPgas(rank_, nprocs_, nprocs_ * (l * count + 1), l * count + 1);
     centers.Allocate();
 
     // Educated random subsample
-    hshm::UniformDistribution rand_page;
-    rand_page.Seed(SEED);
-    rand_page.Shape(off_, last_);
-    for (size_t i = 0; i < count; ++i) {
-      HILOG(kInfo, "Selecting {} points for cluster {}",
-            l, i);
-      hshm::UniformDistribution rand_dist;
-      rand_dist.Seed(SEED);
-      rand_dist.Shape(0, sqrt(l * stat.max_ * stat.max_ / stat.sum_));
-      for (size_t j = 0; j < l; ++j) {
-        // Randomly choose a distance and page
-        double dist = pow(rand_dist.GetDouble(), 2) * stat.sum_ / l;
-        size_t page_idx = rand_page.GetSize();
-        size_t page_off =
-            (page_idx / data_.page_size_) * data_.page_size_;
-        // Get the point with nearest distance to this distance
-        T pt = FindNearestPoint(page_off, data_.page_size_, dist);
-        ks_.emplace_back(pt);
+    {
+      auto tx = data_.RandTxBegin(
+          SEED, data_.local_off(), data_.local_size(),
+          data_.local_size(), count * l * NEAR_COUNT_PER_ITER,
+          MM_READ_ONLY);
+      ks_.reserve(count * l);
+      for (size_t i = 0; i < count; ++i) {
+        HILOG(kInfo, "Selecting {} points for cluster {}, with k: {}",
+              l, i, ks_.size());
+        hshm::UniformDistribution rand_dist;
+        rand_dist.Seed(SEED);
+        rand_dist.Shape(0, sqrt(l * stat.max_ * stat.max_ / stat.sum_));
+        for (size_t j = 0; j < l; ++j) {
+          // Randomly choose a distance and page
+          double dist = pow(rand_dist.GetDouble(), 2) * stat.sum_ / l;
+          // Get the point with nearest distance to this distance
+          T pt = FindNearestPoint(tx, dist);
+          ks_.emplace_back(pt);
+        }
+        // Determine the range of distances
+        DataStat new_stat = LocalStatPoints();
+        stat = new_stat;
       }
-      // Determine the range of distances
-      DataStat new_stat = LocalStatPoints();
-
-      stat = new_stat;
+      data_.TxEnd(tx);
     }
+
     // Broadcast centers
-    for (size_t i = 0; i < ks_.size(); ++i) {
-      centers[i + centers.local_off()] = ks_[i].center_;
+    {
+      auto tx = centers.SeqTxBegin(centers.local_off(),
+                                   centers.local_size(),
+                                   MM_WRITE_ONLY);
+      for (size_t i = 0; i < ks_.size(); ++i) {
+        centers[i + centers.local_off()] = ks_[i].center_;
+        ++tx;
+      }
+      centers.TxEnd(tx);
     }
     centers.Barrier(MM_READ_ONLY, world_);
     ks_.clear();
     ks_.reserve(centers.size());
-    for (size_t i = 0; i < centers.size(); ++i) {
-      ks_.emplace_back(centers[i]);
+    {
+      auto tx = centers.SeqTxBegin(0, centers.size(), MM_READ_ONLY);
+      for (size_t i = 0; i < centers.size(); ++i) {
+        ks_.emplace_back(centers[i]);
+        ++tx;
+      }
+      centers.TxEnd(tx);
     }
     return centers;
   }
@@ -530,18 +585,18 @@ class KmeansLlMpi : public KMeans<T> {
   /**
    * Find point with nearest distance measurement
    * */
-  T FindNearestPoint(size_t page_off, size_t page_size, double dist) {
-    size_t off = page_off, last = page_off + page_size;
+  T FindNearestPoint(mm::Tx<mm::RandomIterator, DataT, T> &tx, double dist) {
     T nearest_point;
     double nearest_dist = std::numeric_limits<double>::max();
-    for (size_t i = off; i < last; ++i) {
-      T &cur_pt = data_[i];
+    for (size_t i = 0; i < NEAR_COUNT_PER_ITER; ++i) {
+      T &cur_pt = *tx;
       double pt_dist = MinOfCenterDists(cur_pt, ks_);
       double cur_dist = abs(pt_dist - dist);
       if (cur_dist < nearest_dist) {
         nearest_dist = cur_dist;
         nearest_point = cur_pt;
       }
+      ++tx;
     }
     return nearest_point;
   }
@@ -552,12 +607,18 @@ class KmeansLlMpi : public KMeans<T> {
   DataStat LocalStatPoints() {
     DataStat stat;
     HILOG(kInfo, "Collecting local statistics of chunk")
-    for (size_t i = off_; i < last_; ++i) {
-      if ((i - off_) % (256 * MM_PAGE_SIZE) == 0) {
+    size_t off = data_.local_off();
+    size_t subsample = data_.local_size() / 8;
+    auto tx = data_.RandTxBegin(
+        SEED, off, data_.local_size(),
+        data_.local_size(), subsample,
+        MM_READ_ONLY);
+    for (size_t i = 0; i < subsample; ++i) {
+      if (i % (data_.elmts_per_page_) == 0) {
         HILOG(kInfo, "{}: We are {}% done", rank_,
-              (i - off_) * 100.0 / (last_ - off_))
+              i * 100.0 / subsample)
       }
-      T &cur_pt = data_[i];
+      T &cur_pt = *tx;
       double dist = MinOfCenterDists(cur_pt, ks_);
       stat.sum_ += dist;
       if (dist < stat.min_) {
@@ -566,7 +627,9 @@ class KmeansLlMpi : public KMeans<T> {
       if (dist > stat.max_) {
         stat.max_ = dist;
       }
+      ++tx;
     }
+    data_.TxEnd(tx);
     HILOG(kInfo, "Finished collecting local statistics of chunk")
     return stat;
   }
@@ -579,7 +642,10 @@ class KmeansLlMpi : public KMeans<T> {
     dist.Seed(SEED);
     dist.Shape(0, data_.size_ - 1);
     size_t first_k = dist.GetSize();
-    return data_[first_k];
+    auto tx = data_.SeqTxBegin(first_k, 1, MM_READ_ONLY);
+    T first = data_[first_k];
+    data_.TxEnd(tx);
+    return first;
   }
 
   /**

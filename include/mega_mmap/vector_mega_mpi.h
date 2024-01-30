@@ -23,20 +23,273 @@ namespace stdfs = std::filesystem;
 
 namespace mm {
 
-/** Forward declaration */
-template<typename T, bool IS_COMPLEX_TYPE=false>
-class VectorMegaMpiIterator;
-
 template<typename T>
 struct Page {
-  LPointer<hrunpq::TypedPushTask<hermes::GetBlobTask>> async_;
   std::vector<T> elmts_;
   u32 id_;
 
   Page() = default;
 
-  Page(u32 id) : id_(id) {
-    async_.ptr_ = nullptr;
+  Page(u32 id) : id_(id) {}
+};
+
+struct PageLog {
+  size_t page_idx_;
+  size_t mod_start_;
+  size_t mod_size_;
+
+  // Default constructor
+  PageLog() = default;
+
+  // Constructor
+  PageLog(size_t page_idx, size_t mod_start, size_t mod_size)
+      : page_idx_(page_idx), mod_start_(mod_start), mod_size_(mod_size) {}
+
+  // Copy constructor
+  PageLog(const PageLog &other) = default;
+};
+
+class SequentialIterator {
+ public:
+  size_t off_, size_;
+  size_t elmts_per_page_;
+
+ public:
+  explicit SequentialIterator(size_t off, size_t size, size_t elmts_per_page)
+      : off_(off), size_(size), elmts_per_page_(elmts_per_page) {}
+
+  size_t get(size_t iter_cur) {
+    return iter_cur + off_;
+  }
+
+  std::vector<PageLog> next_pages(size_t iter_cur, int max_n,
+                                  size_t &iter_max) {
+    std::vector<PageLog> pages;
+    pages.reserve(max_n);
+    size_t off = iter_cur + off_;
+    if (iter_cur + elmts_per_page_ > size_) {
+      PageLog only;
+      only.page_idx_ = off / elmts_per_page_;
+      only.mod_start_ = off % elmts_per_page_;
+      only.mod_size_ = size_ - iter_cur;
+      pages.emplace_back(only);
+      iter_max += pages.back().mod_size_;
+      return pages;
+    }
+
+    // Get first page
+    PageLog first;
+    first.page_idx_ = off / elmts_per_page_;
+    first.mod_start_ = off % elmts_per_page_;
+    first.mod_size_ = elmts_per_page_ - first.mod_start_;
+    size_t page_idx = first.page_idx_ + 1;
+    pages.emplace_back(first);
+
+    // Get maximum number of pages
+    size_t max_count = max_n * elmts_per_page_;
+    size_t last_idx = off + max_count;
+    if (max_count > size_) {
+      last_idx = off + size_ - iter_cur;
+      max_n = (size_ - iter_cur) / elmts_per_page_;
+    }
+
+    // Get middle pages
+    for (int i = 1; i < max_n - 1; ++i) {
+      pages.emplace_back(PageLog(page_idx++, 0, elmts_per_page_));
+      iter_max += pages.back().mod_size_;
+    }
+
+    // Get last page
+    PageLog last;
+    last.page_idx_ = last_idx / elmts_per_page_;
+    last.mod_start_ = 0;
+    last.mod_size_ = last_idx % elmts_per_page_;
+    if (last.mod_size_ == 0) {
+      last.mod_size_ = elmts_per_page_;
+    }
+    pages.emplace_back(last);
+    iter_max += pages.back().mod_size_;
+    return pages;
+  }
+};
+
+class RandomIterator {
+ public:
+  size_t seed_, size_;
+  size_t elmts_per_page_;
+  hshm::UniformDistribution dist_;
+  size_t page_ = 0;
+
+ public:
+  explicit RandomIterator(size_t seed,
+                          size_t rand_left, size_t rand_size,
+                          size_t size, size_t elmts_per_page)
+      : seed_(seed), size_(size), elmts_per_page_(elmts_per_page) {
+    dist_.Seed(seed);
+    size_t page_left = rand_left / elmts_per_page_;
+    size_t page_right = (rand_left + rand_size) / elmts_per_page_;
+    if (page_right == page_left) {
+      dist_.Shape(page_left, page_right);
+    } else {
+      dist_.Shape(page_left, page_right - 1);
+    }
+  }
+
+  size_t get(size_t iter_cur) {
+    if (iter_cur % elmts_per_page_ == 0) {
+      page_ = dist_.GetSize() * elmts_per_page_;
+      return page_;
+    } else {
+      return page_ + iter_cur % elmts_per_page_;
+    }
+  }
+
+  std::vector<PageLog> next_pages(size_t iter_cur, int max_n,
+                                  size_t &iter_max) {
+    hshm::UniformDistribution dist = dist_;
+    std::vector<PageLog> pages;
+    size_t max_count = max_n * elmts_per_page_;
+    if (iter_cur + max_count > size_) {
+      max_n = (size_ - iter_cur) / elmts_per_page_;
+    }
+    for (int i = 0; i < max_n; ++i) {
+      size_t page_idx = dist.GetSize();
+      pages.emplace_back(PageLog(page_idx, 0, elmts_per_page_));
+      iter_max += pages.back().mod_size_;
+    }
+    return pages;
+  }
+};
+
+template<typename AssignT>
+class IndexIterator {
+ public:
+  AssignT &assign_;
+  size_t size_, elmts_per_page_;
+
+ public:
+  IndexIterator(size_t size, size_t elmts_per_page,
+                AssignT &assign)
+      : size_(size), elmts_per_page_(elmts_per_page), assign_(assign) {}
+
+  size_t get(size_t iter_cur) {
+    return assign_[iter_cur];
+  }
+
+  std::vector<PageLog> next_pages(size_t iter_cur, int max_n,
+                                  size_t &iter_max) {
+    std::vector<PageLog> pages;
+    size_t max_count = max_n * elmts_per_page_;
+    if (iter_cur + max_count > size_) {
+      max_count = size_ - iter_cur;
+    }
+
+    for (size_t i = 0; i < max_count; ++i) {
+      if (iter_max >= assign_.size() || pages.size() >= max_n) {
+        break;
+      }
+      size_t page_idx = assign_[iter_max] / elmts_per_page_;
+      if (pages.size() && pages.back().page_idx_ != page_idx) {
+        pages.emplace_back(PageLog(page_idx, 0, elmts_per_page_));
+      }
+      ++iter_max;
+    }
+    return pages;
+  }
+};
+
+template<typename IterT, typename VectorT, typename T>
+class Tx {
+ public:
+  MPI_Comm comm_;
+  IterT iter_;
+  size_t off_ = 0;      /**< The offset in the data buffer */
+  size_t iter_cur_ = 0;    /**< The current iteration we are at */
+  size_t iter_max_ = 0;    /**< The maximum iteration before evicts */
+  std::vector<PageLog> pages_;
+  VectorT &mm_vec_;
+  bitfield32_t flags_;
+  size_t mm_lookahead_;
+
+ public:
+  // begin
+  Tx begin() {
+    return Tx(iter_, mm_vec_, flags_, mm_lookahead_);
+  }
+
+  // end
+  Tx end() {
+    return Tx(iter_.size_);
+  }
+
+  // Begin iterator
+  explicit Tx(MPI_Comm comm, const IterT &iter, VectorT &mm_vec,
+              const bitfield32_t &flags, size_t mm_lookahead)
+      : comm_(comm), iter_(iter), mm_vec_(mm_vec),
+        flags_(flags), mm_lookahead_(mm_lookahead) {
+    if (mm_lookahead < 1) {
+      mm_lookahead = 1;
+    }
+    iter_cur_ = 0;
+    iter_max_ = 0;
+    off_ = iter_.get(iter_cur_);
+    pages_ = iter_.next_pages(iter_cur_, mm_lookahead_, iter_max_);
+  }
+
+  // End iterator
+  explicit Tx(size_t end) {
+    iter_cur_ = end;
+  }
+
+  // Const dereference operator
+  const T& operator*() const {
+    return mm_vec_[off_];
+  }
+
+  // Dereference operator
+  T& operator*() {
+    return mm_vec_[off_];
+  }
+
+  // Prefix increment operator
+  Tx& operator++() {
+    ++iter_cur_;
+    off_ = iter_.get(iter_cur_);
+    if (iter_cur_ == iter_max_) {
+      ConsistencyAndEviction();
+    }
+    return *this;
+  }
+
+  // Consistency guarantees
+  void ConsistencyAndEviction() {
+    // Flush all modifications
+    if (flags_.Any(MM_WRITE_ONLY)) {
+      for (size_t i = 0; i < pages_.size(); ++i) {
+        mm_vec_._Flush(pages_[i].page_idx_,
+                       pages_[i].mod_start_,
+                       pages_[i].mod_size_);
+      }
+    }
+    // Evict all pages
+    for (size_t i = 0; i < pages_.size(); ++i) {
+      mm_vec_._Evict(pages_[i].page_idx_);
+    }
+    // Prefetch next pages
+    pages_ = iter_.next_pages(iter_cur_, mm_lookahead_, iter_max_);
+    if (flags_.Any(MM_READ_ONLY)) {
+      for (size_t i = 0; i < pages_.size(); ++i) {
+        mm_vec_.Prefetch(pages_[i].page_idx_, 1.0);
+      }
+    }
+    if (iter_cur_ >= iter_.size_) {
+      pages_.clear();
+    }
+  }
+
+  // Equality operator
+  bool operator==(const Tx& rhs) const {
+    return iter_cur_ == rhs.iter_cur_;
   }
 };
 
@@ -57,11 +310,10 @@ class VectorMegaMpi {
   size_t page_mem_ = 0;
   std::string path_;
   size_t window_size_ = 0;
+  size_t elmts_per_window_ = 0;
   size_t cur_memory_ = 0;
-  size_t min_page_ = -1, max_page_ = -1;
   bitfield32_t flags_;
   PGAS pgas_;
-  PGAS pgas_elmt_;
 
  public:
   VectorMegaMpi() = default;
@@ -100,8 +352,6 @@ class VectorMegaMpi {
     }
     pgas_.off_ = 0;
     pgas_.size_ = 0;
-    pgas_elmt_.off_ = 0;
-    pgas_elmt_.size_ = 0;
     SetPageSize(MM_PAGE_SIZE);
   }
 
@@ -114,6 +364,7 @@ class VectorMegaMpi {
   /** Ensure this DSM doesn't exceed DRAM capacity */
   void BoundMemory(size_t window_size) {
     window_size_ = window_size;
+    elmts_per_window_ = window_size / elmt_size_;
   }
 
   /** Set the exact size in bytes of a DSM page */
@@ -137,24 +388,16 @@ class VectorMegaMpi {
     page_mem_ = page_size_ + sizeof(Page<T>);
   }
 
-  /** Split DSM among processes */
-  void Pgas(size_t off, size_t count, size_t count_per_page = 0) {
-    if (count_per_page != 0) {
-      SetElmtsPerPage(count_per_page);
-    }
-    pgas_.Init(off * elmt_size_,
-               count * elmt_size_,
-               page_size_);
-    pgas_elmt_.Init(off,
-                    count,
-                    elmts_per_page_);
-  }
-
   /** Evenly split DSM among processes */
   void EvenPgas(int rank, int nprocs, size_t max_count,
                 size_t count_per_page = 0) {
     Bounds bounds(rank, nprocs, max_count);
-    Pgas(bounds.off_, bounds.size_, count_per_page);
+    if (count_per_page != 0) {
+      SetElmtsPerPage(count_per_page);
+    }
+    pgas_.Init(bounds.off_,
+               bounds.size_,
+               elmts_per_page_);
   }
 
   /** Allocate the DSM */
@@ -172,65 +415,87 @@ class VectorMegaMpi {
     append_data_.reserve(elmts_per_page_);
   }
 
-  /** Flush data to backend */
-  void _Flush() {
-    if (min_page_ == -1) {
-      return;
+  /** Create a sequential transaction */
+  Tx<SequentialIterator, VectorMegaMpi<T>, T>
+  SeqTxBegin(size_t off, size_t size, uint32_t flags,
+             MPI_Comm comm = MPI_COMM_WORLD) {
+    SequentialIterator iter(off, size, elmts_per_page_);
+    return Tx<SequentialIterator, VectorMegaMpi<T>, T>(
+        comm, iter, *this,
+        bitfield32_t(flags),
+        elmts_per_window_ / elmts_per_page_);
+  }
+
+  /** Create a random transaction */
+  Tx<RandomIterator, VectorMegaMpi<T>, T>
+  RandTxBegin(size_t seed, size_t rand_left, size_t rand_size,
+              size_t size, uint32_t flags,
+              MPI_Comm comm = MPI_COMM_WORLD) {
+    RandomIterator iter(seed, rand_left, rand_size, size, elmts_per_page_);
+    return Tx<RandomIterator, VectorMegaMpi<T>, T>(
+        comm, iter, *this,
+        bitfield32_t(flags),
+        elmts_per_window_ / elmts_per_page_);
+  }
+
+  /** Create a transaction */
+  template<typename GenT>
+  Tx<GenT, VectorMegaMpi<T>, T>
+  TxBegin(GenT &iter, uint32_t flags,
+          MPI_Comm comm = MPI_COMM_WORLD) {
+    return Tx<GenT, VectorMegaMpi<T>, T>(comm, iter, *this,
+                                         bitfield32_t(flags),
+                                         elmts_per_window_ / elmts_per_page_);
+  }
+
+  /** End a transaction */
+  template<typename GenT>
+  void TxEnd(Tx<GenT, VectorMegaMpi<T>, T> &tx) {
+    tx.ConsistencyAndEviction();
+    if (tx.flags_.Any(MM_APPEND_ONLY)) {
+      FlushEmplace(tx.comm_, 0, 1);
     }
+  }
+
+  /** Flush data to backend */
+  void _Flush(size_t page_idx, size_t mod_start, size_t mod_count) {
     if (flags_.Any(MM_WRITE_ONLY | MM_READ_WRITE) && pgas_.size_ > 0) {
       hermes::Context ctx;
-      for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
-        auto it = data_.find(page_idx);
-        if (it == data_.end()) {
-          continue;
-        }
-        Page<T> &page = it->second;
-        size_t page_off, page_size;
-        if constexpr (!IS_COMPLEX_TYPE) {
-          pgas_.GetPageBounds(page_idx, page_off, page_size);
-          std::string page_name =
-              hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
-          ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
-          hermes::Blob blob((char*)page.elmts_.data() + page_off,
-                            page_size);
-          bkt_.PartialPut(page_name, blob, page_off, ctx);
-        } else {
-          std::string page_name =
-              hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
-          bkt_.Put<T>(page_name, page.elmts_[0], ctx);
-        }
+      auto it = data_.find(page_idx);
+      if (it == data_.end()) {
+        return;
+      }
+      Page<T> &page = it->second;
+      if constexpr (!IS_COMPLEX_TYPE) {
+        std::string page_name =
+            hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
+        ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+        hermes::Blob blob((char*)page.elmts_.data() + mod_start * elmt_size_,
+                          mod_count * elmt_size_);
+        bkt_.PartialPut(page_name, blob, mod_start * elmt_size_, ctx);
+      } else {
+        std::string page_name =
+            hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
+        bkt_.Put<T>(page_name, page.elmts_[0], ctx);
       }
     }
   }
 
   /** Serialize the in-memory cache back to backend */
-  void _Evict(size_t bytes = 0) {
-    _Flush();
-    if (min_page_ == -1) {
+  void _Evict(size_t page_idx) {
+    auto it = data_.find(page_idx);
+    if (it == data_.end()) {
       return;
     }
-    if (bytes == 0) {
-      bytes = 2 * page_mem_;
+    if (cur_page_ == &it->second) {
+      cur_page_ = nullptr;
     }
-    for (size_t page_idx = min_page_; page_idx <= max_page_; ++page_idx) {
-      if (cur_memory_ + bytes < window_size_) {
-        break;
-      }
-      auto it = data_.find(page_idx);
-      if (it == data_.end()) {
-        continue;
-      }
-      if (cur_page_ == &it->second) {
-        cur_page_ = nullptr;
-      }
-      data_.erase(it);
-      cur_memory_ -= page_size_;
-    }
+    data_.erase(it);
+    cur_memory_ -= page_size_;
   }
 
   /** Lock a region */
   void Barrier(u32 flags, MPI_Comm comm) {
-    _Flush();
     MPI_Barrier(comm);
     flags_.SetBits(flags);
   }
@@ -248,9 +513,6 @@ class VectorMegaMpi {
       HELOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
             rank, path_, page_idx, size_ / elmts_per_page_);
     }
-    if (window_size_ > page_mem_ && cur_memory_ > window_size_ - page_mem_) {
-      _Evict();
-    }
     hermes::Context ctx;
     data_.emplace(page_idx, Page<T>(page_idx));
     Page<T> &page = data_[page_idx];
@@ -267,64 +529,7 @@ class VectorMegaMpi {
       }
     }
     cur_memory_ += page_mem_;
-    if (min_page_ == -1 || max_page_ == -1) {
-      min_page_ = page_idx;
-      max_page_ = page_idx;
-    }
-    if (page_idx < min_page_) {
-      min_page_ = page_idx;
-    }
-    if (page_idx > max_page_) {
-      max_page_ = page_idx;
-    }
     return &page;
-  }
-
-  /** Create an async fault */
-  void _AsyncFaultBegin(size_t page_idx) {
-    if (page_idx > size_ / elmts_per_page_) {
-      int rank;
-      MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-      HELOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
-            rank, path_, page_idx, size_ / elmts_per_page_);
-    }
-    hermes::Context ctx;
-    data_.emplace(page_idx, Page<T>(page_idx));
-    Page<T> &page = data_[page_idx];
-    page.elmts_.resize(elmts_per_page_);
-    std::string page_name =
-        hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
-    if constexpr (!IS_COMPLEX_TYPE) {
-      ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
-      hermes::Blob blob((char*)page.elmts_.data(), page_size_);
-      page.async_ = bkt_.AsyncGet(page_name, blob, ctx);
-    } else {
-      throw std::runtime_error(
-          "Async not supported for serialized types at this time.");
-    }
-    cur_memory_ += page_mem_;
-    return &page;
-  }
-
-  /** Finish inducting a page */
-  void _AsyncFaultEnd(Page<T> &page) {
-    if (window_size_ > page_mem_ && cur_memory_ > window_size_ - page_mem_) {
-      _Evict();
-    }
-    size_t page_idx = page.id_;
-    page.async_->Wait();
-    HRUN_CLIENT->DelTask(page.async_);
-    page.async_.ptr_ = nullptr;
-    if (min_page_ == -1 || max_page_ == -1) {
-      min_page_ = page_idx;
-      max_page_ = page_idx;
-    }
-    if (page_idx < min_page_) {
-      min_page_ = page_idx;
-    }
-    if (page_idx > max_page_) {
-      max_page_ = page_idx;
-    }
   }
 
   /** Index operator */
@@ -340,26 +545,11 @@ class VectorMegaMpi {
         page_ptr = _Fault(page_idx);
       } else {
         page_ptr = &it->second;
-        if (page_ptr->async_.ptr_ != nullptr) {
-          _AsyncFaultEnd(*page_ptr);
-        }
       }
     }
     Page<T> &page = *page_ptr;
     cur_page_ = page_ptr;
     return page.elmts_[page_off];
-  }
-
-  /** check if sorted */
-  bool IsSorted(size_t off, size_t size) {
-    return std::is_sorted(begin() + off,
-                          begin() + off + size);
-  }
-
-  /** Sort a subset */
-  void Sort(size_t off, size_t size) {
-      std::sort(begin() + off,
-                begin() + off + size);
   }
 
   /** Size */
@@ -369,22 +559,17 @@ class VectorMegaMpi {
 
   /** Size of PGAS region */
   size_t local_size() const {
-    return pgas_elmt_.size_;
+    return pgas_.size_;
   }
 
   /** Offset of PGAS region */
   size_t local_off() const {
-    return pgas_elmt_.off_;
+    return pgas_.off_;
   }
 
-  /** Begin iterator */
-  VectorMegaMpiIterator<T, IS_COMPLEX_TYPE> begin() {
-    return VectorMegaMpiIterator<T, IS_COMPLEX_TYPE>(this, 0);
-  }
-
-  /** End iterator */
-  VectorMegaMpiIterator<T, IS_COMPLEX_TYPE> end() {
-    return VectorMegaMpiIterator<T, IS_COMPLEX_TYPE>(this, size());
+  /** Index of last element + 1 */
+  size_t local_last() const {
+    return pgas_.off_ + pgas_.size_;
   }
 
   /** Close region */
@@ -400,13 +585,13 @@ class VectorMegaMpi {
   void emplace_back(const T &elmt) {
     append_data_.emplace_back(elmt);
     if (append_data_.size() == elmts_per_page_) {
-      _flush_emplace();
+      _FlushEmplace();
     }
     ++size_;
   }
 
   /** Flush append buffer */
-  void _flush_emplace() {
+  void _FlushEmplace() {
     if constexpr(!IS_COMPLEX_TYPE) {
       hermes::Context ctx;
       ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
@@ -420,9 +605,9 @@ class VectorMegaMpi {
   }
 
   /** Flush emplace */
-  void flush_emplace(MPI_Comm comm, int proc_off, int nprocs) {
+  void FlushEmplace(MPI_Comm comm, int proc_off, int nprocs) {
     if (append_data_.size()) {
-      _flush_emplace();
+      _FlushEmplace();
     }
     HRUN_ADMIN->FlushRoot(DomainId::GetLocal());
     MPI_Barrier(comm);
@@ -433,10 +618,13 @@ class VectorMegaMpi {
     Hint(MM_READ_ONLY);
   }
 
-  void Prefetch(const std::vector<size_t> &next_pages) {
-    _Evict(next_pages.size() * page_size_);
-    for (size_t page_idx : next_pages) {
-      _AsyncFaultBegin(page_idx);
+  void Prefetch(size_t page_idx, float score) {
+    if (flags_.Any(MM_READ_ONLY | MM_READ_WRITE)) {
+//      hermes::Context ctx;
+//      std::string page_name =
+//          hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
+//      ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+//      bkt_.ReorganizeBlob(page_name, score, ctx);
     }
   }
 };

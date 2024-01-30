@@ -130,13 +130,11 @@ class RandomForestClassifierMpi {
     // Load train data and partition
     data_.Init(train_path, MM_READ_ONLY);
     data_.BoundMemory(window_size_);
-    Bounds bounds(rank_, nprocs_, data_.size());
-    data_.Pgas(bounds.off_, bounds.size_);
+    data_.EvenPgas(rank_, nprocs_, data_.size());
     // Load test data and partition
     test_data_.Init(test_path, MM_READ_ONLY);
     test_data_.BoundMemory(window_size_);
-    Bounds test_bounds(rank_, nprocs_, test_data_.size());
-    test_data_.Pgas(test_bounds.off_, test_bounds.size_);
+    test_data_.EvenPgas(rank_, nprocs_, test_data_.size());
     // Memory bounding paramters
     num_windows_ = data_.size() / window_size_;
     windows_per_proc_ = num_windows_ / nprocs_;
@@ -146,7 +144,7 @@ class RandomForestClassifierMpi {
                 trees_per_proc_ * nprocs_,
                 KILOBYTES(256),
                 MM_WRITE_ONLY);
-    trees_.Pgas(rank_ * trees_per_proc_, trees_per_proc_);
+    trees_.EvenPgas(rank_, nprocs_, rank_ * trees_per_proc_ * nprocs_);
     // Initialize RNG
     feature_dist_.Seed(SEED);
     feature_dist_.Shape(0, num_features_ - 1);
@@ -171,8 +169,7 @@ class RandomForestClassifierMpi {
   float Predict(DataT &data) {
     AssignT preds;
     preds.Init(dir_ + "/preds", nprocs_, MM_WRITE_ONLY);
-    Bounds bounds(rank_, nprocs_, data.size());
-    preds.Pgas(bounds.off_, bounds.size_);
+    preds.EvenPgas(rank_, nprocs_, data.size());
     size_t err_count = 0;
     // Get the offset and size of data to predict
     size_t size_pp = test_data_.size() / nprocs_;
@@ -233,7 +230,7 @@ class RandomForestClassifierMpi {
     AssignT sample;
     sample.Init(sample_name, bounds.size_, MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
-    sample.Pgas(0, data_.size());
+    sample.EvenPgas(0, 1, data_.size());
     size_t off = 0;
     mm::UniformSampler sampler(MM_PAGE_SIZE,
                                data_.size(),
@@ -270,7 +267,7 @@ class RandomForestClassifierMpi {
     AssignT new_sample;
     new_sample.Init(new_sample_name, new_size, MM_WRITE_ONLY);
     new_sample.BoundMemory(window_size_);
-    new_sample.Pgas(0, new_size);
+    new_sample.EvenPgas(0, 1, new_size);
     mm::UniformSampler sampler(MM_PAGE_SIZE,
                                sample.size(),
                                2354235 * (rank_ + 1));
@@ -374,8 +371,8 @@ class RandomForestClassifierMpi {
         right.emplace_back(off);
       }
     }
-    left.flush_emplace(MPI_COMM_SELF, 0, 0);
-    right.flush_emplace(MPI_COMM_SELF, 0, 0);
+    // left.flush_emplace(MPI_COMM_SELF, 0, 0);
+    // right.flush_emplace(MPI_COMM_SELF, 0, 0);
     left.Hint(MM_READ_ONLY);
     right.Hint(MM_READ_ONLY);
   }

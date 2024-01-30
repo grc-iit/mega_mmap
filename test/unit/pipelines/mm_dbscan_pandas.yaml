@@ -3,7 +3,7 @@ env: mega_mmap
 pkgs:
   - pkg_type: mm_dbscan
     pkg_name: mm_dbscan
-    path: ${HOME}/mm_data/kmeans.bin_0_0_1
+    path: ${HOME}/mm_data/kmeans.parquet_0_0_1
     window_size: 1m
     nprocs: 1
     ppn: 16

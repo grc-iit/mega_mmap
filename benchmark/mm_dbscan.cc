@@ -136,22 +136,20 @@ class DbscanMpi {
                 KILOBYTES(512),
                 MM_WRITE_ONLY);
     trees_.BoundMemory(window_size_);
-    trees_.Pgas(rank_, 1);
+    trees_.EvenPgas(rank_, nprocs_, nprocs_);
     trees_.Allocate();
   }
 
   AssignT RootSample() {
     AssignT sample;
-    Bounds bounds(rank_, nprocs_, data_.size());
-    HILOG(kInfo, "BOUNDS: {} {} {}", bounds.off_, bounds.size_, data_.size_)
     std::string sample_name =
         hshm::Formatter::format("{}/sample_{}_{}", dir_, 0, 0);
     sample.Init(sample_name, data_.size(), MM_WRITE_ONLY);
     sample.BoundMemory(window_size_);
-    sample.Pgas(bounds.off_, bounds.size_);
+    sample.EvenPgas(rank_, nprocs_, data_.size());
     sample.Allocate();
-    for (size_t i = 0; i < bounds.size_; ++i) {
-      sample[bounds.off_ + i] = bounds.off_ + i;
+    for (size_t i = 0; i < data_.local_size(); ++i) {
+      sample[data_.local_off() + i] = data_.local_off() + i;
     }
     sample.Barrier(MM_READ_ONLY, world_);
     return sample;
@@ -177,9 +175,7 @@ class DbscanMpi {
     HILOG(kInfo, "{}: Beginning tree proc_off={} nprocs={} uuid={} depth={}",
           rank_, proc_off, nprocs, uuid, node->depth_);
     // Create process sample
-    Bounds proc_bounds(rank_ - proc_off, nprocs,
-                       sample.size());
-    sample.Pgas(proc_bounds.off_, proc_bounds.size_);
+    sample.EvenPgas(rank_ - proc_off, nprocs, sample.size());
     // Decide the feature to split on
     FindGlobalMedianAndFeature(*node, sample,
                                node->depth_, uuid,
@@ -303,7 +299,7 @@ class DbscanMpi {
                                 dir_, node.depth_, uuid);
     should_splits.Init(should_splits_name, nprocs, MM_WRITE_ONLY);
     should_splits.BoundMemory(window_size_);
-    should_splits.Pgas(rank_ - proc_off, 1);
+    should_splits.EvenPgas(rank_ - proc_off, nprocs, nprocs);
     should_splits.Allocate();
     should_splits[rank_ - proc_off] = !(low_entropy || is_max_depth);
     should_splits.Barrier(MM_READ_ONLY, comm);
@@ -328,7 +324,7 @@ class DbscanMpi {
         hshm::Formatter::format("{}/nodes_{}_{}", dir_, depth, uuid);
     all_nodes.Init(all_nodes_name, nprocs, 256, MM_WRITE_ONLY);
     all_nodes.BoundMemory(window_size_);
-    all_nodes.Pgas(rank_ - proc_off, 1);
+    all_nodes.EvenPgas(rank_ - proc_off, nprocs, nprocs);
     all_nodes.Allocate();
     int subrank = rank_ - proc_off;
     all_nodes[subrank].resize(num_features_);
@@ -418,8 +414,8 @@ class DbscanMpi {
         right.emplace_back(off);
       }
     }
-    left.flush_emplace(comm, proc_off, nprocs);
-    right.flush_emplace(comm, proc_off, nprocs);
+    // left.flush_emplace(comm, proc_off, nprocs);
+    // right.flush_emplace(comm, proc_off, nprocs);
   }
 
   std::unordered_set<T, T> CombineDecisionTrees() {
@@ -503,8 +499,7 @@ class DbscanMpi {
     OutT preds;
     preds.Init(output_, data_.size());
     preds.BoundMemory(window_size_);
-    Bounds bounds(rank_, nprocs_, data_.size());
-    preds.Pgas(bounds.off_, bounds.size_);
+    preds.EvenPgas(rank_, nprocs_, data_.size());
     preds.Allocate();
     // Predict using dbscan tree
     size_t size_pp = data_.size() / nprocs_;
