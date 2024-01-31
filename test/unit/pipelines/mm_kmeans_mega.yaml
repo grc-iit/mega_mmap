@@ -7,6 +7,7 @@ pkgs:
     include: ${HOME}/mm_data
     pqdepth: 8
     qdpeth: 64
+    ram: 24g
   - pkg_type: mm_kmeans
     pkg_name: mm_kmeans
     path: ${HOME}/mm_data/kmeans.bin
