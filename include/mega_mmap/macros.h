@@ -85,7 +85,7 @@ struct PGAS {
   }
 };
 
-#define MM_PAGE_SIZE KILOBYTES(64)
+#define MM_PAGE_SIZE KILOBYTES(256)
 
 struct UniformSampler {
  public:
