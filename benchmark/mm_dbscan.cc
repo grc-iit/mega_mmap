@@ -148,9 +148,14 @@ class DbscanMpi {
     sample.BoundMemory(window_size_);
     sample.EvenPgas(rank_, nprocs_, data_.size());
     sample.Allocate();
+    auto tx = sample.SeqTxBegin(data_.local_off(),
+                                data_.local_size(),
+                                MM_WRITE_ONLY);
     for (size_t i = 0; i < data_.local_size(); ++i) {
-      sample[data_.local_off() + i] = data_.local_off() + i;
+      (*tx) = data_.local_off() + i;
+      ++tx;
     }
+    sample.TxEnd(tx);
     sample.Barrier(MM_READ_ONLY, world_);
     return sample;
   }
@@ -161,7 +166,9 @@ class DbscanMpi {
     CreateDecisionTree(root, sample, 0,
                        MPI_COMM_WORLD, 0, nprocs_);
     HILOG(kInfo, "Created decision tree")
-    trees_[rank_] = std::move(root);
+    auto tx = trees_.SeqTxBegin(rank_, 1, MM_WRITE_ONLY);
+    (*tx) = std::move(root);
+    trees_.TxEnd(tx);
     trees_.Barrier(MM_READ_ONLY, world_);
     std::unordered_set<T, T> joints = CombineDecisionTrees();
     Agglomerate(joints);

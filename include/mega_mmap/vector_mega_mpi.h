@@ -222,10 +222,23 @@ class Tx {
     return Tx(iter_.size_);
   }
 
+  // Copy constructor
+  Tx(const Tx &other) {
+    comm_ = other.comm_;
+    iter_ = other.iter_;
+    off_ = other.off_;
+    iter_cur_ = other.iter_cur_;
+    iter_max_ = other.iter_max_;
+    pages_ = other.pages_;
+    mm_vec_ = other.mm_vec_;
+    flags_ = other.flags_;
+    mm_lookahead_ = other.mm_lookahead_;
+  }
+
   // Begin iterator
-  explicit Tx(MPI_Comm comm, const IterT &iter, VectorT &mm_vec,
+  explicit Tx(MPI_Comm comm, const IterT &iter, VectorT *mm_vec,
               const bitfield32_t &flags, size_t mm_lookahead)
-      : comm_(comm), iter_(iter), mm_vec_(mm_vec),
+      : comm_(comm), iter_(iter), mm_vec_(*mm_vec),
         flags_(flags), mm_lookahead_(mm_lookahead) {
     if (mm_lookahead < 1) {
       mm_lookahead = 1;
@@ -416,41 +429,42 @@ class VectorMegaMpi {
   }
 
   /** Create a sequential transaction */
-  Tx<SequentialIterator, VectorMegaMpi<T>, T>
+  Tx<SequentialIterator, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T>
   SeqTxBegin(size_t off, size_t size, uint32_t flags,
              MPI_Comm comm = MPI_COMM_WORLD) {
     SequentialIterator iter(off, size, elmts_per_page_);
-    return Tx<SequentialIterator, VectorMegaMpi<T>, T>(
-        comm, iter, *this,
+    return Tx<SequentialIterator, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T>(
+        comm, iter, this,
         bitfield32_t(flags),
         elmts_per_window_ / elmts_per_page_);
   }
 
   /** Create a random transaction */
-  Tx<RandomIterator, VectorMegaMpi<T>, T>
+  Tx<RandomIterator, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T>
   RandTxBegin(size_t seed, size_t rand_left, size_t rand_size,
               size_t size, uint32_t flags,
               MPI_Comm comm = MPI_COMM_WORLD) {
     RandomIterator iter(seed, rand_left, rand_size, size, elmts_per_page_);
-    return Tx<RandomIterator, VectorMegaMpi<T>, T>(
-        comm, iter, *this,
+    return Tx<RandomIterator, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T>(
+        comm, iter, this,
         bitfield32_t(flags),
         elmts_per_window_ / elmts_per_page_);
   }
 
   /** Create a transaction */
   template<typename GenT>
-  Tx<GenT, VectorMegaMpi<T>, T>
+  Tx<GenT, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T>
   TxBegin(GenT &iter, uint32_t flags,
           MPI_Comm comm = MPI_COMM_WORLD) {
-    return Tx<GenT, VectorMegaMpi<T>, T>(comm, iter, *this,
-                                         bitfield32_t(flags),
-                                         elmts_per_window_ / elmts_per_page_);
+    return Tx<GenT, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T>(
+        comm, iter, *this,
+        bitfield32_t(flags),
+        elmts_per_window_ / elmts_per_page_);
   }
 
   /** End a transaction */
   template<typename GenT>
-  void TxEnd(Tx<GenT, VectorMegaMpi<T>, T> &tx) {
+  void TxEnd(Tx<GenT, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T> &tx) {
     tx.ConsistencyAndEviction();
     if (tx.flags_.Any(MM_APPEND_ONLY)) {
       FlushEmplace(tx.comm_, 0, 1);
