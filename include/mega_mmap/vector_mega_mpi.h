@@ -439,6 +439,8 @@ class VectorMegaMpi {
         elmts_per_window_ / elmts_per_page_);
   }
 
+  /** Create a arbitrary map */
+
   /** Create a random transaction */
   Tx<RandomIterator, VectorMegaMpi<T, IS_COMPLEX_TYPE>, T>
   RandTxBegin(size_t seed, size_t rand_left, size_t rand_size,
