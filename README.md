@@ -8,15 +8,7 @@ and storage.
 ## Apache Arrow
 https://arrow.apache.org/docs/developers/cpp/building.html
 ```
-scspkg create arrow
-cd $(scspkg pkg src arrow)
-git clone https://github.com/apache/arrow.git
-cd arrow/cpp
-mkdir build
-cd build
-cmake ../ -DCMAKE_INSTALL_PREFIX=`scspkg pkg root arrow` -DARROW_PARQUET=ON
-make -j8
-make install
+spack install arrow@15 +parquet
 ```
 
 ## Hermes
@@ -28,7 +20,6 @@ spack install hermes@master
 # Install
 
 ```
-module load arrow
 module load hermes_run
 module load mega_mmap
 spack load hermes_shm

@@ -534,7 +534,7 @@ class KmeansLlMpi : public KMeans<T> {
     {
       auto tx = data_.RandTxBegin(
           SEED, data_.local_off(), data_.local_size(),
-          data_.local_size(), count * l * NEAR_COUNT_PER_ITER,
+          count * l * NEAR_COUNT_PER_ITER,
           MM_READ_ONLY);
       ks_.reserve(count * l);
       for (size_t i = 0; i < count; ++i) {
@@ -610,8 +610,7 @@ class KmeansLlMpi : public KMeans<T> {
     size_t off = data_.local_off();
     size_t subsample = data_.local_size() / 8;
     auto tx = data_.RandTxBegin(
-        SEED, off, data_.local_size(),
-        data_.local_size(), subsample,
+        SEED, off, data_.local_size(), subsample,
         MM_READ_ONLY);
     for (size_t i = 0; i < subsample; ++i) {
       if (i % (data_.elmts_per_page_) == 0) {

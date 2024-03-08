@@ -51,6 +51,12 @@ endif()
 # This is for compatability with SPACK
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+# HermesShm
+find_package(HermesShm CONFIG REQUIRED)
+message(STATUS "found hermes_shm.h at ${HermesShm_INCLUDE_DIRS}")
+include_directories(${HermesShm_INCLUDE_DIRS})
+link_directories(${HermesShm_LIBRARY_DIRS})
+
 # Hermes
 find_package(Hermes CONFIG REQUIRED)
 message(STATUS "found Hermes at ${Hermes_DIR}")
