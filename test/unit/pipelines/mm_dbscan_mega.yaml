@@ -6,7 +6,7 @@ pkgs:
     sleep: 2
     include: ${HOME}/mm_data
     pqdepth: 8
-    qdpeth: 64
+    qdepth: 64eth: 64
   - pkg_type: mm_dbscan
     pkg_name: mm_dbscan
     path: ${HOME}/mm_data/kmeans.bin
