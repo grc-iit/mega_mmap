@@ -1,0 +1,116 @@
+/home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/ninja/linux/x64/ninja -DCMAKE_INSTALL_PREFIX=/home/llogan/Documents/Projects/scspkg/packages/mega_mmap -G Ninja -S /home/llogan/Documents/Projects/mega_mmap -B /home/llogan/Documents/Projects/mega_mmap/cmake-build-debug
+IN DEBUG MODE
+-- found libelf at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include/libelf;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include
+-- found cereal at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/cereal-1.3.2-hqv4bfyxuae5c4iah74o4wwjdyw5luyy/lib/cmake/cereal
+-- found catch2.h at 
+-- found yaml-cpp at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/yaml-cpp-0.7.0-w7ywg2vhge7ak4kj2vfdyuuoylsdmfiz/share/cmake/yaml-cpp
+-- found mpi.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- found omp.h at 
+-- found thallium at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-thallium-0.10.1-cxvim5clzrv422mp6ohkd6vsslwxm67u/share/cmake/thallium
+-- found boost at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/include
+-- found bz2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include
+-- found lzo2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo
+-- found zstd.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include
+-- found lz4.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include
+-- found zlib.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include
+-- found liblzma.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include
+-- found libbrotli.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include
+-- found libbrotli.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include
+-- found blosc2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include
+-- found libcrypto.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include
+-- found hermes_shm.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hermes_shm-master-fpuvacxj7pks3hyluczik5pmdyhxnfff/include
+-- found libelf at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include/libelf;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include
+-- found cereal at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/cereal-1.3.2-hqv4bfyxuae5c4iah74o4wwjdyw5luyy/lib/cmake/cereal
+-- found catch2.h at 
+-- found yaml-cpp at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/yaml-cpp-0.7.0-w7ywg2vhge7ak4kj2vfdyuuoylsdmfiz/share/cmake/yaml-cpp
+-- found mpi.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- found omp.h at 
+-- found thallium at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-thallium-0.10.1-cxvim5clzrv422mp6ohkd6vsslwxm67u/share/cmake/thallium
+-- found boost at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/include
+-- found bz2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include
+-- found lzo2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo
+-- found zstd.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include
+-- found lz4.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include
+-- found zlib.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include
+-- found liblzma.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include
+-- found libbrotli.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include
+-- found libbrotli.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include
+-- found blosc2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include
+-- found libcrypto.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include
+-- found hermes_shm.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hermes_shm-master-fpuvacxj7pks3hyluczik5pmdyhxnfff/include
+-- found yaml-cpp at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/yaml-cpp-0.7.0-w7ywg2vhge7ak4kj2vfdyuuoylsdmfiz/share/cmake/yaml-cpp
+-- found catch2.h at 
+-- found mpi.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- found omp.h at 
+-- found cereal
+-- found boost at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/include
+-- found thallium at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-thallium-0.10.1-cxvim5clzrv422mp6ohkd6vsslwxm67u/share/cmake/thallium
+-- found Hermes at /home/llogan/Documents/Projects/scspkg/packages/hermes_run
+LIBRARIES: -lrt;-ldl;cereal::cereal;-lstdc++fs;crypto;bz2;lzo2;zstd;lz4;z;lzma;brotlicommon;brotlidec;brotlienc;snappy;blosc2;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hermes_shm-master-fpuvacxj7pks3hyluczik5pmdyhxnfff/lib/libhermes_shm_data_structures.so;MPI::MPI_CXX;OpenMP::OpenMP_CXX;yaml-cpp;cereal::cereal;-ldl;-lrt;-lc;-pthread;thallium;hermes;Boost::regex;Boost::system;Boost::filesystem;Boost::fiber;/home/llogan/Documents/Projects/scspkg/packages/hermes_run/lib/libhrun_client.so
+INCLUDE: /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/include;/home/llogan/Documents/Projects/scspkg/packages/hermes_run/include
+-- Arrow version: 15.0.1
+-- Found the Arrow shared library: /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/libarrow.so.1500.1.0
+-- Found the Arrow import library: ARROW_IMPORT_LIB-NOTFOUND
+-- Found the Arrow static library: /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/libarrow.a
+CMake Warning at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/cmake/Parquet/FindThriftAlt.cmake:56 (find_package):
+  By not providing "FindThrift.cmake" in CMAKE_MODULE_PATH this project has
+  asked CMake to find a package configuration file provided by "Thrift", but
+  CMake did not find one.
+
+  Could not find a package configuration file provided by "Thrift" with any
+  of the following names:
+
+    ThriftConfig.cmake
+    thrift-config.cmake
+
+  Add the installation prefix of "Thrift" to CMAKE_PREFIX_PATH or set
+  "Thrift_DIR" to a directory containing one of the above files.  If "Thrift"
+  provides a separate development package or SDK, be sure it has been
+  installed.
+Call Stack (most recent call first):
+  /home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/cmake/linux/x64/share/cmake-3.27/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)
+  /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/cmake/Arrow/ArrowConfig.cmake:99 (find_dependency)
+  /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/cmake/Parquet/ParquetConfig.cmake:62 (arrow_find_dependencies)
+  CMakeLists.txt:69 (find_package)
+
+
+-- Parquet version: 15.0.1
+-- Found the Parquet shared library: /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/libparquet.so.1500.1.0
+-- Found the Parquet import library: PARQUET_IMPORT_LIB-NOTFOUND
+-- Found the Parquet static library: /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/libparquet.a
+-- found libelf at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include/libelf;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include
+-- found cereal at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/cereal-1.3.2-hqv4bfyxuae5c4iah74o4wwjdyw5luyy/lib/cmake/cereal
+-- found catch2.h at 
+-- found yaml-cpp at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/yaml-cpp-0.7.0-w7ywg2vhge7ak4kj2vfdyuuoylsdmfiz/share/cmake/yaml-cpp
+-- found mpi.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- found omp.h at 
+-- found thallium at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-thallium-0.10.1-cxvim5clzrv422mp6ohkd6vsslwxm67u/share/cmake/thallium
+-- found boost at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/include
+-- found bz2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include
+-- found lzo2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo
+-- found zstd.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include
+-- found lz4.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include
+-- found zlib.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include
+-- found liblzma.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include
+-- found libbrotli.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include
+-- found libbrotli.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include
+-- found blosc2.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include
+-- found libcrypto.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include
+-- found hermes_shm.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hermes_shm-master-fpuvacxj7pks3hyluczik5pmdyhxnfff/include
+-- found yaml-cpp at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/yaml-cpp-0.7.0-w7ywg2vhge7ak4kj2vfdyuuoylsdmfiz/share/cmake/yaml-cpp
+-- found catch2.h at 
+-- found mpi.h at /home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include
+-- Found OpenMP_C: -fopenmp (found version "4.5") 
+-- Found OpenMP_CXX: -fopenmp (found version "4.5") 
+-- found omp.h at 
+-- Configuring done (0.5s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/llogan/Documents/Projects/mega_mmap/cmake-build-debug

@@ -1,0 +1,8611 @@
+{
+	"entries" : 
+	[
+		{
+			"name" : "Arrow_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Arrow."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/cmake/Arrow"
+		},
+		{
+			"name" : "Boost_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Boost."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/cmake/Boost-1.83.0"
+		},
+		{
+			"name" : "Boost_FIBER_LIBRARY_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "STRING",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-wo7sp24s7t7f35dzcaelm5mrf5blbhrm/lib/libboost_fiber.so.1.83.0"
+		},
+		{
+			"name" : "Boost_FILESYSTEM_LIBRARY_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "STRING",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/libboost_filesystem.so.1.83.0"
+		},
+		{
+			"name" : "Boost_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a file."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/include"
+		},
+		{
+			"name" : "Boost_REGEX_LIBRARY_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "STRING",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/libboost_regex.so.1.83.0"
+		},
+		{
+			"name" : "Boost_SYSTEM_LIBRARY_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "STRING",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/libboost_system.so.1.83.0"
+		},
+		{
+			"name" : "CMAKE_ADDR2LINE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/addr2line"
+		},
+		{
+			"name" : "CMAKE_AR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/ar"
+		},
+		{
+			"name" : "CMAKE_ARCHIVE_OUTPUT_DIRECTORY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Single Directory for all static libraries."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap/cmake-build-debug/bin"
+		},
+		{
+			"name" : "CMAKE_BUILD_TYPE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel ..."
+				}
+			],
+			"type" : "STRING",
+			"value" : "Debug"
+		},
+		{
+			"name" : "CMAKE_CACHEFILE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "This is the directory where this CMakeCache.txt was created"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap/cmake-build-debug"
+		},
+		{
+			"name" : "CMAKE_CACHE_MAJOR_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Major version of cmake used to create the current loaded cache"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "3"
+		},
+		{
+			"name" : "CMAKE_CACHE_MINOR_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Minor version of cmake used to create the current loaded cache"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "27"
+		},
+		{
+			"name" : "CMAKE_CACHE_PATCH_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Patch version of cmake used to create the current loaded cache"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "8"
+		},
+		{
+			"name" : "CMAKE_COLOR_DIAGNOSTICS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Enable colored diagnostics throughout."
+				}
+			],
+			"type" : "BOOL",
+			"value" : "ON"
+		},
+		{
+			"name" : "CMAKE_COMMAND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to CMake executable."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/cmake/linux/x64/bin/cmake"
+		},
+		{
+			"name" : "CMAKE_CPACK_COMMAND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to cpack program executable."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/cmake/linux/x64/bin/cpack"
+		},
+		{
+			"name" : "CMAKE_CTEST_COMMAND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to ctest program executable."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/cmake/linux/x64/bin/ctest"
+		},
+		{
+			"name" : "CMAKE_CXX_COMPILER",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "CXX compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/c++"
+		},
+		{
+			"name" : "CMAKE_CXX_COMPILER_AR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "A wrapper around 'ar' adding the appropriate '--plugin' option for the GCC compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/gcc-ar-11"
+		},
+		{
+			"name" : "CMAKE_CXX_COMPILER_RANLIB",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "A wrapper around 'ranlib' adding the appropriate '--plugin' option for the GCC compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/gcc-ranlib-11"
+		},
+		{
+			"name" : "CMAKE_CXX_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the CXX compiler during all build types."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_CXX_FLAGS_DEBUG",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the CXX compiler during DEBUG builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-g"
+		},
+		{
+			"name" : "CMAKE_CXX_FLAGS_MINSIZEREL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the CXX compiler during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-Os -DNDEBUG"
+		},
+		{
+			"name" : "CMAKE_CXX_FLAGS_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the CXX compiler during RELEASE builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-O3 -DNDEBUG"
+		},
+		{
+			"name" : "CMAKE_CXX_FLAGS_RELWITHDEBINFO",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the CXX compiler during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-O2 -g -DNDEBUG"
+		},
+		{
+			"name" : "CMAKE_C_COMPILER",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "C compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/cc"
+		},
+		{
+			"name" : "CMAKE_C_COMPILER_AR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "A wrapper around 'ar' adding the appropriate '--plugin' option for the GCC compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/gcc-ar-11"
+		},
+		{
+			"name" : "CMAKE_C_COMPILER_RANLIB",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "A wrapper around 'ranlib' adding the appropriate '--plugin' option for the GCC compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/gcc-ranlib-11"
+		},
+		{
+			"name" : "CMAKE_C_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the C compiler during all build types."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_C_FLAGS_DEBUG",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the C compiler during DEBUG builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-g"
+		},
+		{
+			"name" : "CMAKE_C_FLAGS_MINSIZEREL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the C compiler during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-Os -DNDEBUG"
+		},
+		{
+			"name" : "CMAKE_C_FLAGS_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the C compiler during RELEASE builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-O3 -DNDEBUG"
+		},
+		{
+			"name" : "CMAKE_C_FLAGS_RELWITHDEBINFO",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the C compiler during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-O2 -g -DNDEBUG"
+		},
+		{
+			"name" : "CMAKE_DLLTOOL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "CMAKE_DLLTOOL-NOTFOUND"
+		},
+		{
+			"name" : "CMAKE_EXECUTABLE_FORMAT",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Executable file format"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "ELF"
+		},
+		{
+			"name" : "CMAKE_EXE_LINKER_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during all build types."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXE_LINKER_FLAGS_DEBUG",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during DEBUG builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXE_LINKER_FLAGS_MINSIZEREL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXE_LINKER_FLAGS_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during RELEASE builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXPORT_COMPILE_COMMANDS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Enable/Disable output of compile commands during generation."
+				}
+			],
+			"type" : "BOOL",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_EXTRA_GENERATOR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Name of external makefile project generator."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_FIND_PACKAGE_REDIRECTS_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake."
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap/cmake-build-debug/CMakeFiles/pkgRedirects"
+		},
+		{
+			"name" : "CMAKE_GENERATOR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Name of generator."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "Ninja"
+		},
+		{
+			"name" : "CMAKE_GENERATOR_INSTANCE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Generator instance identifier."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_GENERATOR_PLATFORM",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Name of generator platform."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_GENERATOR_TOOLSET",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Name of generator toolset."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_HAVE_LIBC_PTHREAD",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test CMAKE_HAVE_LIBC_PTHREAD"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "CMAKE_HOME_DIRECTORY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Source directory with the top level CMakeLists.txt file for this project"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap"
+		},
+		{
+			"name" : "CMAKE_INSTALL_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Install path prefix, prepended onto install directories."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/scspkg/packages/mega_mmap"
+		},
+		{
+			"name" : "CMAKE_INSTALL_SO_NO_EXE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Install .so files without execute permission."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "CMAKE_LIBRARY_OUTPUT_DIRECTORY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Single Directory for all Libraries"
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap/cmake-build-debug/bin"
+		},
+		{
+			"name" : "CMAKE_LINKER",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/ld"
+		},
+		{
+			"name" : "CMAKE_MAKE_PROGRAM",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "No help, variable specified on the command line."
+				}
+			],
+			"type" : "UNINITIALIZED",
+			"value" : "/home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/ninja/linux/x64/ninja"
+		},
+		{
+			"name" : "CMAKE_MODULE_LINKER_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of modules during all build types."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_MODULE_LINKER_FLAGS_DEBUG",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of modules during DEBUG builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_MODULE_LINKER_FLAGS_MINSIZEREL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of modules during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_MODULE_LINKER_FLAGS_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of modules during RELEASE builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of modules during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_NM",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/nm"
+		},
+		{
+			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "number of local generators"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "3"
+		},
+		{
+			"name" : "CMAKE_OBJCOPY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/objcopy"
+		},
+		{
+			"name" : "CMAKE_OBJDUMP",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/objdump"
+		},
+		{
+			"name" : "CMAKE_PLATFORM_INFO_INITIALIZED",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Platform information initialized"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "CMAKE_PROJECT_DESCRIPTION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_PROJECT_HOMEPAGE_URL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_PROJECT_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "MegaMmap"
+		},
+		{
+			"name" : "CMAKE_RANLIB",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/ranlib"
+		},
+		{
+			"name" : "CMAKE_READELF",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/readelf"
+		},
+		{
+			"name" : "CMAKE_ROOT",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to CMake installation."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Installed/CLion-2023.3.4/clion-2023.3.4/bin/cmake/linux/x64/share/cmake-3.27"
+		},
+		{
+			"name" : "CMAKE_RUNTIME_OUTPUT_DIRECTORY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Single Directory for all Executables."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap/cmake-build-debug/bin"
+		},
+		{
+			"name" : "CMAKE_SHARED_LINKER_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of shared libraries during all build types."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_SHARED_LINKER_FLAGS_DEBUG",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of shared libraries during DEBUG builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_SHARED_LINKER_FLAGS_MINSIZEREL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of shared libraries during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_SHARED_LINKER_FLAGS_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of shared libraries during RELEASE builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of shared libraries during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_SKIP_INSTALL_RPATH",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "If set, runtime paths are not added when installing shared libraries, but are added when building."
+				}
+			],
+			"type" : "BOOL",
+			"value" : "NO"
+		},
+		{
+			"name" : "CMAKE_SKIP_RPATH",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "If set, runtime paths are not added when using shared libraries."
+				}
+			],
+			"type" : "BOOL",
+			"value" : "NO"
+		},
+		{
+			"name" : "CMAKE_STATIC_LINKER_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of static libraries during all build types."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_STATIC_LINKER_FLAGS_DEBUG",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of static libraries during DEBUG builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of static libraries during MINSIZEREL builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_STATIC_LINKER_FLAGS_RELEASE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of static libraries during RELEASE builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flags used by the linker during the creation of static libraries during RELWITHDEBINFO builds."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "CMAKE_STRIP",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/strip"
+		},
+		{
+			"name" : "CMAKE_TAPI",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "CMAKE_TAPI-NOTFOUND"
+		},
+		{
+			"name" : "CMAKE_UNAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "uname command"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/usr/bin/uname"
+		},
+		{
+			"name" : "CMAKE_VERBOSE_MAKEFILE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "If this value is on, makefiles will be generated without the .SILENT directive, and all commands will be echoed to the console during the make.  This is useful for debugging only. With Visual Studio IDE projects all commands are done without /nologo."
+				}
+			],
+			"type" : "BOOL",
+			"value" : "FALSE"
+		},
+		{
+			"name" : "Catch2_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Catch2."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/catch2-3.0.1-ug5nppegwb6bxhtc6vfnngashaldsaw4/lib/cmake/Catch2"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Boost",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding Boost"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/cmake/Boost-1.83.0/BoostConfig.cmake][cfound components: regex system filesystem fiber ][v1.83.0()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_HDF5",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding HDF5"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[hdf5-shared][/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hdf5-1.14.0-tdpphnuafputmps54uqzb2o7xev2zhee/include][c ][v1.14.0(1.14.0)]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_MPI",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding MPI"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[TRUE][TRUE][cfound components: C CXX ][v3.1()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_MPI_C",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding MPI_C"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/lib/libmpi.so][mpi][/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include][TRUE][v3.1()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_MPI_CXX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding MPI_CXX"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/lib/libmpi.so][mpi][/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include][TRUE][v3.1()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenMP",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding OpenMP"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[TRUE][TRUE][cfound components: C CXX ][v4.5()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_C",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding OpenMP_C"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[-fopenmp][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][v4.5()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenMP_CXX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding OpenMP_CXX"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[-fopenmp][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so][/usr/lib/x86_64-linux-gnu/libpthread.a][v4.5()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding PkgConfig"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/pkgconf-1.9.5-yqjuchl3dopetsexegzazhuin66uq64q/bin/pkg-config][v1.9.5()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Threads",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding Threads"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[TRUE][v()]"
+		},
+		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_ThriftAlt",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding ThriftAlt"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib/libthrift.so][/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/include][c ][v0.18.1()]"
+		},
+		{
+			"name" : "HDF5_DIFF_EXECUTABLE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "HDF5 file differencing tool."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hdf5-1.14.0-tdpphnuafputmps54uqzb2o7xev2zhee/bin/h5diff"
+		},
+		{
+			"name" : "HDF5_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for HDF5."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hdf5-1.14.0-tdpphnuafputmps54uqzb2o7xev2zhee/cmake"
+		},
+		{
+			"name" : "HermesShm_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for HermesShm."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hermes_shm-master-fpuvacxj7pks3hyluczik5pmdyhxnfff/cmake"
+		},
+		{
+			"name" : "HermesShm_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a file."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hermes_shm-master-fpuvacxj7pks3hyluczik5pmdyhxnfff/include"
+		},
+		{
+			"name" : "HermesShm_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hermes_shm-master-fpuvacxj7pks3hyluczik5pmdyhxnfff/lib/libhermes_shm_data_structures.so"
+		},
+		{
+			"name" : "Hermes_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Hermes."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/scspkg/packages/hermes_run/cmake"
+		},
+		{
+			"name" : "Hermes_INCLUDE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a file."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/scspkg/packages/hermes_run/include"
+		},
+		{
+			"name" : "Hermes_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/scspkg/packages/hermes_run/lib/libhrun_client.so"
+		},
+		{
+			"name" : "LIBRT",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/lib/x86_64-linux-gnu/librt.a"
+		},
+		{
+			"name" : "MPIEXEC_EXECUTABLE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Executable for running MPI programs."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/bin/mpiexec"
+		},
+		{
+			"name" : "MPIEXEC_MAX_NUMPROCS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Maximum number of processors available to run MPI applications."
+				}
+			],
+			"type" : "STRING",
+			"value" : "8"
+		},
+		{
+			"name" : "MPIEXEC_NUMPROC_FLAG",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Flag used by MPI to specify the number of processes for mpiexec; the next option will be the number of processes."
+				}
+			],
+			"type" : "STRING",
+			"value" : "-n"
+		},
+		{
+			"name" : "MPIEXEC_POSTFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "These flags will be placed after all flags passed to mpiexec."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPIEXEC_PREFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "These flags will be directly before the executable that is being run by mpiexec."
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPI_CXX_ADDITIONAL_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI CXX additional include directories"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPI_CXX_COMPILER",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI compiler for CXX"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/bin/mpicxx"
+		},
+		{
+			"name" : "MPI_CXX_COMPILER_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI CXX compiler wrapper include directories"
+				}
+			],
+			"type" : "STRING",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include"
+		},
+		{
+			"name" : "MPI_CXX_COMPILE_DEFINITIONS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI CXX compilation definitions"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPI_CXX_COMPILE_OPTIONS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI CXX compilation options"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPI_CXX_HEADER_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a file."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include"
+		},
+		{
+			"name" : "MPI_CXX_LIB_NAMES",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI CXX libraries to link against"
+				}
+			],
+			"type" : "STRING",
+			"value" : "mpi"
+		},
+		{
+			"name" : "MPI_CXX_LINK_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI CXX linker flags"
+				}
+			],
+			"type" : "STRING",
+			"value" : "-Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/lib -Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hwloc-2.9.1-nnz7vs2sqkxrdvgxqohxqfnzpjmkya5y/lib -Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libevent-2.1.12-2pgggguk6xobwerfgdcbf7mcxqkfctph/lib -Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/pmix-5.0.1-gehxngg7cudln3ksd7ntogjoddjrcqiz/lib -L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hwloc-2.9.1-nnz7vs2sqkxrdvgxqohxqfnzpjmkya5y/lib -L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libevent-2.1.12-2pgggguk6xobwerfgdcbf7mcxqkfctph/lib -L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/pmix-5.0.1-gehxngg7cudln3ksd7ntogjoddjrcqiz/lib"
+		},
+		{
+			"name" : "MPI_CXX_SKIP_MPICXX",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "If true, the MPI-2 C++ bindings are disabled using definitions."
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "MPI_C_ADDITIONAL_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI C additional include directories"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPI_C_COMPILER",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI compiler for C"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/bin/mpicc"
+		},
+		{
+			"name" : "MPI_C_COMPILER_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI C compiler wrapper include directories"
+				}
+			],
+			"type" : "STRING",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include"
+		},
+		{
+			"name" : "MPI_C_COMPILE_DEFINITIONS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI C compilation definitions"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPI_C_COMPILE_OPTIONS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI C compilation options"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "MPI_C_HEADER_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a file."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/include"
+		},
+		{
+			"name" : "MPI_C_LIB_NAMES",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI C libraries to link against"
+				}
+			],
+			"type" : "STRING",
+			"value" : "mpi"
+		},
+		{
+			"name" : "MPI_C_LINK_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "MPI C linker flags"
+				}
+			],
+			"type" : "STRING",
+			"value" : "-Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/lib -Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hwloc-2.9.1-nnz7vs2sqkxrdvgxqohxqfnzpjmkya5y/lib -Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libevent-2.1.12-2pgggguk6xobwerfgdcbf7mcxqkfctph/lib -Wl,-rpath -Wl,/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/pmix-5.0.1-gehxngg7cudln3ksd7ntogjoddjrcqiz/lib -L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/hwloc-2.9.1-nnz7vs2sqkxrdvgxqohxqfnzpjmkya5y/lib -L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libevent-2.1.12-2pgggguk6xobwerfgdcbf7mcxqkfctph/lib -L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/pmix-5.0.1-gehxngg7cudln3ksd7ntogjoddjrcqiz/lib"
+		},
+		{
+			"name" : "MPI_RESULT_CXX_test_mpi_MPICXX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Result of TRY_COMPILE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "MPI_RESULT_CXX_test_mpi_normal",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Result of TRY_COMPILE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "MPI_RESULT_C_test_mpi_normal",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Result of TRY_COMPILE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "MPI_mpi_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Location of the mpi library for MPI"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openmpi-4.1.6-xk75jhlk7zzy7y5oxvryrbk7zoohzcou/lib/libmpi.so"
+		},
+		{
+			"name" : "MegaMmap_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap/cmake-build-debug"
+		},
+		{
+			"name" : "MegaMmap_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "MegaMmap_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/llogan/Documents/Projects/mega_mmap"
+		},
+		{
+			"name" : "OpenMP_COMPILE_RESULT_CXX_fopenmp",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Result of TRY_COMPILE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "OpenMP_COMPILE_RESULT_C_fopenmp",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Result of TRY_COMPILE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "OpenMP_CXX_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "CXX compiler flags for OpenMP parallelization"
+				}
+			],
+			"type" : "STRING",
+			"value" : "-fopenmp"
+		},
+		{
+			"name" : "OpenMP_CXX_LIB_NAMES",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "CXX compiler libraries for OpenMP parallelization"
+				}
+			],
+			"type" : "STRING",
+			"value" : "gomp;pthread"
+		},
+		{
+			"name" : "OpenMP_CXX_SPEC_DATE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "CXX compiler's OpenMP specification date"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "201511"
+		},
+		{
+			"name" : "OpenMP_C_FLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "C compiler flags for OpenMP parallelization"
+				}
+			],
+			"type" : "STRING",
+			"value" : "-fopenmp"
+		},
+		{
+			"name" : "OpenMP_C_LIB_NAMES",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "C compiler libraries for OpenMP parallelization"
+				}
+			],
+			"type" : "STRING",
+			"value" : "gomp;pthread"
+		},
+		{
+			"name" : "OpenMP_C_SPEC_DATE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "C compiler's OpenMP specification date"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "201511"
+		},
+		{
+			"name" : "OpenMP_SPECTEST_CXX_",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Result of TRY_COMPILE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "OpenMP_SPECTEST_C_",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Result of TRY_COMPILE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "OpenMP_gomp_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to the gomp library for OpenMP"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so"
+		},
+		{
+			"name" : "OpenMP_pthread_LIBRARY",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to the pthread library for OpenMP"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/lib/x86_64-linux-gnu/libpthread.a"
+		},
+		{
+			"name" : "PKG_CONFIG_ARGN",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Arguments to supply to pkg-config"
+				}
+			],
+			"type" : "STRING",
+			"value" : ""
+		},
+		{
+			"name" : "PKG_CONFIG_EXECUTABLE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "pkg-config executable"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/pkgconf-1.9.5-yqjuchl3dopetsexegzazhuin66uq64q/bin/pkg-config"
+		},
+		{
+			"name" : "Parquet_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Parquet."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/arrow-15.0.1-7rbgaydw3fm6y2oeibndjszdpy4yuyza/lib/cmake/Parquet"
+		},
+		{
+			"name" : "THRIFT_COMPILER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a program."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/bin/thrift"
+		},
+		{
+			"name" : "THRIFT_PC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/include"
+		},
+		{
+			"name" : "THRIFT_PC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "THRIFT_PC_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/include"
+		},
+		{
+			"name" : "THRIFT_PC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/include"
+		},
+		{
+			"name" : "THRIFT_PC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib;-lthrift"
+		},
+		{
+			"name" : "THRIFT_PC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib"
+		},
+		{
+			"name" : "THRIFT_PC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "thrift"
+		},
+		{
+			"name" : "THRIFT_PC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib"
+		},
+		{
+			"name" : "THRIFT_PC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "thrift"
+		},
+		{
+			"name" : "THRIFT_PC_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt"
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/include"
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/include"
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib;-lthrift"
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "thrift"
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib"
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "0.18.1"
+		},
+		{
+			"name" : "THRIFT_PC_thrift_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_thrift_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_thrift_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "THRIFT_PC_thrift_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "ThriftAlt_LIB",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib/libthrift.so"
+		},
+		{
+			"name" : "Thrift_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Thrift."
+				}
+			],
+			"type" : "PATH",
+			"value" : "Thrift_DIR-NOTFOUND"
+		},
+		{
+			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "linker supports push/pop state"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "TRUE"
+		},
+		{
+			"name" : "__pkg_config_arguments_THRIFT_PC",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "thrift"
+		},
+		{
+			"name" : "__pkg_config_arguments_blosc2",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;blosc2"
+		},
+		{
+			"name" : "__pkg_config_arguments_bzip2",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;bzip2"
+		},
+		{
+			"name" : "__pkg_config_arguments_libbrotlicommon",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;libbrotlicommon;libbrotlidec;libbrotlienc"
+		},
+		{
+			"name" : "__pkg_config_arguments_libcrypto",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;libcrypto"
+		},
+		{
+			"name" : "__pkg_config_arguments_libelf",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;libelf"
+		},
+		{
+			"name" : "__pkg_config_arguments_liblz4",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;liblz4"
+		},
+		{
+			"name" : "__pkg_config_arguments_liblzma",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;liblzma"
+		},
+		{
+			"name" : "__pkg_config_arguments_libzstd",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;libzstd"
+		},
+		{
+			"name" : "__pkg_config_arguments_lzo2",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;lzo2"
+		},
+		{
+			"name" : "__pkg_config_arguments_margo",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;IMPORTED_TARGET;margo"
+		},
+		{
+			"name" : "__pkg_config_arguments_snappy",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;snappy"
+		},
+		{
+			"name" : "__pkg_config_arguments_zlib",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "REQUIRED;zlib"
+		},
+		{
+			"name" : "__pkg_config_checked_THRIFT_PC",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_blosc2",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_bzip2",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_libbrotlicommon",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_libcrypto",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_libelf",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_liblz4",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_liblzma",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_libzstd",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_lzo2",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_margo",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_snappy",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "__pkg_config_checked_zlib",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "blosc2_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include"
+		},
+		{
+			"name" : "blosc2_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "blosc2_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include"
+		},
+		{
+			"name" : "blosc2_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include"
+		},
+		{
+			"name" : "blosc2_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/lib;-lblosc2"
+		},
+		{
+			"name" : "blosc2_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/lib"
+		},
+		{
+			"name" : "blosc2_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "blosc2"
+		},
+		{
+			"name" : "blosc2_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/lib"
+		},
+		{
+			"name" : "blosc2_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "blosc2"
+		},
+		{
+			"name" : "blosc2_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq"
+		},
+		{
+			"name" : "blosc2_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include"
+		},
+		{
+			"name" : "blosc2_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/include"
+		},
+		{
+			"name" : "blosc2_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/lib;-lblosc2"
+		},
+		{
+			"name" : "blosc2_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "blosc2"
+		},
+		{
+			"name" : "blosc2_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/lib"
+		},
+		{
+			"name" : "blosc2_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "2.11.1"
+		},
+		{
+			"name" : "blosc2_blosc2_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_blosc2_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_blosc2_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "blosc2_blosc2_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "boost_atomic_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for boost_atomic."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/cmake/boost_atomic-1.83.0"
+		},
+		{
+			"name" : "boost_context_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for boost_context."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-wo7sp24s7t7f35dzcaelm5mrf5blbhrm/lib/cmake/boost_context-1.83.0"
+		},
+		{
+			"name" : "boost_fiber_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for boost_fiber."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-wo7sp24s7t7f35dzcaelm5mrf5blbhrm/lib/cmake/boost_fiber-1.83.0"
+		},
+		{
+			"name" : "boost_filesystem_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for boost_filesystem."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/cmake/boost_filesystem-1.83.0"
+		},
+		{
+			"name" : "boost_headers_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for boost_headers."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/cmake/boost_headers-1.83.0"
+		},
+		{
+			"name" : "boost_regex_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for boost_regex."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/cmake/boost_regex-1.83.0"
+		},
+		{
+			"name" : "boost_system_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for boost_system."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-z2opokujixbvkn2h3f7t2uv7dpz6ls7g/lib/cmake/boost_system-1.83.0"
+		},
+		{
+			"name" : "bzip2_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include"
+		},
+		{
+			"name" : "bzip2_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "bzip2_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include"
+		},
+		{
+			"name" : "bzip2_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include"
+		},
+		{
+			"name" : "bzip2_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/lib;-lbz2"
+		},
+		{
+			"name" : "bzip2_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/lib"
+		},
+		{
+			"name" : "bzip2_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "bz2"
+		},
+		{
+			"name" : "bzip2_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/lib"
+		},
+		{
+			"name" : "bzip2_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "bzip2"
+		},
+		{
+			"name" : "bzip2_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt"
+		},
+		{
+			"name" : "bzip2_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include"
+		},
+		{
+			"name" : "bzip2_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/include"
+		},
+		{
+			"name" : "bzip2_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/lib;-lbz2"
+		},
+		{
+			"name" : "bzip2_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "bz2"
+		},
+		{
+			"name" : "bzip2_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/lib"
+		},
+		{
+			"name" : "bzip2_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.0.8"
+		},
+		{
+			"name" : "bzip2_bzip2_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_bzip2_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_bzip2_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "bzip2_bzip2_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "cereal_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for cereal."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/cereal-1.3.2-hqv4bfyxuae5c4iah74o4wwjdyw5luyy/lib/cmake/cereal"
+		},
+		{
+			"name" : "libbrotlicommon_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include"
+		},
+		{
+			"name" : "libbrotlicommon_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "libbrotlicommon_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include"
+		},
+		{
+			"name" : "libbrotlicommon_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;-lbrotlicommon;-lbrotlidec;-R/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;-lbrotlienc"
+		},
+		{
+			"name" : "libbrotlicommon_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-R/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib"
+		},
+		{
+			"name" : "libbrotlicommon_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "brotlicommon;brotlidec;brotlienc"
+		},
+		{
+			"name" : "libbrotlicommon_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib"
+		},
+		{
+			"name" : "libbrotlicommon_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include"
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include"
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;-lbrotlidec;-lbrotlienc;-R/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;-lbrotlicommon;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;-R/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;-lbrotlicommon"
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-R/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;-R/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib"
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "brotlidec;brotlienc;brotlicommon;brotlicommon"
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib"
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlicommon_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlicommon_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlicommon_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "libbrotlicommon"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlicommon_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlicommon_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.0.9"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlidec_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlidec_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlidec_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "libbrotlidec"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlidec_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlidec_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.0.9"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlienc_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/include"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlienc_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlienc_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "libbrotlienc"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlienc_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc"
+		},
+		{
+			"name" : "libbrotlicommon_libbrotlienc_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.0.9"
+		},
+		{
+			"name" : "libcrypto_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include"
+		},
+		{
+			"name" : "libcrypto_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "libcrypto_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include"
+		},
+		{
+			"name" : "libcrypto_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include"
+		},
+		{
+			"name" : "libcrypto_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/lib64;-lcrypto"
+		},
+		{
+			"name" : "libcrypto_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/lib64"
+		},
+		{
+			"name" : "libcrypto_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "crypto"
+		},
+		{
+			"name" : "libcrypto_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/lib64"
+		},
+		{
+			"name" : "libcrypto_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "libcrypto"
+		},
+		{
+			"name" : "libcrypto_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z"
+		},
+		{
+			"name" : "libcrypto_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include"
+		},
+		{
+			"name" : "libcrypto_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/include"
+		},
+		{
+			"name" : "libcrypto_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/lib64;-lcrypto;-lz;-ldl;-pthread"
+		},
+		{
+			"name" : "libcrypto_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-pthread"
+		},
+		{
+			"name" : "libcrypto_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "crypto;z;dl"
+		},
+		{
+			"name" : "libcrypto_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/lib64"
+		},
+		{
+			"name" : "libcrypto_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "3.1.3"
+		},
+		{
+			"name" : "libcrypto_libcrypto_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_libcrypto_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_libcrypto_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libcrypto_libcrypto_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include/libelf;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include"
+		},
+		{
+			"name" : "libelf_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "libelf_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include"
+		},
+		{
+			"name" : "libelf_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include/libelf;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include"
+		},
+		{
+			"name" : "libelf_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/lib;-lelf"
+		},
+		{
+			"name" : "libelf_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/lib"
+		},
+		{
+			"name" : "libelf_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "elf"
+		},
+		{
+			"name" : "libelf_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/lib"
+		},
+		{
+			"name" : "libelf_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "libelf"
+		},
+		{
+			"name" : "libelf_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7"
+		},
+		{
+			"name" : "libelf_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include/libelf;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include"
+		},
+		{
+			"name" : "libelf_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include/libelf;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/include"
+		},
+		{
+			"name" : "libelf_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/lib;-lelf"
+		},
+		{
+			"name" : "libelf_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "elf"
+		},
+		{
+			"name" : "libelf_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/lib"
+		},
+		{
+			"name" : "libelf_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "0.8.13"
+		},
+		{
+			"name" : "libelf_libelf_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_libelf_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_libelf_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libelf_libelf_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include"
+		},
+		{
+			"name" : "liblz4_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "liblz4_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include"
+		},
+		{
+			"name" : "liblz4_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include"
+		},
+		{
+			"name" : "liblz4_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/lib;-llz4"
+		},
+		{
+			"name" : "liblz4_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/lib"
+		},
+		{
+			"name" : "liblz4_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "lz4"
+		},
+		{
+			"name" : "liblz4_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/lib"
+		},
+		{
+			"name" : "liblz4_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "liblz4"
+		},
+		{
+			"name" : "liblz4_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv"
+		},
+		{
+			"name" : "liblz4_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include"
+		},
+		{
+			"name" : "liblz4_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/include"
+		},
+		{
+			"name" : "liblz4_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/lib;-llz4"
+		},
+		{
+			"name" : "liblz4_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "lz4"
+		},
+		{
+			"name" : "liblz4_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/lib"
+		},
+		{
+			"name" : "liblz4_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.9.4"
+		},
+		{
+			"name" : "liblz4_liblz4_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_liblz4_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_liblz4_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblz4_liblz4_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include"
+		},
+		{
+			"name" : "liblzma_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "liblzma_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include"
+		},
+		{
+			"name" : "liblzma_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include"
+		},
+		{
+			"name" : "liblzma_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/lib;-llzma"
+		},
+		{
+			"name" : "liblzma_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/lib"
+		},
+		{
+			"name" : "liblzma_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "lzma"
+		},
+		{
+			"name" : "liblzma_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/lib"
+		},
+		{
+			"name" : "liblzma_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "liblzma"
+		},
+		{
+			"name" : "liblzma_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz"
+		},
+		{
+			"name" : "liblzma_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include"
+		},
+		{
+			"name" : "liblzma_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/include"
+		},
+		{
+			"name" : "liblzma_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/lib;-llzma;-pthread;-lpthread"
+		},
+		{
+			"name" : "liblzma_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-pthread"
+		},
+		{
+			"name" : "liblzma_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "lzma;pthread"
+		},
+		{
+			"name" : "liblzma_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/lib"
+		},
+		{
+			"name" : "liblzma_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "5.4.1"
+		},
+		{
+			"name" : "liblzma_liblzma_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_liblzma_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_liblzma_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "liblzma_liblzma_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include"
+		},
+		{
+			"name" : "libzstd_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "libzstd_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include"
+		},
+		{
+			"name" : "libzstd_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include"
+		},
+		{
+			"name" : "libzstd_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/lib;-lzstd"
+		},
+		{
+			"name" : "libzstd_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/lib"
+		},
+		{
+			"name" : "libzstd_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "zstd"
+		},
+		{
+			"name" : "libzstd_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/lib"
+		},
+		{
+			"name" : "libzstd_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "libzstd"
+		},
+		{
+			"name" : "libzstd_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt"
+		},
+		{
+			"name" : "libzstd_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include"
+		},
+		{
+			"name" : "libzstd_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/include"
+		},
+		{
+			"name" : "libzstd_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/lib;-lzstd;-pthread"
+		},
+		{
+			"name" : "libzstd_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-pthread"
+		},
+		{
+			"name" : "libzstd_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "zstd"
+		},
+		{
+			"name" : "libzstd_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/lib"
+		},
+		{
+			"name" : "libzstd_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.5.5"
+		},
+		{
+			"name" : "libzstd_libzstd_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_libzstd_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_libzstd_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "libzstd_libzstd_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo"
+		},
+		{
+			"name" : "lzo2_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "lzo2_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include"
+		},
+		{
+			"name" : "lzo2_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo"
+		},
+		{
+			"name" : "lzo2_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/lib;-llzo2"
+		},
+		{
+			"name" : "lzo2_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/lib"
+		},
+		{
+			"name" : "lzo2_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "lzo2"
+		},
+		{
+			"name" : "lzo2_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/lib"
+		},
+		{
+			"name" : "lzo2_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "lzo2"
+		},
+		{
+			"name" : "lzo2_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg"
+		},
+		{
+			"name" : "lzo2_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo"
+		},
+		{
+			"name" : "lzo2_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/include/lzo"
+		},
+		{
+			"name" : "lzo2_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/lib;-llzo2"
+		},
+		{
+			"name" : "lzo2_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "lzo2"
+		},
+		{
+			"name" : "lzo2_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/lib"
+		},
+		{
+			"name" : "lzo2_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "2.10"
+		},
+		{
+			"name" : "lzo2_lzo2_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_lzo2_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_lzo2_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "lzo2_lzo2_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/include;-pthread;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-wo7sp24s7t7f35dzcaelm5mrf5blbhrm/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include/json-c"
+		},
+		{
+			"name" : "margo_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-pthread"
+		},
+		{
+			"name" : "margo_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "margo_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/include"
+		},
+		{
+			"name" : "margo_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-wo7sp24s7t7f35dzcaelm5mrf5blbhrm/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include/json-c"
+		},
+		{
+			"name" : "margo_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/lib;-lmargo;-lpthread;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/lib;-lmercury;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/lib;-labt;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/lib;-ljson-c"
+		},
+		{
+			"name" : "margo_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/lib"
+		},
+		{
+			"name" : "margo_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "margo;pthread;mercury;abt;json-c"
+		},
+		{
+			"name" : "margo_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/lib"
+		},
+		{
+			"name" : "margo_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "margo"
+		},
+		{
+			"name" : "margo_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx"
+		},
+		{
+			"name" : "margo_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/include;-pthread;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-wo7sp24s7t7f35dzcaelm5mrf5blbhrm/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include;-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include/json-c"
+		},
+		{
+			"name" : "margo_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-pthread"
+		},
+		{
+			"name" : "margo_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/boost-1.83.0-wo7sp24s7t7f35dzcaelm5mrf5blbhrm/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/include/json-c"
+		},
+		{
+			"name" : "margo_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/lib;-lmargo;-lpthread;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/lib;-lmercury;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/lib;-labt;-lpthread;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/lib;-ljson-c;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/lib;-lmchecksum;-lna;-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libfabric-1.19.0-mbk5grjupy4mqipdxwjuqn3n74o2nevy/lib;-lfabric;-lmercury_util;-ldl;-lrt"
+		},
+		{
+			"name" : "margo_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "margo;pthread;mercury;abt;pthread;json-c;mchecksum;na;fabric;mercury_util;dl;rt"
+		},
+		{
+			"name" : "margo_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/lib;/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libfabric-1.19.0-mbk5grjupy4mqipdxwjuqn3n74o2nevy/lib"
+		},
+		{
+			"name" : "margo_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "0.14.1"
+		},
+		{
+			"name" : "margo_margo_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_margo_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_margo_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "margo_margo_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "pkgcfg_lib_THRIFT_PC_thrift",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib/libthrift.so"
+		},
+		{
+			"name" : "pkgcfg_lib_blosc2_blosc2",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/c-blosc2-2.11.1-l3byn23mehakbdv7epkmecn4pvuqchcq/lib/libblosc2.so"
+		},
+		{
+			"name" : "pkgcfg_lib_bzip2_bz2",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/bzip2-1.0.8-yx7ikurnz6j5zte5lrz5woj56t3buzjt/lib/libbz2.so"
+		},
+		{
+			"name" : "pkgcfg_lib_libbrotlicommon_brotlicommon",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib/libbrotlicommon.so"
+		},
+		{
+			"name" : "pkgcfg_lib_libbrotlicommon_brotlidec",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib/libbrotlidec.so"
+		},
+		{
+			"name" : "pkgcfg_lib_libbrotlicommon_brotlienc",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/brotli-1.0.9-mke5lt72dyv2k7tg3progx5f357bblfc/lib/libbrotlienc.so"
+		},
+		{
+			"name" : "pkgcfg_lib_libcrypto_crypto",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/openssl-3.1.3-5yitv3h35hzl7kz7zdc2ptc5r3dqpf3z/lib64/libcrypto.so"
+		},
+		{
+			"name" : "pkgcfg_lib_libelf_elf",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/libelf-0.8.13-pabrn5kbznwgj6jpg7twrgshrffrylg7/lib/libelf.so"
+		},
+		{
+			"name" : "pkgcfg_lib_liblz4_lz4",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lz4-1.9.4-btg22rhuatkeq632quktioibxuwshrnv/lib/liblz4.so"
+		},
+		{
+			"name" : "pkgcfg_lib_liblzma_lzma",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/xz-5.4.1-vxtvggn7g6znu7xlvnpilvqwspm5orhz/lib/liblzma.so"
+		},
+		{
+			"name" : "pkgcfg_lib_libzstd_zstd",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zstd-1.5.5-gsz6742htyffnfv775gcpnpatj4j5jkt/lib/libzstd.so"
+		},
+		{
+			"name" : "pkgcfg_lib_lzo2_lzo2",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/lzo-2.10-s5a4rjcv6vjpcgba5vromql2k7m4wrcg/lib/liblzo2.so"
+		},
+		{
+			"name" : "pkgcfg_lib_margo_abt",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/argobots-1.1-r6mwygumjeemclzkusrr55ayhmwc3g4f/lib/libabt.so"
+		},
+		{
+			"name" : "pkgcfg_lib_margo_json-c",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/json-c-0.16-jjpr3fs56onldz5ej4hum2c2oehomqpc/lib/libjson-c.so"
+		},
+		{
+			"name" : "pkgcfg_lib_margo_margo",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-margo-0.14.1-wuqexwiwqj53hhjk7qtzzfzgo47p6rgx/lib/libmargo.so"
+		},
+		{
+			"name" : "pkgcfg_lib_margo_mercury",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mercury-2.3.1-unvqgyqgr74wdomidvituxavplxdkk7r/lib/libmercury.so"
+		},
+		{
+			"name" : "pkgcfg_lib_margo_pthread",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/lib/x86_64-linux-gnu/libpthread.a"
+		},
+		{
+			"name" : "pkgcfg_lib_snappy_snappy",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/lib/libsnappy.a"
+		},
+		{
+			"name" : "pkgcfg_lib_zlib_z",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Path to a library."
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/lib/libz.so"
+		},
+		{
+			"name" : "prefix_result",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/thrift-0.18.1-fw4dn3gn6c4sojiigextbb7upeoewglt/lib"
+		},
+		{
+			"name" : "snappy_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include"
+		},
+		{
+			"name" : "snappy_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "snappy_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include"
+		},
+		{
+			"name" : "snappy_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include"
+		},
+		{
+			"name" : "snappy_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/lib;-lsnappy"
+		},
+		{
+			"name" : "snappy_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/lib"
+		},
+		{
+			"name" : "snappy_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "snappy"
+		},
+		{
+			"name" : "snappy_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/lib"
+		},
+		{
+			"name" : "snappy_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "snappy"
+		},
+		{
+			"name" : "snappy_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls"
+		},
+		{
+			"name" : "snappy_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include"
+		},
+		{
+			"name" : "snappy_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/include"
+		},
+		{
+			"name" : "snappy_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/lib;-lsnappy"
+		},
+		{
+			"name" : "snappy_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "snappy"
+		},
+		{
+			"name" : "snappy_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/snappy-1.1.10-vkbkmc3ba73j7tvuew64hsza5tzvr7ls/lib"
+		},
+		{
+			"name" : "snappy_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.1.10"
+		},
+		{
+			"name" : "snappy_snappy_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_snappy_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_snappy_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "snappy_snappy_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "thallium_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for thallium."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/mochi-thallium-0.10.1-cxvim5clzrv422mp6ohkd6vsslwxm67u/share/cmake/thallium"
+		},
+		{
+			"name" : "yaml-cpp_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for yaml-cpp."
+				}
+			],
+			"type" : "PATH",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/yaml-cpp-0.7.0-w7ywg2vhge7ak4kj2vfdyuuoylsdmfiz/share/cmake/yaml-cpp"
+		},
+		{
+			"name" : "zlib_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include"
+		},
+		{
+			"name" : "zlib_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "zlib_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include"
+		},
+		{
+			"name" : "zlib_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include"
+		},
+		{
+			"name" : "zlib_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/lib;-lz"
+		},
+		{
+			"name" : "zlib_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/lib"
+		},
+		{
+			"name" : "zlib_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "z"
+		},
+		{
+			"name" : "zlib_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/lib"
+		},
+		{
+			"name" : "zlib_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_MODULE_NAME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "zlib"
+		},
+		{
+			"name" : "zlib_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu"
+		},
+		{
+			"name" : "zlib_STATIC_CFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-I/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include"
+		},
+		{
+			"name" : "zlib_STATIC_CFLAGS_I",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_STATIC_CFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_STATIC_INCLUDE_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/include"
+		},
+		{
+			"name" : "zlib_STATIC_LDFLAGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "-L/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/lib;-lz"
+		},
+		{
+			"name" : "zlib_STATIC_LDFLAGS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_STATIC_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_STATIC_LIBRARIES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "z"
+		},
+		{
+			"name" : "zlib_STATIC_LIBRARY_DIRS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "/home/llogan/Documents/Projects/spack/opt/spack/linux-pop22-zen2/gcc-11.4.0/zlib-ng-2.1.4-cotuljvjyyyl6f4eja4jv6yx2m3oyrfu/lib"
+		},
+		{
+			"name" : "zlib_STATIC_LIBS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_STATIC_LIBS_L",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_STATIC_LIBS_OTHER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_STATIC_LIBS_PATHS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1.3.0.zlib-ng"
+		},
+		{
+			"name" : "zlib_zlib_INCLUDEDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_zlib_LIBDIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_zlib_PREFIX",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "zlib_zlib_VERSION",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		}
+	],
+	"kind" : "cache",
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}

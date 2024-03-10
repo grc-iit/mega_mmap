@@ -3,8 +3,7 @@ env: mega_mmap
 pkgs:
   - pkg_type: hermes_run
     pkg_name: hermes_run
-    sleep: 6
-    include: ${HOME}/mm_data
+    sleep: 3
     pqdepth: 8
     qdepth: 64
     ram: 24g
@@ -14,10 +13,10 @@ pkgs:
     pkg_name: mm_kmeans
     path: ${HOME}/mm_data/kmeans.bin
     window_size: 256m
-    nprocs: 1
+    nprocs: 4
     ppn: 24
     api: mega
     max_iter: 4
-    k: 8
+    k: 1000
     do_dbg: false
     dbg_port: 4001

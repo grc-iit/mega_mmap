@@ -1,0 +1,11 @@
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/bin/mm_kmeans
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/bin/mm_kmeans_df
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/bin/mm_random_forest
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/bin/mm_random_forest_df
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/bin/mm_dbscan
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/bin/mm_gadget2conv
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/scripts/pandas_kmeans.py
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/scripts/pandas_random_forest.py
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/scripts/pandas_dbscan.py
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/scripts/spark_kmeans.py
+/home/llogan/Documents/Projects/scspkg/packages/mega_mmap/scripts/spark_random_forest.py

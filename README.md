@@ -22,7 +22,7 @@ spack install hermes@master
 ```
 module load hermes_run
 module load mega_mmap
-spack load hermes_shm
+spack load hermes_shm arrow
 ```
 
 ```
@@ -43,11 +43,9 @@ make -j8
 # Build environment
 
 ```
-module use $(scspkg module dir)
-module load arrow
 module load hermes_run
 module load mega_mmap
-spack load hermes_shm
+spack load hermes_shm arrow
 module load spark
 jarvis env build mega_mmap +MM_PATH +SPARK_SCRIPTS
 ```

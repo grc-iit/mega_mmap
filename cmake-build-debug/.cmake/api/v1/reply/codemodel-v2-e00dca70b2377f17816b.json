@@ -1,0 +1,265 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "test/unit",
+					"jsonFile" : "directory-test.unit-Debug-95f19909738940399904.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "test/unit",
+					"targetIndexes" : 
+					[
+						2,
+						3,
+						4,
+						8,
+						9,
+						10,
+						11,
+						12,
+						15,
+						16,
+						17,
+						18,
+						19
+					]
+				},
+				{
+					"build" : "benchmark",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-benchmark-Debug-c22235ee5ae42b9de39a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "benchmark",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						5,
+						6,
+						7,
+						13,
+						14
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2
+					],
+					"name" : "MegaMmap",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 2,
+					"id" : "hermes_test::@3e2e920e28e9d6b4e283",
+					"jsonFile" : "target-hermes_test-Debug-3122ec9f09afa104132d.json",
+					"name" : "hermes_test",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "mm_dbscan::@3e2e920e28e9d6b4e283",
+					"jsonFile" : "target-mm_dbscan-Debug-6b6784c8132467581aaf.json",
+					"name" : "mm_dbscan",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_dbscan_mega::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_dbscan_mega-Debug-3856bd1aa460a3cccd91.json",
+					"name" : "mm_dbscan_mega",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_dbscan_mmap::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_dbscan_mmap-Debug-a8966bc1ed89c4d45ec5.json",
+					"name" : "mm_dbscan_mmap",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_dbscan_pandas::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_dbscan_pandas-Debug-c1939912dc906d7749a9.json",
+					"name" : "mm_dbscan_pandas",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "mm_gadget2conv::@3e2e920e28e9d6b4e283",
+					"jsonFile" : "target-mm_gadget2conv-Debug-30aa286f45dcd19d5469.json",
+					"name" : "mm_gadget2conv",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "mm_kmeans::@3e2e920e28e9d6b4e283",
+					"jsonFile" : "target-mm_kmeans-Debug-d1ff16f9414ff4119eb0.json",
+					"name" : "mm_kmeans",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "mm_kmeans_df::@3e2e920e28e9d6b4e283",
+					"jsonFile" : "target-mm_kmeans_df-Debug-0de8b8dabb7ef35d3e19.json",
+					"name" : "mm_kmeans_df",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_kmeans_df_parquet::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_kmeans_df_parquet-Debug-2c3b45fefbf43eee5e8d.json",
+					"name" : "mm_kmeans_df_parquet",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_kmeans_df_shared::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_kmeans_df_shared-Debug-16abdb8357eb269fdca3.json",
+					"name" : "mm_kmeans_df_shared",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_kmeans_mega::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_kmeans_mega-Debug-b3e300ca1441eec1584f.json",
+					"name" : "mm_kmeans_mega",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_kmeans_mmap::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_kmeans_mmap-Debug-55436ef74ff8038a1746.json",
+					"name" : "mm_kmeans_mmap",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_kmeans_pandas::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_kmeans_pandas-Debug-d217b2693baddbf479f7.json",
+					"name" : "mm_kmeans_pandas",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "mm_random_forest::@3e2e920e28e9d6b4e283",
+					"jsonFile" : "target-mm_random_forest-Debug-598f7630d984f6329565.json",
+					"name" : "mm_random_forest",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "mm_random_forest_df::@3e2e920e28e9d6b4e283",
+					"jsonFile" : "target-mm_random_forest_df-Debug-e1157aa81f148625203e.json",
+					"name" : "mm_random_forest_df",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_random_forest_df_parquet::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_random_forest_df_parquet-Debug-c5ff7bdacd1902ba7f19.json",
+					"name" : "mm_random_forest_df_parquet",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_random_forest_df_shared::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_random_forest_df_shared-Debug-eaac3239cb55946976f0.json",
+					"name" : "mm_random_forest_df_shared",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_random_forest_mega::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_random_forest_mega-Debug-f5d7bb9ee8635d5b11a4.json",
+					"name" : "mm_random_forest_mega",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_random_forest_mmap::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_random_forest_mmap-Debug-8851ac09a8d83c2ad8a0.json",
+					"name" : "mm_random_forest_mmap",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "mm_random_forest_pandas::@eef10db73b2f22524f92",
+					"jsonFile" : "target-mm_random_forest_pandas-Debug-3841b316a27460485b15.json",
+					"name" : "mm_random_forest_pandas",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/llogan/Documents/Projects/mega_mmap/cmake-build-debug",
+		"source" : "/home/llogan/Documents/Projects/mega_mmap"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

@@ -144,6 +144,7 @@ class KMeans {
     world_ = world;
     MPI_Comm_rank(world_, &rank_);
     MPI_Comm_size(world_, &nprocs_);
+    HILOG(kInfo, "{}: Initialize mm kmeans with known centers", rank_)
     data_ = data;
     dir_ = stdfs::path(data_.path_).parent_path();
     window_size_ = window_size;
@@ -223,13 +224,14 @@ class KMeans {
         T &row = *data_tx;
         size_t &assign_i = *assign_tx;
         assign_i = FindClosestCenter(row);
-        sum[sum.local_off() + assign_i].row_ += row;
-        sum[sum.local_off() + assign_i].count_ += 1;
-        sum[sum.local_off() + assign_i].inertia_ +=
+        (*sum_tx).row_ += row;
+        (*sum_tx).count_ += 1;
+        (*sum_tx).inertia_ +=
             pow(row.Distance(ks_[assign_i].center_), 2);
 
-        ++assign_tx;
         ++data_tx;
+        ++sum_tx;
+        ++assign_tx;
       }
       data_.TxEnd(data_tx);
       sum.TxEnd(sum_tx);
@@ -684,13 +686,19 @@ int main(int argc, char **argv) {
   HILOG(kInfo, "{}: Running {} on {} with window size {} with {} centers",
         rank, algo, path, window_size, k);
 
+  HILOG(kInfo, "{}: Started Hermes transparent connection", rank);
+  std::mutex mux;
+  mux.lock();
+  TRANSPARENT_HERMES();
+  mux.unlock();
+  HILOG(kInfo, "{}: Initialized Hermes transparent connection", rank);
+
   if (algo == "mmap") {
   } else if (algo == "mega") {
-    TRANSPARENT_HERMES();
     KmeansLlMpi<Row> kmeans;
-    kmeans.Init(MPI_COMM_WORLD, path, window_size, k, max_iter);
-    kmeans.Run();
-    kmeans.Print();
+    // kmeans.Init(MPI_COMM_WORLD, path, window_size, k, max_iter);
+    // kmeans.Run();
+    // kmeans.Print();
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
   }
