@@ -1,4 +1,4 @@
-name: mm_kmeans_mega
+name: mm_hermes_mega
 env: mega_mmap
 pkgs:
   - pkg_type: hermes_run
@@ -9,14 +9,7 @@ pkgs:
     ram: 24g
     do_dbg: false
     dbg_port: 4000
-  - pkg_type: mm_kmeans
-    pkg_name: mm_kmeans
-    path: ${HOME}/mm_data/kmeans.bin
-    window_size: 256m
-    nprocs: 4
-    ppn: 24
-    api: mega
-    max_iter: 4
-    k: 1000
-    do_dbg: false
+  - pkg_type: mm_hermes
+    pkg_name: mm_hermes
+    do_dbg: true
     dbg_port: 4001
