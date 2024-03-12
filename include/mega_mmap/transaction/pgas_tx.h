@@ -36,7 +36,7 @@ class PgasTx : public Tx {
     if (end) {
       size_t first_page = off_ / vec_->elmts_per_page_;
       size_t last_page = (off_ + size_) / vec_->elmts_per_page_;
-      for (size_t i = first_page; i < last_page; ++i) {
+      for (size_t i = first_page; i <= last_page; ++i) {
         vec_->Rescore(i, 0, vec_->elmts_per_page_,
                       0, flags_);
       }

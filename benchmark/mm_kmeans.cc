@@ -236,13 +236,13 @@ class KMeans {
     }
     sum.Barrier(MM_READ_ONLY, world_);
     // Calculate global statistics from each local assignment
-    float inertia = 0;
+    double inertia = 0;
     {
       sum.SeqTxBegin(0, sum.size(), MM_READ_ONLY);
       for (int i = 0; i < ks_.size(); ++i) {
         T avg(0);
         size_t count = 0;
-        float k_inertia = 0;
+        double k_inertia = 0;
         for (int j = 0; j < nprocs_; ++j) {
           RowSum<T> &sum_i = sum[j * k_ + i];
           avg += sum_i.row_;
@@ -260,6 +260,7 @@ class KMeans {
     sum.Barrier(0, world_);
     sum.Destroy();
     assign.Destroy();
+    HILOG(kInfo, "Inertia {}: {}", rank_, inertia);
     return inertia;
   }
 
@@ -284,6 +285,10 @@ class KMeans {
     if (rank_ == 0) {
       HILOG(kInfo, "Intertia: {}", inertia_);
       HILOG(kInfo, "Iterations: {}", iter_);
+//      std::sort(ks_.begin(), ks_.end(),
+//                [](const Center<T> &a, const Center<T> &b) {
+//                  return a.center_.Key() > b.center_.Key();
+//                });
       for (int i = 0; i < k_; ++i) {
         ks_[i].Print();
       }
@@ -700,5 +705,6 @@ int main(int argc, char **argv) {
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);
   }
+  HILOG(kInfo, "Finishing kmeans: {}", rank);
   MPI_Finalize();
 }

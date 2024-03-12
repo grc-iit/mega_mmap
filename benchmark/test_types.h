@@ -108,6 +108,10 @@ struct Row {
   std::string ToString() const {
     return hshm::Formatter::format("({}, {})", x_, y_);
   }
+
+  float Key() const {
+    return x_;
+  }
 };
 
 template<int N>
@@ -195,6 +199,10 @@ struct RowND {
     }
     str += hshm::Formatter::format("{})", p_[N - 1]);
     return str;
+  }
+
+  float Key() const {
+    return p_[0];
   }
 };
 
