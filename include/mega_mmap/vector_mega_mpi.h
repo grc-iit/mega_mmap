@@ -152,19 +152,22 @@ class VectorMegaMpi : public Vector {
 
   /** Create a sequential transaction */
   void SeqTxBegin(size_t off, size_t size, uint32_t flags) {
-    cur_tx_ = std::shared_ptr<SeqIterTx>(this, off, size, flags);
+    cur_tx_ = std::make_shared<SeqIterTx>(
+        this, off, size, flags);
   }
 
   /** Create a random transaction */
   void RandTxBegin(size_t seed, size_t rand_left, size_t rand_size,
                    size_t size, uint32_t flags) {
-    cur_tx_ = std::shared_ptr<RandIterTx>(this, seed, rand_left, rand_size, size, flags);
+    cur_tx_ = std::make_shared<RandIterTx>(
+        this, seed, rand_left, rand_size, size, flags);
   }
 
   /** Begin an arbitrary transaction */
   template<typename TxT, typename ...Args>
   void TxBegin(Args&& ...args) {
-    cur_tx_ = std::shared_ptr<TxT>(this, std::forward<Args>(args)...);
+    cur_tx_ = std::make_shared<TxT>(
+        this, std::forward<Args>(args)...);
   }
 
   /** Get the current point in iterator */
@@ -288,6 +291,12 @@ class VectorMegaMpi : public Vector {
         page_ptr = &it->second;
       }
     }
+    if (cur_tx_) {
+      if ((cur_tx_->tail_ % elmts_per_page_) == 0) {
+        cur_tx_->ProcessLog();
+      }
+      ++cur_tx_->tail_;
+    }
     Page<T> &page = *page_ptr;
     cur_page_ = page_ptr;
     return page.elmts_[page_off];
@@ -359,22 +368,29 @@ class VectorMegaMpi : public Vector {
     Hint(MM_READ_ONLY);
   }
 
-  void Rescore(size_t page_idx, size_t mod_start, size_t mod_count, float score) override {
+  void Rescore(size_t page_idx, size_t mod_start, size_t mod_count,
+               float score, bitfield32_t flags) override {
+    // Flush and evict modified data
     if (score < 1) {
-      _Flush(page_idx, mod_start, mod_count);
+      if (flags.Any(MM_READ_WRITE | MM_WRITE_ONLY)) {
+        _Flush(page_idx, mod_start, mod_count);
+      }
       _Evict(page_idx);
     }
+
+    // Stage data to be read from storage
     hermes::Context ctx;
-    if (flags_.Any(MM_READ_ONLY | MM_READ_WRITE)) {
+    if (flags.Any(MM_STAGE_READ_FROM_BACKEND)) {
       ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
     }
     std::string page_name =
         hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
-    if (score == 1) {
-      // TODO(llogan): Async begin prefetch
-      bkt_.ReorganizeBlob(page_name, score, ctx);
-    } else {
-      bkt_.ReorganizeBlob(page_name, score, ctx);
+
+    // Reorganize the blob
+    bkt_.ReorganizeBlob(page_name, score, ctx);
+
+    // Async fault the data
+    if (flags.Any(MM_READ_ONLY | MM_READ_WRITE | MM_STAGE_READ_FROM_BACKEND)) {
     }
   }
 };

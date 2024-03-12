@@ -16,6 +16,13 @@ class SeqIterTx : public Tx {
   hshm::bitfield32_t flags_;
 
  public:
+  /**
+   * Sequentially iterate over a vector
+   *
+   * @param off Offset (in elements) into the vector
+   * @param size Number of elements to iterate over
+   * @param flags Access flags for this transaction
+   * */
   SeqIterTx(Vector *vec, size_t off, size_t size, uint32_t flags) : Tx(vec) {
     off_ = off;
     size_ = size;
@@ -24,14 +31,34 @@ class SeqIterTx : public Tx {
 
   virtual ~SeqIterTx() = default;
 
+  /** Process the accesses that have occurred */
   void ProcessLog() override {
-    // Identify pages we have completed
-    size_t max_pages = (tail_ - head_) / vec_->page_size_;
-    std::vector<size_t> page_idxs;
+    size_t first_page = (head_ + off_) / vec_->elmts_per_page_;
+    size_t last_page = (tail_ + off_) / vec_->elmts_per_page_;
+    if (first_page == last_page) {
+      return;
+    }
 
     // Evict pages we no longer need
+    size_t first_mod = (head_ + off_) % vec_->elmts_per_page_;
+    size_t first_rem = vec_->elmts_per_page_ - first_mod;
+    vec_->Rescore(first_page, first_mod, first_rem,
+                  0, flags_);
+    for (size_t i = first_page + 1; i < last_page; ++i) {
+      vec_->Rescore(i, 0, vec_->elmts_per_page_,
+                    0, flags_);
+    }
 
-    // Prefetch pages
+    // Prefetch future pages
+    for (size_t i = last_page + 1; i < last_page + 1; ++i) {
+      vec_->Rescore(i, 0, vec_->elmts_per_page_,
+                    1.0, flags_);
+    }
+  }
+
+  /** Get the current point in the transaction */
+  size_t Get() {
+    return tail_;
   }
 };
 

@@ -222,10 +222,11 @@ class KMeans {
         }
         T &row = data_[i];
         size_t &assign_i = assign[i];
+        RowSum<T> &sum_i = sum[i];
         assign_i = FindClosestCenter(row);
-        sum[i].row_ += row;
-        sum[i].count_ += 1;
-        sum[i].inertia_ +=
+        sum_i.row_ += row;
+        sum_i.count_ += 1;
+        sum_i.inertia_ +=
             pow(row.Distance(ks_[assign_i].center_), 2);
       }
       data_.TxEnd();
@@ -242,9 +243,10 @@ class KMeans {
         size_t count = 0;
         float k_inertia = 0;
         for (int j = 0; j < nprocs_; ++j) {
-          avg += sum[j * k_ + i].row_;
-          count += sum[j * k_ + i].count_;
-          k_inertia += sum[j * k_ + i].inertia_;
+          RowSum<T> &sum_i = sum[j * k_ + i];
+          avg += sum_i.row_;
+          count += sum_i.count_;
+          k_inertia += sum_i.inertia_;
         }
         inertia += k_inertia;
         avg /= count;
@@ -342,7 +344,10 @@ class KMeansPpMpi : public KMeans<T> {
     local_maxes.Barrier(MM_READ_ONLY, world_);
     // Find global max across processes
     LocalMax global_max = FindGlobalMax(local_maxes);
+    data_.SeqTxBegin(global_max.idx_, 1, MM_READ_ONLY);
     ks.emplace_back(data_[global_max.idx_]);
+    data_.TxEnd();
+    // Clean up local maxes
     local_maxes.Barrier(0, world_);
     local_maxes.Destroy();
   }
@@ -464,7 +469,7 @@ class KmeansLlMpi : public KMeans<T> {
     HILOG(kInfo, "Running KMeansLL")
     T first_k = SelectFirstCenter();
     ks_.emplace_back(first_k);
-    DataStat stat = LocalStatPoints();
+    DataStat stat = LocalStatPointsWithTx();
     size_t log_size = std::max<size_t>(log(data_.size()), 1);
     size_t log_sum = std::max<size_t>(log(stat.sum_), 1);
     size_t count = std::min<size_t>(log_size, log_sum);
@@ -525,9 +530,10 @@ class KmeansLlMpi : public KMeans<T> {
 
     // Educated random subsample
     {
+      size_t subsample = data_.local_size() / 8;
       data_.RandTxBegin(
           SEED, data_.local_off(), data_.local_size(),
-          count * l * NEAR_COUNT_PER_ITER,
+          count * l * NEAR_COUNT_PER_ITER + subsample,
           MM_READ_ONLY);
       ks_.reserve(count * l);
       for (size_t i = 0; i < count; ++i) {
@@ -544,7 +550,7 @@ class KmeansLlMpi : public KMeans<T> {
           ks_.emplace_back(pt);
         }
         // Determine the range of distances
-        DataStat new_stat = LocalStatPoints();
+        DataStat new_stat = LocalStatPointsNoTx(subsample);
         stat = new_stat;
       }
       data_.TxEnd();
@@ -594,7 +600,7 @@ class KmeansLlMpi : public KMeans<T> {
   /**
    * Collect statistics about the data points.
    * */
-  DataStat LocalStatPoints() {
+  DataStat LocalStatPointsWithTx() {
     DataStat stat;
     HILOG(kInfo, "Collecting local statistics of chunk")
     size_t off = data_.local_off();
@@ -602,6 +608,15 @@ class KmeansLlMpi : public KMeans<T> {
     data_.RandTxBegin(
         SEED, off, data_.local_size(),
         subsample, MM_READ_ONLY);
+    LocalStatPointsNoTx(subsample);
+    data_.TxEnd();
+    HILOG(kInfo, "Finished collecting local statistics of chunk")
+    return stat;
+  }
+
+  DataStat LocalStatPointsNoTx(size_t subsample) {
+    DataStat stat;
+    HILOG(kInfo, "Collecting local statistics of chunk")
     for (size_t i = 0; i < subsample; ++i) {
       if (i % (data_.elmts_per_page_) == 0) {
         HILOG(kInfo, "{}: We are {}% done", rank_,
@@ -617,7 +632,6 @@ class KmeansLlMpi : public KMeans<T> {
         stat.max_ = dist;
       }
     }
-    data_.TxEnd();
     HILOG(kInfo, "Finished collecting local statistics of chunk")
     return stat;
   }

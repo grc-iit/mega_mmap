@@ -13,13 +13,15 @@ namespace mm {
 
 class Tx {
  public:
-  size_t head_;
-  size_t tail_;
-  Vector *vec_;
+  size_t head_;  /**< Last access touched by ProcessLog */
+  size_t tail_;  /**< Number of index operations */
+  Vector *vec_;  /**< The vector where data is stored */
 
  public:
   explicit Tx(Vector *vec) {
     vec_ = vec;
+    head_ = 0;
+    tail_ = 0;
   }
   virtual ~Tx() = default;
 

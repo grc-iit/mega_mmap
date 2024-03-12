@@ -27,7 +27,8 @@ class Vector {
   bitfield32_t flags_;         /** Access flags for this vector */
 
  public:
-  virtual void Rescore(size_t page_idx, size_t mod_start, size_t mod_count, float score) = 0;
+  virtual void Rescore(size_t page_idx, size_t mod_start, size_t mod_count,
+                       float score, bitfield32_t flags) = 0;
 };
 
 }  // namespace mm

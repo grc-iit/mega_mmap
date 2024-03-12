@@ -142,6 +142,15 @@ class MmKmeans(Application):
         """
         pass
 
+    def kill(self):
+        """
+        Kill a running application. E.g., OrangeFS will terminate the servers,
+        clients, and metadata services.
+
+        :return: None
+        """
+        Kill('*mm_kmeans*', PsshExecInfo(hosts=self.jarvis.hostfile))
+
     def clean(self):
         """
         Destroy all data for an application. E.g., OrangeFS will delete all
