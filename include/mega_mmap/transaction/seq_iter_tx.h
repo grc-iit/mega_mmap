@@ -32,7 +32,7 @@ class SeqIterTx : public Tx {
   virtual ~SeqIterTx() = default;
 
   /** Process the accesses that have occurred */
-  void ProcessLog() override {
+  void ProcessLog(bool end) override {
     size_t first_page = (head_ + off_) / vec_->elmts_per_page_;
     size_t last_page = (tail_ + off_) / vec_->elmts_per_page_;
     if (first_page == last_page) {

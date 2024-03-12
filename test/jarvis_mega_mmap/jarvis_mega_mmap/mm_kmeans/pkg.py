@@ -149,7 +149,7 @@ class MmKmeans(Application):
 
         :return: None
         """
-        Kill('*mm_kmeans*', PsshExecInfo(hosts=self.jarvis.hostfile))
+        Kill('.*mm_kmeans.*', PsshExecInfo(hosts=self.jarvis.hostfile))
 
     def clean(self):
         """

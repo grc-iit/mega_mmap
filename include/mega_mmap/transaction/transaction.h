@@ -25,7 +25,7 @@ class Tx {
   }
   virtual ~Tx() = default;
 
-  virtual void ProcessLog() = 0;
+  virtual void ProcessLog(bool end) = 0;
 };
 
 }  // namespace mm

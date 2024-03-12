@@ -23,6 +23,7 @@
 #include "transaction/transaction.h"
 #include "transaction/seq_iter_tx.h"
 #include "transaction/rand_iter_tx.h"
+#include "transaction/pgas_tx.h"
 
 namespace stdfs = std::filesystem;
 
@@ -156,6 +157,12 @@ class VectorMegaMpi : public Vector {
         this, off, size, flags);
   }
 
+  /** Create a PGAS transaction */
+  void PgasTxBegin(size_t off, size_t size, uint32_t flags) {
+    cur_tx_ = std::make_shared<PgasTx>(
+        this, off, size, flags);
+  }
+
   /** Create a random transaction */
   void RandTxBegin(size_t seed, size_t rand_left, size_t rand_size,
                    size_t size, uint32_t flags) {
@@ -192,7 +199,7 @@ class VectorMegaMpi : public Vector {
 
   /** End a transaction */
   void TxEnd() {
-    cur_tx_->ProcessLog();
+    cur_tx_->ProcessLog(true);
     cur_tx_ = nullptr;
   }
 
@@ -293,7 +300,7 @@ class VectorMegaMpi : public Vector {
     }
     if (cur_tx_) {
       if ((cur_tx_->tail_ % elmts_per_page_) == 0) {
-        cur_tx_->ProcessLog();
+        cur_tx_->ProcessLog(false);
       }
       ++cur_tx_->tail_;
     }

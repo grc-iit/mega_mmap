@@ -174,6 +174,7 @@ class KMeans {
       }
       inertia_ = cur_inertia;
     }
+    MPI_Barrier(world_);
   }
 
   /**
@@ -208,7 +209,7 @@ class KMeans {
       data_.SeqTxBegin(data_.local_off(),
                        data_.local_size(),
                        MM_READ_ONLY);
-      sum.SeqTxBegin(sum.local_off(),
+      sum.PgasTxBegin(sum.local_off(),
                      sum.local_size(),
                      MM_WRITE_ONLY);
       assign.SeqTxBegin(assign.local_off(),
@@ -222,8 +223,8 @@ class KMeans {
         }
         T &row = data_[i];
         size_t &assign_i = assign[i];
-        RowSum<T> &sum_i = sum[i];
         assign_i = FindClosestCenter(row);
+        RowSum<T> &sum_i = sum[assign_i];
         sum_i.row_ += row;
         sum_i.count_ += 1;
         sum_i.inertia_ +=
@@ -257,6 +258,8 @@ class KMeans {
       sum.TxEnd();
     }
     sum.Barrier(0, world_);
+    sum.Destroy();
+    assign.Destroy();
     return inertia;
   }
 
