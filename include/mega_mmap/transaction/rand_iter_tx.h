@@ -28,7 +28,7 @@ class RandIterTx : public Tx {
 
   virtual ~RandIterTx() = default;
 
-  void ProcessLog(bool end) override {
+  void _ProcessLog(bool end) override {
     // Get number of pages iterated over
     size_t num_pages = (tail_ - head_) / vec_->elmts_per_page_;
     if (num_pages == 0) {

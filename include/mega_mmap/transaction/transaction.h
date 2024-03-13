@@ -25,7 +25,12 @@ class Tx {
   }
   virtual ~Tx() = default;
 
-  virtual void ProcessLog(bool end) = 0;
+  virtual void _ProcessLog(bool end) = 0;
+
+  void ProcessLog(bool end) {
+    _ProcessLog(end);
+    head_ = tail_;
+  }
 };
 
 }  // namespace mm

@@ -32,7 +32,7 @@ class PgasTx : public Tx {
   virtual ~PgasTx() = default;
 
   /** Process the accesses that have occurred */
-  void ProcessLog(bool end) override {
+  void _ProcessLog(bool end) override {
     if (end) {
       size_t first_page = off_ / vec_->elmts_per_page_;
       size_t last_page = (off_ + size_) / vec_->elmts_per_page_;

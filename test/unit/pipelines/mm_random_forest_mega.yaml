@@ -5,17 +5,17 @@ pkgs:
     pkg_name: hermes_run
     sleep: 2
     include: ${HOME}/mm_data
-    pqdepth: 8
+    pqdepth: 32
     dbg_port: 4000
     do_dbg: false
   - pkg_type: mm_random_forest
     pkg_name: mm_random_forest
     train_path: ${HOME}/mm_data/rf_train.bin
     test_path: ${HOME}/mm_data/rf_test.bin
-    window_size: 1m
+    window_size: 64m
     nfeature: 2
     api: mega
-    nprocs: 1
+    nprocs: 4
     ppn: 16
     dbg_port: 4001
     do_dbg: false
