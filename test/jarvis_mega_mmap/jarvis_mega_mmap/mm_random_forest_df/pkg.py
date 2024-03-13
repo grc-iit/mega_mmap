@@ -78,7 +78,7 @@ class MmRandomForestDf(Application):
         :param kwargs: Configuration parameters for this pkg.
         :return: None
         """
-        self.path = self.config['path']
+        self.path = os.path.expandvars(self.config['path'])
         Mkdir(str(pathlib.Path(self.path).parent),
               LocalExecInfo(env=self.env))
 
@@ -97,12 +97,12 @@ class MmRandomForestDf(Application):
             self.config['window_size'],
             self.config['type']
         ]
-        print(cmd)
         cmd = ' '.join(cmd)
         Exec(cmd, MpiExecInfo(nprocs=self.config['nprocs'],
                               ppn=self.config['ppn'],
                               do_dbg=self.config['do_dbg'],
-                              dbg_port=self.config['dbg_port']))
+                              dbg_port=self.config['dbg_port'],
+                              env=self.env))
 
     def stop(self):
         """

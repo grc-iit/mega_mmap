@@ -18,11 +18,6 @@
 
 namespace stdfs = std::filesystem;
 
-struct Window {
-  size_t off_;
-  size_t size_;
-};
-
 template<typename T>
 struct Node {
   int feature_;
@@ -79,6 +74,15 @@ struct Node {
   }
 };
 
+/**
+ * RandomForest algorihtm:
+ * 1. For each tree
+ * 2. Select a subset of features
+ * 3. Select a subset of the dataset
+ * 3. Determine the feature with the highest entropy in the subset
+ * 4.
+ * */
+
 template<typename T>
 class RandomForestClassifierMpi {
  public:
@@ -97,10 +101,11 @@ class RandomForestClassifierMpi {
   size_t window_size_;
   size_t num_windows_;
   size_t windows_per_proc_;
-  int trees_per_proc_;
+  int num_trees_;
   int num_features_;
   int num_cols_;
   int max_features_;
+  int num_bootstrap_samples_ = 30;
   hshm::UniformDistribution feature_dist_;
   std::vector<size_t> my_windows_;
   float tol_;
@@ -114,7 +119,7 @@ class RandomForestClassifierMpi {
             int num_features,
             int num_cols,
             size_t window_size,
-            int trees_per_proc = 4,
+            int num_trees = 4,
             float tol = .0001,
             int max_depth = 5){
     world_ = world;
@@ -128,23 +133,25 @@ class RandomForestClassifierMpi {
     tol_ = tol;
     max_depth_ = max_depth;
     // Load train data and partition
-    data_.Init(train_path, MM_READ_ONLY);
+    data_.Init(train_path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
     data_.BoundMemory(window_size_);
     data_.EvenPgas(rank_, nprocs_, data_.size());
+    data_.Allocate();
     // Load test data and partition
-    test_data_.Init(test_path, MM_READ_ONLY);
+    test_data_.Init(test_path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
     test_data_.BoundMemory(window_size_);
     test_data_.EvenPgas(rank_, nprocs_, test_data_.size());
+    test_data_.Allocate();
     // Memory bounding paramters
     num_windows_ = data_.size() / window_size_;
     windows_per_proc_ = num_windows_ / nprocs_;
     // Initialize final tree data structure
-    trees_per_proc_ = trees_per_proc;
+    num_trees_ = num_trees;
     trees_.Init(dir_ + "/trees",
-                trees_per_proc_ * nprocs_,
+                num_trees_ ,
                 KILOBYTES(256),
                 MM_WRITE_ONLY);
-    trees_.EvenPgas(rank_, nprocs_, rank_ * trees_per_proc_ * nprocs_);
+    trees_.Allocate();
     // Initialize RNG
     feature_dist_.Seed(SEED);
     feature_dist_.Shape(0, num_features_ - 1);
@@ -152,12 +159,22 @@ class RandomForestClassifierMpi {
 
   void Run() {
     HILOG(kInfo, "Running random forest on rank {}", rank_);
-    for (int i = 0; i < trees_per_proc_; ++i) {
+    if (rank_ == 0) {
+      trees_.PgasTxBegin(0,
+                         num_trees_, MM_WRITE_ONLY);
+    }
+    for (int i = 0; i < num_trees_; ++i) {
       HILOG(kInfo, "Creating tree {} on rank {}", i, rank_);
-      AssignT sample = SubsampleDataset();
       std::unique_ptr<Node<T>> root = std::make_unique<Node<T>>();
-      CreateDecisionTree(root, nullptr, sample, 0);
-      trees_[rank_ * trees_per_proc_ + i] = std::move(root);
+      CreateDecisionTree(root, nullptr, data_, 0,
+                         MPI_COMM_WORLD,
+                         rank_, nprocs_);
+      if (rank_ == 0) {
+        trees_[i] = std::move(root);
+      }
+    }
+    if (rank_ == 0) {
+      trees_.TxEnd();
     }
     trees_.Barrier(MM_READ_ONLY, world_);
     float error = Predict(test_data_);
@@ -222,92 +239,42 @@ class RandomForestClassifierMpi {
     return features;
   }
 
-  AssignT SubsampleDataset() {
-    Bounds bounds(rank_, nprocs_, data_.size());
-    std::string sample_name =
-        hshm::Formatter::format("{}/sample_{}_{}_{}",
-                                dir_, 0, 0, rank_);
-    AssignT sample;
-    sample.Init(sample_name, bounds.size_, MM_WRITE_ONLY);
-    sample.BoundMemory(window_size_);
-    sample.EvenPgas(0, 1, data_.size());
-    size_t off = 0;
-    mm::UniformSampler sampler(MM_PAGE_SIZE,
-                               data_.size(),
-                               2354235 * (rank_ + 1));
-    while (off < sample.size()) {
-      sampler.SamplePage(sample, off);
+  inline size_t SubsampleSize(DataT &data) {
+    size_t subsample_size = data.size() / nprocs_ / num_bootstrap_samples_;
+    if (subsample_size == 0) {
+      subsample_size = 1;
     }
-    sample.Hint(MM_READ_ONLY);
-    return sample;
-  }
-
-  size_t SubsubsampleSize(AssignT &sample, size_t divisor) {
-    if (divisor > sample.size()) {
-      size_t i = 5;
-      while (true) {
-        divisor = sample.size() / i;
-        if (divisor > 0) {
-          break;
-        }
-        --i;
-      }
-    }
-    return sample.size() / divisor;
-  }
-
-  AssignT SubsubsampleDataset(AssignT &sample,
-                              size_t divisor,
-                              uint64_t uuid,
-                              int depth) {
-    size_t new_size = SubsubsampleSize(sample, divisor);
-    std::string new_sample_name =
-        hshm::Formatter::format("{}/subsample_{}_{}_{}",
-                                dir_, uuid, depth, rank_);
-    AssignT new_sample;
-    new_sample.Init(new_sample_name, new_size, MM_WRITE_ONLY);
-    new_sample.BoundMemory(window_size_);
-    new_sample.EvenPgas(0, 1, new_size);
-    mm::UniformSampler sampler(MM_PAGE_SIZE,
-                               sample.size(),
-                               2354235 * (rank_ + 1));
-    size_t off = 0;
-    while (off < new_sample.size()) {
-      sampler.SamplePage(sample, new_sample, off);
-    }
-    new_sample.Hint(MM_READ_ONLY);
-    return new_sample;
+    return subsample_size;
   }
 
   void CreateDecisionTree(std::unique_ptr<Node<T>> &node,
                           const std::unique_ptr<Node<T>> &parent,
-                          AssignT &sample,
-                          uint64_t uuid) {
+                          DataT &sample,
+                          uint64_t uuid,
+                          MPI_Comm comm, int rank, int nprocs) {
     HILOG(kInfo, "Creating decision tree on rank {} with {} samples",
           rank_, sample.size());
     // Decide the feature to split on
-    size_t num_bootstrap_samples = 30;
-    std::vector<Node<T>> stats(max_features_ * num_bootstrap_samples);
-    hshm::UniformDistribution sample_dist;
-    sample_dist.Seed(SEED * (rank_ + 1));
+    std::vector<Node<T>> stats(max_features_ * num_bootstrap_samples_);
     size_t stat_idx = 0;
-    for (int i = 0; i < num_bootstrap_samples; ++i) {
+    for (int i = 0; i < num_bootstrap_samples_; ++i) {
       std::vector<int> features = SubsampleFeatures();
-      AssignT subsample = SubsubsampleDataset(
-          sample, num_bootstrap_samples, uuid, node->depth_);
-      sample_dist.Shape(0, subsample.size() - 1);
+      size_t subsample_size = SubsampleSize(sample);
+      sample.RandTxBegin(SEED, 0,  sample.size(),
+                         (subsample_size + 1) * features.size(),
+                         MM_READ_ONLY);
       for (int feature : features) {
         stats[stat_idx] = *node;
         stats[stat_idx].feature_ = feature;
-        size_t sample_idx = sample_dist.GetSize();
-        stats[stat_idx].joint_ = data_[subsample[sample_idx]];
+        stats[stat_idx].joint_ = sample.template TxGet<mm::RandIterTx>();
         stats[stat_idx].left_ = std::make_unique<Node<T>>();
         stats[stat_idx].right_ = std::make_unique<Node<T>>();
-        Split(stats[stat_idx], subsample, feature,
-              stats[stat_idx].joint_);
+        Split(stats[stat_idx], sample,  subsample_size,
+              feature, stats[stat_idx].joint_, uuid,
+              comm, rank, nprocs);
         ++stat_idx;
       }
-      subsample.Destroy();
+      sample.TxEnd();
     }
     auto it = std::min_element(stats.begin(), stats.end(),
                                [](const Node<T> &a, const Node<T> &b) {
@@ -328,8 +295,8 @@ class RandomForestClassifierMpi {
       sample.Destroy();
       return;
     }
-    // Calculate decision tree for subsamples
-    AssignT left_sample, right_sample;
+    // Divide sample into left and right
+    DataT left_sample, right_sample;
     size_t left_uuid = uuid;
     size_t right_uuid = uuid | (1 << node->depth_);
     std::string left_sample_name =
@@ -347,48 +314,108 @@ class RandomForestClassifierMpi {
                       node->right_->count_, MM_APPEND_ONLY);
     right_sample.BoundMemory(window_size_);
     DivideSample(*node, sample,
-                 left_sample, right_sample);
+                 left_sample, right_sample,
+                 comm, rank, nprocs);
     sample.Destroy();
     HILOG(kInfo, "Finished decision tree on rank {} with {} samples",
           rank_, sample.size());
+
+    // Create next decision tree nodes
+    int left_off = rank;
+    int left_proc = nprocs / 2;
+    int right_off = rank + left_proc;
+    int right_proc = nprocs - left_proc;
+    if (right_proc < 1) {
+      right_off = rank;
+      right_proc = 1;
+    }
+    if (left_proc < 1) {
+      left_off = rank;
+      left_proc = 1;
+    }
+    MpiComm left_subcomm(comm, left_off, left_proc);
+    MpiComm right_subcomm(comm, right_off, right_proc);
     CreateDecisionTree(node->left_, node,
                        left_sample,
-                       left_uuid);
+                       left_uuid,
+                       left_subcomm.comm_,
+                       left_off, left_proc);
     CreateDecisionTree(node->right_, node,
                        right_sample,
-                       right_uuid);
+                       right_uuid,
+                       right_subcomm.comm_,
+                       right_off, right_proc);
   }
 
   void DivideSample(Node<T> &node,
-                    AssignT &sample,
-                    AssignT &left,
-                    AssignT &right) {
-    for (size_t i = 0; i < sample.size(); ++i) {
-      size_t off = sample[i];
-      if (data_[off].LessThan(node.joint_, node.feature_)) {
-        left.emplace_back(off);
+                    DataT &sample,
+                    DataT &left,
+                    DataT &right,
+                    MPI_Comm comm, int rank, int nprocs) {
+    sample.EvenPgas(rank, nprocs, sample.size());
+    sample.SeqTxBegin(sample.local_off(), sample.local_size(),
+                      MM_READ_ONLY);
+    for (size_t i = sample.local_off(); i < sample.local_size(); ++i) {
+      T &elmt = sample[i];
+      if (elmt.LessThan(node.joint_, node.feature_)) {
+        left.emplace_back(elmt);
       } else {
-        right.emplace_back(off);
+        right.emplace_back(elmt);
       }
     }
+    sample.TxEnd();
     // left.flush_emplace(MPI_COMM_SELF, 0, 0);
     // right.flush_emplace(MPI_COMM_SELF, 0, 0);
+    sample.Barrier(
+        MM_READ_ONLY, comm);
     left.Hint(MM_READ_ONLY);
     right.Hint(MM_READ_ONLY);
   }
 
   void Split(Node<T> &node,
-             AssignT &sample,
+             DataT &sample,
+             size_t subsample_size,
              int feature,
-             T &joint) {
+             T &joint,
+             size_t uuid,
+             MPI_Comm comm, int rank, int nprocs) {
+    TreeT nodes;
+    // Calculate the entropy per-node
+    nodes.Init(hshm::Formatter::format(dir_ + "/nodes_{}", uuid),
+               nprocs, MM_WRITE_ONLY);
+    nodes.EvenPgas(rank, nprocs, nprocs);
+    nodes.Allocate();
+    nodes.PgasTxBegin(rank, 1, MM_WRITE_ONLY);
+    nodes[rank] = std::make_unique<Node<T>>();
+    nodes[rank]->left_ = std::make_unique<Node<T>>();
+    nodes[rank]->right_ = std::make_unique<Node<T>>();
+    LocalSplit(*nodes[rank], sample, subsample_size, feature, joint);
+    nodes.TxEnd();
+    nodes.Barrier(MM_READ_ONLY, comm);
+
+    // Sum up node entropies
+    nodes.SeqTxBegin(0, nprocs, MM_READ_ONLY);
+    for (size_t i = 0; i < nprocs; ++i) {
+      auto &onode = *nodes[i];
+      node.entropy_ += onode.entropy_;
+      node.left_->count_ += onode.left_->count_;
+      node.right_->count_ += onode.right_->count_;
+    }
+    nodes.TxEnd();
+  }
+
+  void LocalSplit(Node<T> &node,
+                  DataT &sample,
+                  size_t subsample_size,
+                  int feature,
+                  T &joint) {
     // Group by output
     GiniT gini;
 
     // Assign points to left or right using joint
     size_t count[2] = {0};
-    for (size_t i = 0 ; i < sample.size(); ++i) {
-      size_t off = sample[i];
-      T &row = data_[off];
+    for (size_t i = 0 ; i < subsample_size; ++i) {
+      T &row = sample.template TxGet<mm::RandIterTx>();
       if (row.LessThan(joint, feature)) {
         count[0] += 1;
         gini.Induct(row, 0);
@@ -416,11 +443,8 @@ int main(int argc, char **argv) {
   std::string algo = argv[1];
   std::string train_path = argv[2];
   std::string test_path = argv[3];
-  HILOG(kInfo, "HERE1");
   int nfeature = std::stoi(argv[4]);
-  HILOG(kInfo, "HERE2");
   int ncol = nfeature + 1;
-  HILOG(kInfo, "HERE3");
   size_t window_size = hshm::ConfigParse::ParseSize(argv[5]);
   HILOG(kInfo, "Parsed argument on {}", rank);
 
