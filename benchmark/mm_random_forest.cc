@@ -300,25 +300,28 @@ class RandomForestClassifierMpi {
     size_t left_uuid = uuid;
     size_t right_uuid = uuid | (1 << node->depth_);
     std::string left_sample_name =
-        hshm::Formatter::format("{}/sample_{}_{}_{}",
+        hshm::Formatter::format("{}/sample_{}_{}",
                                 dir_, node->depth_ + 1,
-                                left_uuid, rank_);
+                                left_uuid);
     std::string right_sample_name =
-        hshm::Formatter::format("{}/sample_{}_{}_{}",
+        hshm::Formatter::format("{}/sample_{}_{}",
                                 dir_, node->depth_ + 1,
-                                right_uuid, rank_);
+                                right_uuid);
     left_sample.Init(left_sample_name,
                      node->left_->count_, MM_APPEND_ONLY);
     left_sample.BoundMemory(window_size_);
+    left_sample.Allocate();
     right_sample.Init(right_sample_name,
                       node->right_->count_, MM_APPEND_ONLY);
     right_sample.BoundMemory(window_size_);
+    right_sample.Allocate();
     DivideSample(*node, sample,
                  left_sample, right_sample,
                  comm, rank, nprocs);
+    sample.Barrier(MM_READ_ONLY, comm);
     sample.Destroy();
-    HILOG(kInfo, "Finished decision tree on rank {} with {} samples",
-          rank_, sample.size());
+    HILOG(kInfo, "Finished decision tree on rank {} with {} samples, {} and {}",
+          rank_, sample.size(), left_sample.size(), right_sample.size());
 
     // Create next decision tree nodes
     int left_off = rank;
@@ -333,18 +336,16 @@ class RandomForestClassifierMpi {
       left_off = rank;
       left_proc = 1;
     }
-    MpiComm left_subcomm(comm, left_off, left_proc);
-    MpiComm right_subcomm(comm, right_off, right_proc);
+//    MpiComm left_subcomm(comm, left_off, left_proc);
+//    MpiComm right_subcomm(comm, right_off, right_proc);
     CreateDecisionTree(node->left_, node,
                        left_sample,
                        left_uuid,
-                       left_subcomm.comm_,
-                       left_off, left_proc);
+                       comm, rank, nprocs);
     CreateDecisionTree(node->right_, node,
                        right_sample,
                        right_uuid,
-                       right_subcomm.comm_,
-                       right_off, right_proc);
+                       comm, rank, nprocs);
   }
 
   void DivideSample(Node<T> &node,
@@ -355,6 +356,7 @@ class RandomForestClassifierMpi {
     sample.EvenPgas(rank, nprocs, sample.size());
     sample.SeqTxBegin(sample.local_off(), sample.local_size(),
                       MM_READ_ONLY);
+    HILOG(kInfo, "{}: Dividing sample of size {}", rank, sample.local_size());
     for (size_t i = sample.local_off(); i < sample.local_size(); ++i) {
       T &elmt = sample[i];
       if (elmt.LessThan(node.joint_, node.feature_)) {
@@ -364,10 +366,8 @@ class RandomForestClassifierMpi {
       }
     }
     sample.TxEnd();
-    // left.flush_emplace(MPI_COMM_SELF, 0, 0);
-    // right.flush_emplace(MPI_COMM_SELF, 0, 0);
-    sample.Barrier(
-        MM_READ_ONLY, comm);
+    left.FlushEmplace(comm);
+    right.FlushEmplace(comm);
     left.Hint(MM_READ_ONLY);
     right.Hint(MM_READ_ONLY);
   }
@@ -381,8 +381,11 @@ class RandomForestClassifierMpi {
              MPI_Comm comm, int rank, int nprocs) {
     TreeT nodes;
     // Calculate the entropy per-node
-    nodes.Init(hshm::Formatter::format(dir_ + "/nodes_{}", uuid),
+    std::string nodes_name = hshm::Formatter::format(dir_ + "/nodes_{}_{}",
+                                                     node.depth_, uuid);
+    nodes.Init(nodes_name,
                nprocs, MM_WRITE_ONLY);
+    HILOG(kInfo, "{}: Created {} for {} procs", rank_, nodes_name, nprocs);
     nodes.EvenPgas(rank, nprocs, nprocs);
     nodes.Allocate();
     nodes.PgasTxBegin(rank, 1, MM_WRITE_ONLY);
@@ -402,6 +405,8 @@ class RandomForestClassifierMpi {
       node.right_->count_ += onode.right_->count_;
     }
     nodes.TxEnd();
+    nodes.Barrier(MM_READ_ONLY, comm);
+    // nodes.Destroy();
   }
 
   void LocalSplit(Node<T> &node,

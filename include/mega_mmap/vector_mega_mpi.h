@@ -47,7 +47,6 @@ class VectorMegaMpi : public Vector {
   std::vector<T> append_data_;   /**< Buffer containing data to append to vector */
   Page<T> *cur_page_ = nullptr;  /**< The last page accessed by this thread */
   hermes::Bucket bkt_;     /**< The Hermes bucket */
-  hermes::Bucket append_;  /**< The Hermes bucket used for appends */
   std::string path_;       /**< The path being mapped into memory */
   std::shared_ptr<Tx> cur_tx_ = nullptr;   /**< The current access pattern transaction */
 
@@ -336,6 +335,7 @@ class VectorMegaMpi : public Vector {
   void Destroy() {
     Close();
     bkt_.Destroy();
+    HRUN_ADMIN->FlushRoot(DomainId::GetLocal());
   }
 
   /** Emplace back */
@@ -362,13 +362,14 @@ class VectorMegaMpi : public Vector {
   }
 
   /** Flush emplace */
-  void FlushEmplace(MPI_Comm comm, int proc_off, int nprocs) {
+  void FlushEmplace(MPI_Comm comm) {
     if (append_data_.size()) {
       _FlushEmplace();
     }
     HRUN_ADMIN->FlushRoot(DomainId::GetLocal());
     MPI_Barrier(comm);
     size_t new_size = bkt_.GetSize();
+    HILOG(kInfo, "New bucket ({}) size: {}", bkt_.id_, new_size);
     new_size = new_size / elmt_size_;
     Resize(new_size);
     size_ = new_size;
