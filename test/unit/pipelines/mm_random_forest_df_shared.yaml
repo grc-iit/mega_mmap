@@ -5,7 +5,7 @@ pkgs:
     pkg_name: mm_random_forest_df_train
     path: ${HOME}/mm_data/rf_train.bin
     window_size: 1m
-    df_size: 64m
+    df_size: 8g
     nprocs: 1
     ppn: 16
     type: shared
