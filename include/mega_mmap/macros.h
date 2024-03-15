@@ -21,19 +21,22 @@ using hshm::bitfield32_t;
 class Bounds {
  public:
   size_t off_, size_;
+  int rank_, nprocs_;
  public:
   Bounds() = default;
-
-  Bounds(size_t off, size_t size) : off_(off), size_(size) {}
 
   Bounds(const Bounds &other) {
     off_ = other.off_;
     size_ = other.size_;
+    rank_ = other.rank_;
+    nprocs_ = other.nprocs_;
   }
 
   Bounds &operator=(const Bounds &other) {
     off_ = other.off_;
     size_ = other.size_;
+    rank_ = other.rank_;
+    nprocs_ = other.nprocs_;
     return *this;
   }
 
@@ -49,6 +52,8 @@ class Bounds {
       size_ += max_size % nprocs;
     }
     off_ = rank * (max_size / nprocs);
+    rank_ = rank;
+    nprocs_ = nprocs;
   }
 };
 

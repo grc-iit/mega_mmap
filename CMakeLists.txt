@@ -68,11 +68,6 @@ message("INCLUDE: ${Hermes_INCLUDE_DIRS}")
 find_package(Arrow REQUIRED)
 find_package(Parquet REQUIRED)
 
-# HermesShm
-find_package(HermesShm CONFIG REQUIRED)
-message(STATUS "found hermes_shm.h at ${HermesShm_INCLUDE_DIRS}")
-include_directories(${HermesShm_INCLUDE_DIRS})
-
 # YAML-CPP
 find_package(yaml-cpp REQUIRED)
 message(STATUS "found yaml-cpp at ${yaml-cpp_DIR}")

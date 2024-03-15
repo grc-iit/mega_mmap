@@ -54,7 +54,7 @@ class GrayScott {
   std::uniform_real_distribution<double> uniform_dist;
 
   // Setup cartesian communicator data types
-  void init_upc();
+  void init_mpi();
   // Setup initial conditions
   void init_field();
 

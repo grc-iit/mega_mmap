@@ -7,7 +7,7 @@
 #include <mpi.h>
 
 #include "../settings.h"
-#include <upcxx/upcxx.hpp>
+#include "mega_mmap/vector_mega_mpi.h"
 
 class GrayScott {
  public:
@@ -29,7 +29,7 @@ class GrayScott {
  protected:
   Settings settings;
 
-  upcxx::global_ptr<double> u, v, u2, v2;
+  mm::VectorMegaMpi<double> u, v, u2, v2;
 
   int rank, procs;
   int west, east, up, down, north, south;
@@ -46,30 +46,22 @@ class GrayScott {
   std::uniform_real_distribution<double> uniform_dist;
 
   // Setup cartesian communicator data types
-  void init_upc();
+  void init_mm();
   // Setup initial conditions
   void init_field();
 
   // Progess simulation for one timestep
-  void calc(const std::vector<double> &u, const std::vector<double> &v,
-            std::vector<double> &u2, std::vector<double> &v2);
+  void calc(mm::VectorMegaMpi<double> &u,
+            mm::VectorMegaMpi<double> &v,
+            mm::VectorMegaMpi<double> &u2,
+            mm::VectorMegaMpi<double> &v2);
   // Compute reaction term for U
   double calcU(double tu, double tv) const;
   // Compute reaction term for V
   double calcV(double tu, double tv) const;
   // Compute laplacian of field s at (ix, iy, iz)
   double laplacian(int ix, int iy, int iz,
-                   const std::vector<double> &s) const;
-
-  // Exchange faces with neighbors
-  void exchange(upcxx::global_ptr<double> &u,
-                upcxx::global_ptr<double> &v) const;
-  // Exchange XY faces with north/south
-  void exchange_xy(upcxx::global_ptr<double> &data) const;
-  // Exchange XZ faces with up/down
-  void exchange_xz(upcxx::global_ptr<double> &data) const;
-  // Exchange YZ faces with west/east
-  void exchange_yz(upcxx::global_ptr<double> &data) const;
+                   mm::VectorMegaMpi<double> &s) const;
 
   // Check if point is included in my subdomain
   inline bool is_inside(int x, int y, int z) const

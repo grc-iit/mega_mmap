@@ -129,12 +129,12 @@ class VectorMegaMpi : public Vector {
   /** Evenly split DSM among processes */
   void EvenPgas(int rank, int nprocs, size_t max_count,
                 size_t count_per_page = 0) {
-    Bounds bounds(rank, nprocs, max_count);
+    bounds_ = Bounds(rank, nprocs, max_count);
     if (count_per_page != 0) {
       SetElmtsPerPage(count_per_page);
     }
-    pgas_.Init(bounds.off_,
-               bounds.size_,
+    pgas_.Init(bounds_.off_,
+               bounds_.size_,
                elmts_per_page_);
   }
 
@@ -359,9 +359,15 @@ class VectorMegaMpi : public Vector {
     return pgas_.size_;
   }
 
-  /** Offset of PGAS region */
+  /** Offset of local PGAS region */
   size_t local_off() const {
     return pgas_.off_;
+  }
+
+  /** Offset of remote PGAS region */
+  size_t remote_off(int rank) const {
+    Bounds bounds(rank, bounds.nprocs_, bounds.size_);
+    return bounds.off_;
   }
 
   /** Index of last element + 1 */

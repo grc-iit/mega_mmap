@@ -15,16 +15,34 @@ GrayScott::GrayScott(const Settings &settings, MPI_Comm comm)
 GrayScott::~GrayScott() {}
 
 void GrayScott::init() {
-  init_mpi();
+  init_mm();
   init_field();
 }
 
 void GrayScott::init_field() {
   const int V = (size_x + 2) * (size_y + 2) * (size_z + 2);
-  u.resize(V, 1.0);
-  v.resize(V, 0.0);
-  u2.resize(V, 0.0);
-  v2.resize(V, 0.0);
+  u.Init("u", V * V * V, MM_READ_WRITE);
+  u.EvenPgas(rank, nprocs, u.size());
+  u.Allocate();
+
+  v.Init("v", V * V * V, MM_READ_WRITE);
+  v.EvenPgas(rank, nprocs, u.size());
+  v.Allocate();
+
+  u2.Init("u2", V * V * V, MM_READ_WRITE);
+  u2.EvenPgas(rank, nprocs, u.size());
+  u2.Allocate();
+
+  v2.Init("u2", V * V * V, MM_READ_WRITE);
+  v2.EvenPgas(rank, nprocs, u.size());
+  v2.Allocate();
+
+  for (size_t i = 0; i < V; ++i) {
+    u[i] = 1.0;
+    v[i] = 0.0;
+    u2[i] = 0.0;
+    v2[i] = 0.0;
+  }
 
   const int d = 6;
   for (int z = settings.L / 2 - d; z < settings.L / 2 + d; z++) {
@@ -40,7 +58,7 @@ void GrayScott::init_field() {
   }
 }
 
-void GrayScott::init_mpi() {
+void GrayScott::init_mm() {
   int dims[3] = {};
   const int periods[3] = {1, 1, 1};
   int coords[3] = {};
@@ -97,11 +115,7 @@ void GrayScott::init_mpi() {
 }
 
 void GrayScott::iterate() {
-  exchange(u, v);
   calc(u, v, u2, v2);
-
-  u.swap(u2);
-  v.swap(v2);
 }
 
 double GrayScott::calcU(double tu, double tv) const {
@@ -113,7 +127,7 @@ double GrayScott::calcV(double tu, double tv) const {
 }
 
 double GrayScott::laplacian(int x, int y, int z,
-                            const std::vector<double> &s) const {
+                            mm::VectorMegaMpi<double> &s) const {
   double ts = 0.0;
   ts += s[l2i(x - 1, y, z)];
   ts += s[l2i(x + 1, y, z)];
@@ -126,8 +140,10 @@ double GrayScott::laplacian(int x, int y, int z,
   return ts / 6.0;
 }
 
-void GrayScott::calc(const std::vector<double> &u, const std::vector<double> &v,
-                     std::vector<double> &u2, std::vector<double> &v2) {
+void GrayScott::calc(mm::VectorMegaMpi<double> &u,
+                     mm::VectorMegaMpi<double> &v,
+                     mm::VectorMegaMpi<double> &u2,
+                     mm::VectorMegaMpi<double> &v2) {
   for (int z = 1; z < size_z + 1; z++) {
     for (int y = 1; y < size_y + 1; y++) {
       for (int x = 1; x < size_x + 1; x++) {
@@ -141,70 +157,6 @@ void GrayScott::calc(const std::vector<double> &u, const std::vector<double> &v,
         du += settings.noise * uniform_dist(mt_gen);
         u2[i] = u[i] + du * settings.dt;
         v2[i] = v[i] + dv * settings.dt;
-      }
-    }
-  }
-}
-
-void GrayScott::exchange_xy(std::vector<double> &local_data) const {
-//  MPI_Status st;
-//
-//  // Send XY face z=size_z to north and receive z=0 from south
-//  MPI_Sendrecv(&local_data[l2i(1, 0, size_z)], 1, xy_face_type, north, 1,
-//               &local_data[l2i(1, 0, 0)], 1, xy_face_type, south, 1,
-//               cart_comm, &st);
-//  // Send XY face z=1 to south and receive z=size_z+1 from north
-//  MPI_Sendrecv(&local_data[l2i(1, 0, 1)], 1, xy_face_type, south, 1,
-//               &local_data[l2i(1, 0, size_z + 1)], 1, xy_face_type, north, 1,
-//               cart_comm, &st);
-}
-
-void GrayScott::exchange_xz(std::vector<double> &local_data) const {
-//  MPI_Status st;
-//
-//  // Send XZ face y=size_y to up and receive y=0 from down
-//  MPI_Sendrecv(&local_data[l2i(1, size_y, 1)], 1, xz_face_type, up, 2,
-//               &local_data[l2i(1, 0, 1)], 1, xz_face_type, down, 2, cart_comm,
-//               &st);
-//  // Send XZ face y=1 to down and receive y=size_y+1 from up
-//  MPI_Sendrecv(&local_data[l2i(1, 1, 1)], 1, xz_face_type, down, 2,
-//               &local_data[l2i(1, size_y + 1, 1)], 1, xz_face_type, up, 2,
-//               cart_comm, &st);
-}
-
-void GrayScott::exchange_yz(std::vector<double> &local_data) const {
-//  MPI_Status st;
-//
-//  // Send YZ face x=size_x to east and receive x=0 from west
-//  MPI_Sendrecv(&local_data[l2i(size_x, 0, 0)], 1, yz_face_type, east, 3,
-//               &local_data[l2i(0, 0, 0)], 1, yz_face_type, west, 3, cart_comm,
-//               &st);
-//  // Send YZ face x=1 to west and receive x=size_x+1 from east
-//  MPI_Sendrecv(&local_data[l2i(1, 0, 0)], 1, yz_face_type, west, 3,
-//               &local_data[l2i(size_x + 1, 0, 0)], 1, yz_face_type, east, 3,
-//               cart_comm, &st);
-}
-
-void GrayScott::exchange(std::vector<double> &u,
-                         std::vector<double> &v) const {
-  exchange_xy(u);
-  exchange_xz(u);
-  exchange_yz(u);
-
-  exchange_xy(v);
-  exchange_xz(v);
-  exchange_yz(v);
-}
-
-void GrayScott::data_no_ghost_common(const std::vector<double> &data,
-                                     double *data_no_ghost) const {
-  for (int z = 1; z < size_z + 1; z++) {
-    for (int y = 1; y < size_y + 1; y++)
-    {
-      for (int x = 1; x < size_x + 1; x++)
-      {
-        data_no_ghost[(x - 1) + (y - 1) * size_x +
-            (z - 1) * size_x * size_y] = data[l2i(x, y, z)];
       }
     }
   }

@@ -24,6 +24,7 @@ class Vector {
   size_t page_size_ = 0;       /** Number of data bytes a single page can hold */
   size_t page_mem_ = 0;        /** Page Size + Page Header Size */
   PGAS pgas_;                  /** PGAS mapping of vector elements */
+  Bounds bounds_;              /** Bounds of the vector */
   bitfield32_t flags_;         /** Access flags for this vector */
 
  public:
