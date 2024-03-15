@@ -31,7 +31,6 @@ void print_simulator_settings(const GrayScott &s)
 
 int main(int argc, char **argv)
 {
-  upcxx::init();
   MPI_Init(&argc, &argv);
   int rank, procs, wrank;
 
@@ -89,5 +88,4 @@ int main(int argc, char **argv)
   }
 
   MPI_Finalize();
-  upcxx::finalize();
 }

@@ -61,6 +61,7 @@ link_directories(${HermesShm_LIBRARY_DIRS})
 find_package(Hermes CONFIG REQUIRED)
 message(STATUS "found Hermes at ${Hermes_DIR}")
 include_directories(${Hermes_INCLUDE_DIRS})
+link_directories(${Hermes_LIBRARY_DIRS})
 message("LIBRARIES: ${Hermes_LIBRARIES}")
 message("INCLUDE: ${Hermes_INCLUDE_DIRS}")
 

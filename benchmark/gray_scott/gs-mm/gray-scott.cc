@@ -22,19 +22,19 @@ void GrayScott::init() {
 void GrayScott::init_field() {
   const int V = (size_x + 2) * (size_y + 2) * (size_z + 2);
   u.Init("u", V * V * V, MM_READ_WRITE);
-  u.EvenPgas(rank, nprocs, u.size());
+  u.EvenPgas(rank, procs, u.size());
   u.Allocate();
 
   v.Init("v", V * V * V, MM_READ_WRITE);
-  v.EvenPgas(rank, nprocs, u.size());
+  v.EvenPgas(rank, procs, u.size());
   v.Allocate();
 
   u2.Init("u2", V * V * V, MM_READ_WRITE);
-  u2.EvenPgas(rank, nprocs, u.size());
+  u2.EvenPgas(rank, procs, u.size());
   u2.Allocate();
 
   v2.Init("u2", V * V * V, MM_READ_WRITE);
-  v2.EvenPgas(rank, nprocs, u.size());
+  v2.EvenPgas(rank, procs, u.size());
   v2.Allocate();
 
   for (size_t i = 0; i < V; ++i) {

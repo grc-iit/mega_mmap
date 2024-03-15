@@ -5,6 +5,8 @@
 #ifndef MEGAMMAP_INCLUDE_MEGA_MMAP_TRANSACTION_RAND_TX_H_
 #define MEGAMMAP_INCLUDE_MEGA_MMAP_TRANSACTION_RAND_TX_H_
 
+#include "hermes_shm/util/random.h"
+
 namespace mm {
 
 class RandIterTx : public Tx {

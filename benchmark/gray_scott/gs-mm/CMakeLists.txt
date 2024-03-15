@@ -1,9 +1,9 @@
 add_executable(gray-scott-mm
-		main.cc
-		gray-scott.cc
+		${CMAKE_CURRENT_SOURCE_DIR}/main.cc
+		${CMAKE_CURRENT_SOURCE_DIR}/gray-scott.cc
 )
 
-target_link_libraries(gray-scott-mm MPI::MPI_C
-		${Hermes_LIBRARIES} ${HermesShm_LIBRARIES} yaml-cpp)
+target_link_libraries(gray-scott-mm
+		${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 install(TARGETS gray-scott-mm
 	RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
