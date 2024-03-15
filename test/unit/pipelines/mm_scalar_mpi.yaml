@@ -1,0 +1,10 @@
+name: mm_gray_scott_mega
+env: mega_mmap
+pkgs:
+  - pkg_type: mm_scalar
+    pkg_name: mm_scalar
+    api: mpi
+    L: 8g
+    nprocs: 8
+    do_dbg: false
+    dbg_port: 4001

@@ -6,7 +6,7 @@ from jarvis_cd.basic.pkg import Application, Color
 from jarvis_util import *
 
 
-class MmGrayScott(Application):
+class MmScalar(Application):
     """
     This class provides methods to launch the MmKmeans application.
     """
@@ -40,76 +40,15 @@ class MmGrayScott(Application):
             {
                 'name': 'L',
                 'msg': 'Grid size of cube',
-                'type': int,
-                'default': 32,
-            },
-            {
-                'name': 'Du',
-                'msg': 'Diffusion rate of substance U',
-                'type': float,
-                'default': .2,
-            },
-            {
-                'name': 'Dv',
-                'msg': 'Diffusion rate of substance V',
-                'type': float,
-                'default': .1,
-            },
-            {
-                'name': 'F',
-                'msg': 'Feed rate of U',
-                'type': float,
-                'default': .01,
-            },
-            {
-                'name': 'k',
-                'msg': 'Kill rate of V',
-                'type': float,
-                'default': .05,
-            },
-            {
-                'name': 'dt',
-                'msg': 'Timestep',
-                'type': float,
-                'default': 2.0,
-            },
-            {
-                'name': 'steps',
-                'msg': 'Total number of steps to simulate',
-                'type': int,
-                'default': 100,
-            },
-            {
-                'name': 'plotgap',
-                'msg': 'Number of steps between output',
-                'type': float,
-                'default': 10,
-            },
-            {
-                'name': 'noise',
-                'msg': 'Amount of noise',
-                'type': float,
-                'default': .01,
-            },
-            {
-                'name': 'output',
-                'msg': 'Absolute path to output data',
                 'type': str,
-                'default': None,
-            },
-            {
-                'name': 'engine',
-                'msg': 'Engien to be used',
-                'choices': ['bp5', 'hermes'],
-                'type': str,
-                'default': 'bp5',
+                'default': '1m',
             },
             {
                 'name': 'api',
-                'msg': 'GS API to use',
+                'msg': 'API to use',
                 'type': str,
                 'default': 'mpi',
-                'choices': ['mpi', 'mm']
+                'choices': ['mpi', 'mega']
             },
             {
                 'name': 'window_size',
@@ -127,12 +66,7 @@ class MmGrayScott(Application):
         :param kwargs: Configuration parameters for this pkg.
         :return: None
         """
-        if self.config['output'] is None:
-            adios_dir = os.path.join(self.shared_dir, 'gray-scott-output')
-            self.config['output'] = os.path.join(adios_dir,
-                                                 'data')
-            Mkdir(adios_dir, PsshExecInfo(hostfile=self.jarvis.hostfile,
-                                          env=self.env))
+        pass
 
     def start(self):
         """
@@ -142,7 +76,7 @@ class MmGrayScott(Application):
         :return: None
         """
         # print(self.env['HERMES_CLIENT_CONF'])
-        Exec(f'gray-scott-{self.config["api"]} {self.config_path}',
+        Exec(f'mm_scalar {self.config["api"]} {self.config["L"]} {self.config["window_size"]}',
              MpiExecInfo(nprocs=self.config['nprocs'],
                          ppn=self.config['ppn'],
                          hostfile=self.jarvis.hostfile,

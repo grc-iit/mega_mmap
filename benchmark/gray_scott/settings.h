@@ -3,6 +3,8 @@
 
 #include <string>
 #include <yaml-cpp/yaml.h>
+#include <hermes_shm/constants/macros.h>
+#include <hermes_shm/util/config_parse.h>
 
 struct Settings {
   size_t L;
@@ -14,6 +16,7 @@ struct Settings {
   double Du;
   double Dv;
   double noise;
+  size_t window_size;
   std::string output;
 
   Settings() {
@@ -26,6 +29,7 @@ struct Settings {
     Du = 0.05;
     Dv = 0.1;
     noise = 0.0;
+    window_size = MEGABYTES(1);
     output = "foo.bp";
   }
 
@@ -40,6 +44,8 @@ struct Settings {
     Du = config["Du"].as<double>();
     Dv = config["Dv"].as<double>();
     noise = config["noise"].as<double>();
+    window_size = hshm::ConfigParse::ParseSize(
+        config["window_size"].as<std::string>());
     output = config["output"].as<std::string>();
   }
 };

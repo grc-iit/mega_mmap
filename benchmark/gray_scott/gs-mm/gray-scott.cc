@@ -20,42 +20,52 @@ void GrayScott::init() {
 }
 
 void GrayScott::init_field() {
+  TRANSPARENT_HERMES();
+
   const int V = (size_x + 2) * (size_y + 2) * (size_z + 2);
-  u.Init("u", V * V * V, MM_READ_WRITE);
+  u.Init("u", procs * V * V * V, MM_READ_WRITE);
+  u.BoundMemory(settings.window_size);
   u.EvenPgas(rank, procs, u.size());
   u.Allocate();
 
-  v.Init("v", V * V * V, MM_READ_WRITE);
+  v.Init("v", procs * V * V * V, MM_READ_WRITE);
+  v.BoundMemory(settings.window_size);
   v.EvenPgas(rank, procs, u.size());
   v.Allocate();
 
-  u2.Init("u2", V * V * V, MM_READ_WRITE);
+  u2.Init("u2", procs * V * V * V, MM_READ_WRITE);
+  u2.BoundMemory(settings.window_size);
   u2.EvenPgas(rank, procs, u.size());
   u2.Allocate();
 
-  v2.Init("u2", V * V * V, MM_READ_WRITE);
+  v2.Init("v2", procs * V * V * V, MM_READ_WRITE);
+  v2.BoundMemory(settings.window_size);
   v2.EvenPgas(rank, procs, u.size());
   v2.Allocate();
+//
+//  for (size_t i = 0; i < V; ++i) {
+//    u[i] = 1.0;
+//    v[i] = 0.0;
+//    u2[i] = 0.0;
+//    v2[i] = 0.0;
+//  }
 
-  for (size_t i = 0; i < V; ++i) {
-    u[i] = 1.0;
-    v[i] = 0.0;
-    u2[i] = 0.0;
-    v2[i] = 0.0;
-  }
-
+  HILOG(kInfo, "Beginning pgas tx")
   const int d = 6;
+  u.PgasTxBegin(u.local_off(), u.local_size(), MM_WRITE_ONLY);
   for (int z = settings.L / 2 - d; z < settings.L / 2 + d; z++) {
     for (int y = settings.L / 2 - d; y < settings.L / 2 + d; y++) {
       for (int x = settings.L / 2 - d; x < settings.L / 2 + d; x++) {
         if (!is_inside(x, y, z))
           continue;
         int i = g2i(x, y, z);
-        u[i] = 0.25;
-        v[i] = 0.33;
+        u[i + u.local_off()] = 0.25;
+        v[i + v.local_off()] = 0.33;
       }
     }
   }
+  u.TxEnd();
+  HILOG(kInfo, "Ending pgas TX")
 }
 
 void GrayScott::init_mm() {

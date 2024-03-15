@@ -5,9 +5,11 @@ add_subdirectory(gray_scott)
 # add_executable(mm_sort mm_sort.cc)
 # target_link_libraries(mm_sort ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 
-add_executable(mm_hermes_test hermes_test.cc
-)
+add_executable(mm_hermes_test hermes_test.cc)
 target_link_libraries(mm_hermes_test ${Hermes_LIBRARIES})
+
+add_executable(mm_scalar mm_scalar.cc)
+target_link_libraries(mm_scalar ${Hermes_LIBRARIES} MPI::MPI_CXX)
 
 add_executable(mm_kmeans mm_kmeans.cc)
 target_link_libraries(mm_kmeans ${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
@@ -29,7 +31,7 @@ target_link_libraries(mm_random_forest_df ${Hermes_LIBRARIES} MPI::MPI_CXX arrow
 #target_link_libraries(mm_gadget2conv ${Hermes_LIBRARIES}
 #        MPI::MPI_CXX arrow_shared parquet_shared HDF5::HDF5)
 
-install(TARGETS mm_hermes_test mm_kmeans mm_kmeans_df mm_random_forest mm_random_forest_df # mm_dbscan mm_gadget2conv
+install(TARGETS mm_hermes_test mm_scalar mm_kmeans mm_kmeans_df mm_random_forest mm_random_forest_df # mm_dbscan mm_gadget2conv
         RUNTIME DESTINATION bin)
 
 install(FILES pandas_kmeans.py pandas_random_forest.py pandas_dbscan.py

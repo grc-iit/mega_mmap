@@ -6,4 +6,4 @@ add_executable(gray-scott-mm
 target_link_libraries(gray-scott-mm
 		${Hermes_LIBRARIES} MPI::MPI_CXX arrow_shared parquet_shared)
 install(TARGETS gray-scott-mm
-	RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
+		RUNTIME DESTINATION bin)

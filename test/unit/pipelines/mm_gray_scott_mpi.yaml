@@ -1,0 +1,10 @@
+name: mm_gray_scott_mega
+env: mega_mmap
+pkgs:
+  - pkg_type: mm_gray_scott
+    pkg_name: mm_gray_scott
+    api: mpi
+    L: 512
+    nprocs: 8
+    do_dbg: false
+    dbg_port: 4001
