@@ -124,7 +124,7 @@ class KMeans {
     max_iter_ = max_iter;
 
     HILOG(kInfo, "{}: Beginning data definition", rank_)
-    data_.Init(path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
+    data_.Init(path, MM_READ_ONLY | MM_STAGE);
     data_.BoundMemory(window_size);
     data_.EvenPgas(rank_, nprocs_, data_.size());
     data_.Allocate();
@@ -285,10 +285,10 @@ class KMeans {
     if (rank_ == 0) {
       HILOG(kInfo, "Intertia: {}", inertia_);
       HILOG(kInfo, "Iterations: {}", iter_);
-//      std::sort(ks_.begin(), ks_.end(),
-//                [](const Center<T> &a, const Center<T> &b) {
-//                  return a.center_.Key() > b.center_.Key();
-//                });
+      std::sort(ks_.begin(), ks_.end(),
+                [](const Center<T> &a, const Center<T> &b) {
+                  return a.center_.Key() > b.center_.Key();
+                });
       for (int i = 0; i < k_; ++i) {
         ks_[i].Print();
       }
@@ -701,6 +701,7 @@ int main(int argc, char **argv) {
     KmeansLlMpi<Row> kmeans;
     kmeans.Init(MPI_COMM_WORLD, path, window_size, k, max_iter);
     kmeans.Run();
+    MPI_Barrier(MPI_COMM_WORLD);
     kmeans.Print();
   } else {
     HILOG(kFatal, "Unknown algorithm: {}", algo);

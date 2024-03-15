@@ -32,11 +32,14 @@ namespace mm {
 template<typename T>
 struct Page {
   std::vector<T> elmts_;
+  LPointer<hrunpq::TypedPushTask<hermes::GetBlobTask>> task_;
   u32 id_;
 
   Page() = default;
 
-  Page(u32 id) : id_(id) {}
+  Page(u32 id) : id_(id) {
+    task_.ptr_ = nullptr;
+  }
 };
 
 /** A wrapper for mmap-based vectors */
@@ -44,7 +47,7 @@ template<typename T, bool IS_COMPLEX_TYPE=false>
 class VectorMegaMpi : public Vector {
  public:
   std::unordered_map<size_t, Page<T>> data_;   /**< Map page index to page */
-  std::vector<T> append_data_;   /**< Buffer containing data to append to vector */
+  std::vector<T> append_data_;   /**< Contains data to append to vector */
   Page<T> *cur_page_ = nullptr;  /**< The last page accessed by this thread */
   hermes::Bucket bkt_;     /**< The Hermes bucket */
   std::string path_;       /**< The path being mapped into memory */
@@ -140,7 +143,7 @@ class VectorMegaMpi : public Vector {
     hermes::Context ctx;
     if constexpr(!IS_COMPLEX_TYPE) {
       bitfield32_t flags;
-      if (!flags_.Any(MM_STAGE_READ_FROM_BACKEND)) {
+      if (!flags_.Any(MM_STAGE)) {
         flags.SetBits(HERMES_STAGE_NO_READ);
       }
       ctx = hermes::data_stager::BinaryFileStager::BuildContext(
@@ -152,12 +155,18 @@ class VectorMegaMpi : public Vector {
 
   /** Create a sequential transaction */
   void SeqTxBegin(size_t off, size_t size, uint32_t flags) {
+    if (flags_.Any(MM_STAGE)) {
+      flags |= MM_STAGE;
+    }
     cur_tx_ = std::make_shared<SeqIterTx>(
         this, off, size, flags);
   }
 
   /** Create a PGAS transaction */
   void PgasTxBegin(size_t off, size_t size, uint32_t flags) {
+    if (flags_.Any(MM_STAGE)) {
+      flags |= MM_STAGE;
+    }
     cur_tx_ = std::make_shared<PgasTx>(
         this, off, size, flags);
   }
@@ -165,6 +174,9 @@ class VectorMegaMpi : public Vector {
   /** Create a random transaction */
   void RandTxBegin(size_t seed, size_t rand_left, size_t rand_size,
                    size_t size, uint32_t flags) {
+    if (flags_.Any(MM_STAGE)) {
+      flags |= MM_STAGE;
+    }
     cur_tx_ = std::make_shared<RandIterTx>(
         this, seed, rand_left, rand_size, size, flags);
   }
@@ -233,6 +245,8 @@ class VectorMegaMpi : public Vector {
     if (cur_page_ == &it->second) {
       cur_page_ = nullptr;
     }
+    Page<T> &page = it->second;
+    FinishAsyncFault<true>(page);
     data_.erase(it);
     cur_memory_ -= page_size_;
   }
@@ -248,7 +262,24 @@ class VectorMegaMpi : public Vector {
     flags_.SetBits(flags);
   }
 
+  /** Finish async fault */
+  template<bool InEvict>
+  void FinishAsyncFault(Page<T> &page) {
+    if (page.task_.ptr_ != nullptr) {
+      page.task_->Wait();
+      hermes::GetBlobTask *task = page.task_->get();
+      if constexpr(!InEvict) {
+        hermes::Blob blob((char *) page.elmts_.data(), page_size_);
+        char *data = HRUN_CLIENT->GetDataPointer(task->data_);
+        memcpy(blob.data(), data, task->data_size_);
+      }
+      HRUN_CLIENT->DelTask(page.task_);
+      page.task_.ptr_ = nullptr;
+    }
+  }
+
   /** Induct a page */
+  template<bool DoAsync>
   Page<T>* _Fault(size_t page_idx) {
     // Ensure that the page_idx makes sense
     if (page_idx > size_ / elmts_per_page_) {
@@ -256,6 +287,9 @@ class VectorMegaMpi : public Vector {
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
       HELOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
             rank, path_, page_idx, size_ / elmts_per_page_);
+    }
+    if (data_.find(page_idx) != data_.end()) {
+      return &data_[page_idx];
     }
 
     // Add page to page table
@@ -269,9 +303,15 @@ class VectorMegaMpi : public Vector {
     // If we need to read data from the page, ensure we read it from Hermes
     if (flags_.Any(MM_READ_ONLY | MM_READ_WRITE)) {
       if constexpr (!IS_COMPLEX_TYPE) {
-        ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
-        hermes::Blob blob((char*)page.elmts_.data(), page_size_);
-        bkt_.Get(page_name, blob, ctx);
+        if (flags_.Any(MM_STAGE)) {
+          ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
+        }
+        hermes::Blob blob((char *) page.elmts_.data(), page_size_);
+        if constexpr (!DoAsync) {
+          bkt_.Get(page_name, blob, ctx);
+        } else {
+          page.task_ = bkt_.AsyncGet(page_name, blob, ctx);
+        }
       } else {
         bkt_.Get<T>(page_name, page.elmts_[0], ctx);
       }
@@ -292,9 +332,10 @@ class VectorMegaMpi : public Vector {
     } else {
       auto it = data_.find(page_idx);
       if (it == data_.end()) {
-        page_ptr = _Fault(page_idx);
+        page_ptr = _Fault<false>(page_idx);
       } else {
         page_ptr = &it->second;
+        FinishAsyncFault<false>(*page_ptr);
       }
     }
     if (cur_tx_) {
@@ -388,7 +429,7 @@ class VectorMegaMpi : public Vector {
 
     // Stage data to be read from storage
     hermes::Context ctx;
-    if (flags.Any(MM_STAGE_READ_FROM_BACKEND)) {
+    if (flags.Any(MM_STAGE)) {
       ctx.flags_.SetBits(HERMES_SHOULD_STAGE);
     }
     std::string page_name =
@@ -398,7 +439,9 @@ class VectorMegaMpi : public Vector {
     bkt_.ReorganizeBlob(page_name, score, ctx);
 
     // Async fault the data
-    if (flags.Any(MM_READ_ONLY | MM_READ_WRITE | MM_STAGE_READ_FROM_BACKEND)) {
+    if (score == 1 &&
+        flags.Any(MM_READ_ONLY | MM_READ_WRITE)) {
+      _Fault<true>(page_idx);
     }
   }
 };

@@ -133,12 +133,12 @@ class RandomForestClassifierMpi {
     tol_ = tol;
     max_depth_ = max_depth;
     // Load train data and partition
-    data_.Init(train_path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
+    data_.Init(train_path, MM_READ_ONLY | MM_STAGE);
     data_.BoundMemory(window_size_);
     data_.EvenPgas(rank_, nprocs_, data_.size());
     data_.Allocate();
     // Load test data and partition
-    test_data_.Init(test_path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
+    test_data_.Init(test_path, MM_READ_ONLY | MM_STAGE);
     test_data_.BoundMemory(window_size_);
     test_data_.EvenPgas(rank_, nprocs_, test_data_.size());
     test_data_.Allocate();

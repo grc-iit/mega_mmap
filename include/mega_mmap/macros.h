@@ -12,7 +12,7 @@
 #define MM_WRITE_ONLY BIT_OPT(u32, 1)
 #define MM_APPEND_ONLY BIT_OPT(u32, 2)
 #define MM_READ_WRITE BIT_OPT(u32, 3)
-#define MM_STAGE_READ_FROM_BACKEND BIT_OPT(u32, 4)
+#define MM_STAGE BIT_OPT(u32, 4)
 
 namespace mm {
 

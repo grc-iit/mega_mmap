@@ -50,8 +50,13 @@ class SeqIterTx : public Tx {
     }
 
     // Prefetch future pages
-    for (size_t i = last_page + 1; i < last_page + 1; ++i) {
-      vec_->Rescore(i, 0, vec_->elmts_per_page_,
+    if (vec_->window_size_ >= vec_->cur_memory_ || end) {
+      return;
+    }
+    size_t count = NumPrefetchPages(size_);
+    for (size_t i = 0; i < count; ++i) {
+      vec_->Rescore(last_page + 1 + i, 0,
+                    vec_->elmts_per_page_,
                     1.0, flags_);
     }
   }

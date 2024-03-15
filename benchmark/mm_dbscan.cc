@@ -122,7 +122,7 @@ class DbscanMpi {
     path_ = path;
     max_depth_ = 16;
     // Create data vector
-    data_.Init(path, MM_READ_ONLY | MM_STAGE_READ_FROM_BACKEND);
+    data_.Init(path, MM_READ_ONLY | MM_STAGE);
     data_.BoundMemory(window_size);
     data_.EvenPgas(rank_, nprocs_, data_.size());
     data_.Allocate();
