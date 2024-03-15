@@ -104,6 +104,13 @@ class MmGrayScott(Application):
                 'type': str,
                 'default': 'bp5',
             },
+            {
+                'name': 'api',
+                'msg': 'GS API to use',
+                'type': str,
+                'default': 'mpi',
+                'choices': ['mpi', 'mm']
+            },
         ]
 
     def _configure(self, **kwargs):
@@ -120,32 +127,6 @@ class MmGrayScott(Application):
                                                  'data')
             Mkdir(adios_dir, PsshExecInfo(hostfile=self.jarvis.hostfile,
                                           env=self.env))
-        settings_json = {
-            'L': self.config['L'],
-            'Du': self.config['Du'],
-            'Dv': self.config['Dv'],
-            'F': self.config['F'],
-            'k': self.config['k'],
-            'dt': self.config['dt'],
-            'plotgap': self.config['plotgap'],
-            'steps': self.config['steps'],
-            'noise': self.config['noise'],
-            'output': f'{self.config["output"]}',
-            'adios_config': self.adios2_xml_path
-        }
-        Mkdir(self.config['output'],
-              PsshExecInfo(hostfile=self.jarvis.hostfile,
-                           env=self.env))
-        JsonFile(self.settings_json_path).save(settings_json)
-
-        if self.config['engine'].lower() == 'bp5':
-            self.copy_template_file(f'{self.pkg_dir}/config/adios2.xml',
-                                    self.adios2_xml_path)
-        elif self.config['engine'].lower() == 'hermes':
-            self.copy_template_file(f'{self.pkg_dir}/config/hermes.xml',
-                                    self.adios2_xml_path)
-        else:
-            raise Exception('Engine not defined')
 
     def start(self):
         """
@@ -155,15 +136,11 @@ class MmGrayScott(Application):
         :return: None
         """
         # print(self.env['HERMES_CLIENT_CONF'])
-        start = time.time()
-        Exec(f'gray-scott {self.settings_json_path}',
+        Exec(f'gray-scott-{self.config["api"]} {self.config_path}',
              MpiExecInfo(nprocs=self.config['nprocs'],
                          ppn=self.config['ppn'],
                          hostfile=self.jarvis.hostfile,
                          env=self.mod_env))
-        end = time.time()
-        diff = end - start
-        self.log(f'TIME: {diff} seconds', color=Color.GREEN)
 
     def stop(self):
         """
