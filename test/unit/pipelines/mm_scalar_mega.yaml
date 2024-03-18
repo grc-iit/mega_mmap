@@ -5,12 +5,13 @@ pkgs:
     pkg_name: hermes_run
     sleep: 2
     include: ${HOME}/mm_data
-    pqdepth: 8
-    ram: 1g
+    pqdepth: 16
+    ram: 4g
+    data_shm: 1g
   - pkg_type: mm_scalar
     pkg_name: mm_scalar
     api: mega
-    L: 16g
+    L: 8g
     nprocs: 8
     window_size: 2g
     do_dbg: false

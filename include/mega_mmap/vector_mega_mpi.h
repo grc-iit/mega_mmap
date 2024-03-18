@@ -339,7 +339,7 @@ class VectorMegaMpi : public Vector {
       }
     }
     if (cur_tx_) {
-      if ((cur_tx_->tail_ % elmts_per_page_) == 0) {
+      if ((cur_tx_->tail_ % (16 * elmts_per_page_)) == 0) {
         cur_tx_->ProcessLog(false);
       }
       ++cur_tx_->tail_;
