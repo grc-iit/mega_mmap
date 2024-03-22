@@ -111,9 +111,12 @@ class MmKmeans(Application):
             Exec(cmd, LocalExecInfo(env=self.env))
         elif self.config['api'] == 'pandas':
             cmd = [
-                'python3',
+                'python3 -u',
                 f'{self.env["MM_PATH"]}/scripts/pandas_kmeans.py',
-                self.config['path']
+                self.config['path'],
+                self.config['k'],
+                self.config['max_iter'],
+                str(self.config['nprocs']),
             ]
             cmd = ' '.join(cmd)
             Exec(cmd, LocalExecInfo(env=self.env))

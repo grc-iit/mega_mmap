@@ -691,9 +691,10 @@ int main(int argc, char **argv) {
   std::string path = argv[2];
   size_t window_size = hshm::ConfigParse::ParseSize(argv[3]);
   int k = hshm::ConfigParse::ParseSize(argv[4]);
-  int max_iter = std::stoi(argv[4]);
-  HILOG(kInfo, "{}: Running {} on {} with window size {} with {} centers",
-        rank, algo, path, window_size, k);
+  int max_iter = std::stoi(argv[5]);
+  HILOG(kInfo, "{}: Running {} on {} with window size {} with {} centers and "
+               "{} max iterations",
+        rank, algo, path, window_size, k, max_iter);
 
   if (algo == "mmap") {
   } else if (algo == "mega") {
