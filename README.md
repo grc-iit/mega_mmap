@@ -11,6 +11,13 @@ https://arrow.apache.org/docs/developers/cpp/building.html
 spack install arrow@15 +parquet
 ```
 
+## Spark
+```
+spack install spark
+scspkg create spark
+scspkg env set spark SPARK_SCRIPTS=$(spack find --format {PREFIX} spark)
+```
+
 ## Hermes
 
 ```

@@ -4,8 +4,8 @@ pkgs:
   - pkg_type: mm_kmeans_df
     pkg_name: mm_kmeans_df
     path: ${HOME}/mm_data/parquet/kmeans.parquet
-    window_size: 1g
-    df_size: 1g
+    window_size: 4g
+    df_size: 4g
     nprocs: 1
     ppn: 16
     type: parquet
