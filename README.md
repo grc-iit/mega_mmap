@@ -49,6 +49,16 @@ make -j8
 
 # Build environment
 
+Arrow manual:
+```
+module load hermes_run
+module load mega_mmap
+spack load hermes_shm
+module load spark arrow
+jarvis env build mega_mmap +MM_PATH +SPARK_SCRIPTS
+```
+
+Arrow through spack:
 ```
 module load hermes_run
 module load mega_mmap
