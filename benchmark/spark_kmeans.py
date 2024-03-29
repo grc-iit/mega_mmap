@@ -26,14 +26,6 @@ def make_parquet_rdd():
     hermes_rdd = assembler.transform(rdd)
     return hermes_rdd
 
-def make_iris_rdd():
-    rdd_path = "/home/lukemartinlogan/Documents/Projects/PhD/mega_mmap/benchmark/iris.csv"
-    rdd = spark.read.csv(rdd_path, header=True, inferSchema=True)
-    feature_cols = ["sepal_length", "sepal_width", "petal_length", "petal_width"]
-    assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
-    iris_rdd = assembler.transform(rdd)
-    return iris_rdd
-
 # Read training data and fit
 ColorPrinter.print("Beginning KMeans", Color.GREEN)
 rdd = make_parquet_rdd()
