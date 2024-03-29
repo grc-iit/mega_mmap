@@ -103,7 +103,7 @@ class MmKmeans(Application):
             cmd = [
                 'spark-submit',
                 f'--master {master_url}',
-                '--deploy-mode cluster',
+                # '--deploy-mode cluster',
                 f'--driver-memory {self.config["window_size"]}',
                 f'--executor-memory {self.config["window_size"]}',
                 f'--conf spark.speculation=false',
