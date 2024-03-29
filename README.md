@@ -5,17 +5,30 @@ and storage.
 
 # Dependencies
 
-## Apache Arrow
-https://arrow.apache.org/docs/developers/cpp/building.html
 ```
-spack install arrow@15 +parquet
+scspkg create arrow
+cd $(scspkg pkg src arrow)
+git clone https://github.com/apache/arrow.git -b apache-arrow-15.0.1
+cd arrow/cpp
+mkdir build
+cd build
+cmake ../ -DARROW_PARQUET=ON -DCMAKE_INSTALL_PREFIX=$(scspkg pkg root arrow)
+make -j32 install
 ```
 
 ## Spark
 ```
-spack install spark
+spack install openjdk@11
+spack load openjdk@11
 scspkg create spark
-scspkg env set spark SPARK_SCRIPTS=$(spack find --format {PREFIX} spark)
+cd `scspkg pkg src spark`
+wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1.tgz
+tar -xzf spark-3.5.1.tgz
+cd spark-3.5.1
+./build/mvn -T 16 -DskipTests clean package
+scspkg env set spark SPARK_SCRIPTS=${PWD}
+scspkg env prepend spark PATH "${PWD}/bin"
+module load spark
 ```
 
 ## Hermes
@@ -27,9 +40,8 @@ spack install hermes@master
 # Install
 
 ```
-module load hermes_run
-module load mega_mmap
-spack load hermes_shm arrow
+module load hermes_run mega_mmap arrow
+spack load hermes_shm
 ```
 
 ```
@@ -49,20 +61,8 @@ make -j8
 
 # Build environment
 
-Arrow manual:
 ```
-module load hermes_run
-module load mega_mmap
-spack load hermes_shm
-module load spark arrow
-jarvis env build mega_mmap +MM_PATH +SPARK_SCRIPTS
-```
-
-Arrow through spack:
-```
-module load hermes_run
-module load mega_mmap
-spack load hermes_shm arrow
-module load spark
+module load hermes_run mega_mmap spark arrow
+spack load hermes_shm  
 jarvis env build mega_mmap +MM_PATH +SPARK_SCRIPTS
 ```

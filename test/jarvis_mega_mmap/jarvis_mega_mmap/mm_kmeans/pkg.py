@@ -157,6 +157,9 @@ class MmKmeans(Application):
         """
         Kill('.*mm_kmeans.*', PsshExecInfo(hosts=self.jarvis.hostfile))
 
+    def _get_stat(self, stat_dict):
+        stat_dict[f'{self.pkg_id}.runtime'] = self.start_time
+
     def clean(self):
         """
         Destroy all data for an application. E.g., OrangeFS will delete all
