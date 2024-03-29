@@ -27,5 +27,5 @@ vars:
   mm_kmeans_df.df_size: [16m, 64m, 128m, 1g, 2g, 4g]
 loop:
   - [mm_kmeans_df.window_size, mm_kmeans_df.df_size]
-repeat: 3
+repeat: 1
 output: "$shared_dir/output"
