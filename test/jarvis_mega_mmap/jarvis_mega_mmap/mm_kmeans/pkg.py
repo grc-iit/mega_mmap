@@ -103,7 +103,7 @@ class MmKmeans(Application):
                 f'--executor-memory {self.config["window_size"]}',
                 f'--conf spark.speculation=false',
                 f'--conf spark.storage.replication=1',
-                f'--conf spark.executors.cores={self.config["ppn"]}',
+                # f'--conf spark.executors.cores={self.config["ppn"]}',
                 f'--conf spark.local.dir={self.config["scratch"]}',
                 f'{self.env["MM_PATH"]}/scripts/spark_kmeans.py',
                 self.config['path'],
