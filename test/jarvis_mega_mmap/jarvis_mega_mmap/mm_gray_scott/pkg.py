@@ -147,7 +147,7 @@ class MmGrayScott(Application):
              MpiExecInfo(nprocs=self.config['nprocs'],
                          ppn=self.config['ppn'],
                          hostfile=self.jarvis.hostfile,
-                         env=self.mod_env,
+                         env=self.env,
                          dbg_port=self.config['dbg_port'],
                          do_dbg=self.config['do_dbg'],))
 
