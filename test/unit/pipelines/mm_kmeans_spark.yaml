@@ -4,6 +4,7 @@ config:
   pkgs:
     - pkg_type: spark_cluster
       pkg_name: spark_cluster
+      num_nodes: 1
     - pkg_type: mm_kmeans_df
       pkg_name: mm_kmeans_df
       path: ${HOME}/mm_data/parquet/kmeans.parquet
@@ -25,8 +26,8 @@ config:
 vars:
   mm_kmeans_df.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
   mm_kmeans_df.df_size: [16m, 64m, 128m, 1g, 2g, 4g]
-  mm_kmeans.ppn: [32, 64, 128]
+  mm_kmeans.num_nodes: [4]
 loop:
   - [mm_kmeans_df.window_size, mm_kmeans_df.df_size]
 repeat: 1
-output: "$shared_dir/output"
+output: "$shared_dir/output_multi"
