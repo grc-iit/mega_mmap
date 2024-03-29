@@ -160,6 +160,19 @@ class MmGrayScott(Application):
         """
         pass
 
+    def _get_stat(self, stat_dict):
+        """
+        Parse the output of the application to extract performance statistics.
+
+        :param stat_dict: A dictionary to store the performance statistics.
+        :return: None
+        """
+        parser = MonitorParser(self.env['MONITOR_DIR'])
+        stat_dict[f'{self.pkg_id}.runtime'] = self.start_time
+        stat_dict[f'{self.pkg_id}.avg_mem'] = parser.avg_memory()
+        stat_dict[f'{self.pkg_id}.peak_mem'] = parser.peak_memory()
+        stat_dict[f'{self.pkg_id}.avg_cpu'] = parser.avg_cpu()
+
     def clean(self):
         """
         Destroy all data for an application. E.g., OrangeFS will delete all

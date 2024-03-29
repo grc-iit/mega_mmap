@@ -2,6 +2,10 @@ config:
   name: mm_gray_scott_mpi
   env: mega_mmap
   pkgs:
+    - pkg_type: pymonitor
+      pkg_name: pymonitor
+      frequency: 1
+      output: "$ITER_DIR"
     - pkg_type: mm_gray_scott
       pkg_name: mm_gray_scott
       api: mpi
@@ -17,4 +21,4 @@ loop:
   - [mm_gray_scott.L]
   # - [mm_gray_scott.nprocs, mm_gray_scott.L]
 repeat: 1
-output: "$shared_dir/output"
+output: "$SHARED_DIR/output"
