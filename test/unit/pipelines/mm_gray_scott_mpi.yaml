@@ -6,6 +6,7 @@ config:
       pkg_name: pymonitor
       frequency: 1
       dir: "$ITER_DIR"
+      sleep: 1
     - pkg_type: mm_gray_scott
       pkg_name: mm_gray_scott
       api: mpi
