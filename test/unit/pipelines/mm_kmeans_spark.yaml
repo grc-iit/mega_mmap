@@ -29,5 +29,6 @@ vars:
   spark_cluster.num_nodes: [4]
 loop:
   - [mm_kmeans_df.window_size, mm_kmeans_df.df_size]
+  - [spark_cluster.num_nodes]
 repeat: 1
 output: "$shared_dir/output_multi"
