@@ -14,6 +14,7 @@ vars:
   # mm_gray_scott.nprocs: [16m, 64m, 128m, 1g, 2g, 4g]
   mm_gray_scott.L: [256, 512, 1024]
 loop:
-  - [mm_gray_scott.nprocs, mm_gray_scott.L]
+  - [mm_gray_scott.L]
+  # - [mm_gray_scott.nprocs, mm_gray_scott.L]
 repeat: 1
 output: "$shared_dir/output"
