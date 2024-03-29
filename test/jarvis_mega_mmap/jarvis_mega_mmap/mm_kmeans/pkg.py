@@ -97,8 +97,12 @@ class MmKmeans(Application):
         """
         mm_kmeans = ['mmap', 'mega']
         if self.config['api'] == 'spark':
+            master_host = self.env['SPARK_MASTER_HOST']
+            master_port = self.env['SPARK_MASTER_PORT']
+            master_url = f'spark://{master_host}:{master_port}'
             cmd = [
                 'spark-submit',
+                f'--master {master_url}',
                 '--deploy-mode cluster',
                 f'--driver-memory {self.config["window_size"]}',
                 f'--executor-memory {self.config["window_size"]}',
