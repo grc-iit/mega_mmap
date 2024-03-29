@@ -142,6 +142,7 @@ class MmGrayScott(Application):
         :return: None
         """
         # print(self.env['HERMES_CLIENT_CONF'])
+        print(f'gray-scott-{self.config["api"]})')
         Exec(f'gray-scott-{self.config["api"]} {self.config_path}',
              MpiExecInfo(nprocs=self.config['nprocs'],
                          ppn=self.config['ppn'],
