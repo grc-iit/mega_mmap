@@ -168,6 +168,7 @@ class MmGrayScott(Application):
         :return: None
         """
         parser = MonitorParser(self.env['MONITOR_DIR'])
+        parser.parse()
         stat_dict[f'{self.pkg_id}.runtime'] = self.start_time
         stat_dict[f'{self.pkg_id}.avg_mem'] = parser.avg_memory()
         stat_dict[f'{self.pkg_id}.peak_mem'] = parser.peak_memory()
