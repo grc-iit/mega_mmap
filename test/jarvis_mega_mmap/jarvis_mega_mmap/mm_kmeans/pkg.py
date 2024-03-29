@@ -98,7 +98,8 @@ class MmKmeans(Application):
         mm_kmeans = ['mmap', 'mega']
         if self.config['api'] == 'spark':
             cmd = [
-                'spark-submit  --master yarn ',
+                'spark-submit',
+                '--deploy-mode cluster',
                 f'--driver-memory {self.config["window_size"]}',
                 f'--executor-memory {self.config["window_size"]}',
                 f'--conf spark.speculation=false',
