@@ -26,7 +26,7 @@ config:
 vars:
   mm_kmeans_df.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
   mm_kmeans_df.df_size: [16m, 64m, 128m, 1g, 2g, 4g]
-  mm_kmeans.num_nodes: [4]
+  spark_cluster.num_nodes: [4]
 loop:
   - [mm_kmeans_df.window_size, mm_kmeans_df.df_size]
 repeat: 1
