@@ -352,7 +352,8 @@ class VectorMegaMpi : public Vector {
       }
     }
     if (cur_tx_) {
-      if ((cur_tx_->tail_ % prefetch_gran_) == 0) {
+      // if ((cur_tx_->tail_ % prefetch_gran_) == 0) {
+      if (cur_memory_ >= window_size_) {
         cur_tx_->ProcessLog(false);
       }
       ++cur_tx_->tail_;
