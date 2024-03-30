@@ -1,21 +1,33 @@
-name: mm_kmeans_mega
-env: mega_mmap
-pkgs:
-  - pkg_type: hermes_run
-    pkg_name: hermes_run
-    sleep: 3
-    pqdepth: 8
-    ram: 24g
-    do_dbg: false
-    dbg_port: 4000
-  - pkg_type: mm_kmeans
-    pkg_name: mm_kmeans
-    path: ${HOME}/mm_data/kmeans.bin
-    window_size: 256m
-    nprocs: 8
-    ppn: 24
-    api: mega
-    max_iter: 4
-    k: 8
-    do_dbg: false
-    dbg_port: 4001
+config:
+  name: mm_kmeans_mega
+  env: mega_mmap
+  pkgs:
+    - pkg_type: hermes_run
+      pkg_name: hermes_run
+      sleep: 3
+      pqdepth: 8
+      ram: 24g
+      do_dbg: false
+      dbg_port: 4000
+      num_nodes: 1
+    - pkg_type: mm_kmeans
+      pkg_name: mm_kmeans
+      path: ${HOME}/mm_data/kmeans.bin
+      window_size: 256m
+      nprocs: 8
+      ppn: 24
+      api: mega
+      max_iter: 4
+      k: 8
+      do_dbg: false
+      dbg_port: 4001
+vars:
+  mm_kmeans.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
+  mm_kmeans.df_size: [1g]
+  hermes_run.num_nodes: [1]
+loop:
+  - [mm_kmeans.window_size]
+  - [mm_kmeans.df_size]
+  - [hermes_run.num_nodes]
+repeat: 1
+output: "$shared_dir/output_multi"
