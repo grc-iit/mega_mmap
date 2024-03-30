@@ -11,7 +11,6 @@ config:
       ppn: 16
       type: parquet
       k: 1000
-      domain: enp47s0np0
     - pkg_type: hermes_run
       pkg_name: hermes_run
       sleep: 5
@@ -20,6 +19,7 @@ config:
       do_dbg: false
       dbg_port: 4000
       num_nodes: 1
+      domain: enp47s0np0
     - pkg_type: mm_kmeans
       pkg_name: mm_kmeans
       path: ${HOME}/mm_data/kmeans.bin
