@@ -458,10 +458,10 @@ class VectorMegaMpi : public Vector {
     bkt_.ReorganizeBlob(page_name, score, ctx);
 
     // Async fault the data
-//    if (score == 1 &&
-//        flags.Any(MM_READ_ONLY | MM_READ_WRITE)) {
-//      _Fault<true>(page_idx);
-//    }
+    if (score == 1 &&
+        flags.Any(MM_READ_ONLY | MM_READ_WRITE)) {
+      _Fault<true>(page_idx);
+    }
   }
 };
 
