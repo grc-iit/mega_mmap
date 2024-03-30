@@ -35,6 +35,8 @@ vars:
   mm_kmeans_df.df_size: [1g]
   mm_kmeans.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
   hermes_run.num_nodes: [1]
+norerun:
+  - mm_kmeans_df
 loop:
   - [mm_kmeans_df.df_size]
   - [mm_kmeans.window_size]
