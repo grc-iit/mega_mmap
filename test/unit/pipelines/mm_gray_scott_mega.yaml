@@ -9,6 +9,7 @@ config:
       pqdepth: 8
       ram: 1g
       provider: sockets
+      num_nodes: 1
     - pkg_type: pymonitor
       pkg_name: pymonitor
       frequency: 1
@@ -28,8 +29,9 @@ vars:
   mm_gray_scott.L: [1024, 1280, 1536]
   pymonitor.dir: ["$ITER_DIR"]
   pymonitor.num_nodes: [1, 2, 4]
+  hermes_run.num_nodes: [1, 2, 4]
 loop:
-  - [mm_gray_scott.nprocs, mm_gray_scott.L, pymonitor.num_nodes]
+  - [mm_gray_scott.nprocs, mm_gray_scott.L, pymonitor.num_nodes, hermes_run.num_nodes]
   - [pymonitor.dir]
 repeat: 1
 output: "$SHARED_DIR/output"
