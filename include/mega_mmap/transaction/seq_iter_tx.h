@@ -55,9 +55,6 @@ class SeqIterTx : public Tx {
       return;
     }
     size_t count = NumPrefetchPages(size_);
-    if (last_prefetch_ <= last_page) {
-      last_prefetch_ = last_page + 1;
-    }
     for (size_t i = 0; i < count; ++i) {
       vec_->Rescore(last_prefetch_++, 0,
                     vec_->elmts_per_page_,
