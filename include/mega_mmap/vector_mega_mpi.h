@@ -78,6 +78,7 @@ class VectorMegaMpi : public Vector {
   /** Explicit initializer */
   void Init(const std::string &path, size_t count,
             size_t elmt_size, u32 flags) {
+    TRANSPARENT_HERMES();
     if (data_.size()) {
       return;
     }

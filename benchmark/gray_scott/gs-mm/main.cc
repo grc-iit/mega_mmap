@@ -35,6 +35,7 @@ int main(int argc, char **argv)
   int rank, procs, wrank;
 
   MPI_Comm_rank(MPI_COMM_WORLD, &wrank);
+  HILOG(kInfo, "Starting gray scott on rank {}", wrank);
 
   const unsigned int color = 1;
   MPI_Comm comm;
