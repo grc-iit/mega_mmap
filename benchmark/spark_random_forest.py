@@ -1,5 +1,5 @@
 """
-USAGE: spark-submit --driver-memory <size> kmeans.py <path>
+USAGE: spark-submit spark_random_forest.py <train_path> <test_path> <num_trees> <max_depth>
 """
 
 from pyspark.sql import SparkSession
@@ -13,6 +13,8 @@ import sys
 # Get cmd
 train_path = sys.argv[1]
 test_path = sys.argv[2]
+num_trees = int(sys.argv[3])
+max_depth = int(sys.argv[4])
 
 # Initialize Spark
 spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
@@ -27,7 +29,8 @@ def make_parquet_rdd(path):
 # Read training data and fit
 print("Beginning Random forest")
 train_rdd = make_parquet_rdd(train_path)
-rf = RandomForestClassifier(k=8, seed=1)
+rf = RandomForestClassifier(
+    numTrees=num_trees, maxDepth=max_depth, seed=1)
 model = rf.fit(train_rdd)
 
 # Read testing data and predict

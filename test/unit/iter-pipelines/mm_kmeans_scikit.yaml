@@ -1,12 +1,13 @@
-name: mm_kmeans_pandas
-env: mega_mmap
-pkgs:
-  - pkg_type: mm_kmeans
-    pkg_name: mm_kmeans
-    path: ${HOME}/mm_data/parquet/kmeans.parquet_0_0_1
-    window_size: 1m
-    nprocs: 4
-    ppn: 16
-    api: pandas
-    max_iter: 4
-    k: 10
+config:
+  name: mm_kmeans_pandas
+  env: mega_mmap
+  pkgs:
+    - pkg_type: mm_kmeans
+      pkg_name: mm_kmeans
+      path: ${HOME}/mm_data/parquet/kmeans.parquet_0_0_1
+      window_size: 1m
+      nprocs: 4
+      ppn: 16
+      api: pandas
+      max_iter: 4
+      k: 10

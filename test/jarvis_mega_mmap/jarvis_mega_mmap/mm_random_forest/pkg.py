@@ -97,19 +97,16 @@ class MmRandomForest(Application):
         """
         mm_kmeans = ['mmap', 'mega']
         if self.config['api'] == 'spark':
+            master_host = self.env['SPARK_MASTER_HOST']
+            master_port = self.env['SPARK_MASTER_PORT']
             cmd = [
-                'spark-submit',
-                f'--driver-memory 2g',
-                f'--executor-memory {self.config["window_size"]}',
-                f'--conf spark.speculation=false',
-                f'--conf spark.storage.replication=1',
-                f'--conf spark.local.dir={self.config["scratch"]}',
                 f'{self.env["MM_PATH"]}/scripts/spark_random_forest.py',
                 self.config['train_path'],
                 self.config['test_path']
             ]
             cmd = ' '.join(cmd)
-            Exec(cmd, LocalExecInfo(env=self.env))
+            SparkExec(cmd, master_host, master_port,
+                      exec_info=LocalExecInfo(env=self.env))
         elif self.config['api'] == 'pandas':
             cmd = [
                 'python3',
@@ -134,6 +131,20 @@ class MmRandomForest(Application):
                                   ppn=self.config['ppn'],
                                   do_dbg=self.config['do_dbg'],
                                   dbg_port=self.config['dbg_port']))
+
+    def _get_stat(self, stat_dict):
+        """
+        Parse the output of the application to extract performance statistics.
+
+        :param stat_dict: A dictionary to store the performance statistics.
+        :return: None
+        """
+        parser = MonitorParser(self.env['MONITOR_DIR'])
+        parser.parse()
+        stat_dict[f'{self.pkg_id}.runtime'] = self.start_time
+        stat_dict[f'{self.pkg_id}.avg_mem'] = parser.avg_memory()
+        stat_dict[f'{self.pkg_id}.peak_mem'] = parser.peak_memory()
+        stat_dict[f'{self.pkg_id}.avg_cpu'] = parser.avg_cpu()
 
     def stop(self):
         """

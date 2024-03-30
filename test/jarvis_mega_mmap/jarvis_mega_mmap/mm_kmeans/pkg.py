@@ -99,24 +99,15 @@ class MmKmeans(Application):
         if self.config['api'] == 'spark':
             master_host = self.env['SPARK_MASTER_HOST']
             master_port = self.env['SPARK_MASTER_PORT']
-            master_url = f'spark://{master_host}:{master_port}'
             cmd = [
-                'spark-submit',
-                f'--master {master_url}',
-                # '--deploy-mode cluster',
-                f'--driver-memory {self.config["window_size"]}',
-                f'--executor-memory {self.config["window_size"]}',
-                f'--conf spark.speculation=false',
-                f'--conf spark.storage.replication=1',
-                # f'--conf spark.executors.cores={self.config["ppn"]}',
-                f'--conf spark.local.dir={self.config["scratch"]}',
                 f'{self.env["MM_PATH"]}/scripts/spark_kmeans.py',
                 self.config['path'],
                 self.config['k'],
                 self.config['max_iter']
             ]
             cmd = ' '.join(cmd)
-            Exec(cmd, LocalExecInfo(env=self.env))
+            SparkExec(cmd, master_host, master_port,
+                      exec_info=LocalExecInfo(env=self.env))
         elif self.config['api'] == 'pandas':
             cmd = [
                 'python3 -u',
@@ -163,7 +154,18 @@ class MmKmeans(Application):
         Kill('.*mm_kmeans.*', PsshExecInfo(hosts=self.jarvis.hostfile))
 
     def _get_stat(self, stat_dict):
+        """
+        Parse the output of the application to extract performance statistics.
+
+        :param stat_dict: A dictionary to store the performance statistics.
+        :return: None
+        """
+        parser = MonitorParser(self.env['MONITOR_DIR'])
+        parser.parse()
         stat_dict[f'{self.pkg_id}.runtime'] = self.start_time
+        stat_dict[f'{self.pkg_id}.avg_mem'] = parser.avg_memory()
+        stat_dict[f'{self.pkg_id}.peak_mem'] = parser.peak_memory()
+        stat_dict[f'{self.pkg_id}.avg_cpu'] = parser.avg_cpu()
 
     def clean(self):
         """
