@@ -15,11 +15,12 @@ config:
       pkg_name: hermes_run
       sleep: 5
       pqdepth: 8
-      ram: 24g
       do_dbg: false
       dbg_port: 4000
       num_nodes: 1
       domain: enp47s0np0
+      ram: 1g
+      data_shm: 1g
     - pkg_type: pymonitor
       pkg_name: pymonitor
       frequency: 1
@@ -40,13 +41,15 @@ config:
 vars:
   mm_kmeans_df.df_size: [1g]
   mm_kmeans.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
+  hermes_run.ram: [16m, 64m, 128m, 1g, 2g, 4g]
+  hermes_run.data_shm: [16m, 64m, 128m, 1g, 2g, 4g]
   hermes_run.num_nodes: [1]
   pymonitor.dir: ["$ITER_DIR"]
 norerun:
   - mm_kmeans_df
 loop:
   - [mm_kmeans_df.df_size]
-  - [mm_kmeans.window_size]
+  - [mm_kmeans.window_size, hermes_run.ram, hermes_run.data_shm]
   - [hermes_run.num_nodes]
 repeat: 1
 output: "$SHARED_DIR/output_multi"
