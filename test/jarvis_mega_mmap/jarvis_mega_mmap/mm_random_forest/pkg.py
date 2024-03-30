@@ -60,7 +60,7 @@ class MmRandomForest(Application):
                 'msg': 'The implementation to use',
                 'type': str,
                 'default': 'spark',
-                'choices': ['spark', 'mmap', 'mega', 'pandas']
+                'choices': ['spark', 'mega', 'pandas']
             },
             {
                 'name': 'nfeature',
@@ -73,6 +73,18 @@ class MmRandomForest(Application):
                 'msg': 'Where spark buffers data',
                 'type': str,
                 'default': '${HOME}/sparktmp/',
+            },
+            {
+                'name': 'num_trees',
+                'msg': 'The number of trees to generate',
+                'type': int,
+                'default': 1
+            },
+            {
+                'name': 'max_depth',
+                'msg': 'Max depth of trees',
+                'type': int,
+                'default': 4
             },
         ]
 
@@ -102,7 +114,9 @@ class MmRandomForest(Application):
             cmd = [
                 f'{self.env["MM_PATH"]}/scripts/spark_random_forest.py',
                 self.config['train_path'],
-                self.config['test_path']
+                self.config['test_path'],
+                str(self.config['num_trees']),
+                str(self.config['max_depth']),
             ]
             cmd = ' '.join(cmd)
             SparkExec(cmd, master_host, master_port,
@@ -113,6 +127,8 @@ class MmRandomForest(Application):
                 f'{self.env["MM_PATH"]}/scripts/pandas_random_forest.py',
                 self.config['train_path'],
                 self.config['test_path'],
+                str(self.config['num_trees']),
+                str(self.config['max_depth']),
             ]
             cmd = ' '.join(cmd)
             Exec(cmd, LocalExecInfo(env=self.env))
