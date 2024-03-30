@@ -1,0 +1,46 @@
+config:
+  name: mm_kmeans_spark
+  env: mega_mmap
+  pkgs:
+    - pkg_type: mm_random_forest_df
+      pkg_name: mm_rf_train
+      path: ${HOME}/mm_data/train_parquet/rf_train.parquet
+      window_size: 16m
+      df_size: 16m
+      nprocs: 1
+      ppn: 16
+      type: parquet
+      k: 1000
+    - pkg_type: mm_random_forest_df
+      pkg_name: mm_rf_test
+      path: ${HOME}/mm_data/test_parquet/rf_test.parquet
+      window_size: 4m
+      df_size: 4m
+      nprocs: 1
+      ppn: 16
+      type: parquet
+      k: 1000
+    - pkg_type: spark_cluster
+      pkg_name: spark_cluster
+      num_nodes: 1
+    - pkg_type: mm_random_forest
+      pkg_name: mm_random_forest
+      train_path: ${HOME}/mm_data/train_parquet/*
+      test_path: ${HOME}/mm_data/test_parquet/*
+      window_size: 30g
+      api: spark
+      num_trees: 1
+      max_depth: 4
+      do_dbg: False
+      dbg_port: 4001
+vars:
+  mm_rf_train.df_size: [16m, 64m, 128m, 1g, 2g, 4g]
+  spark_cluster.num_nodes: [1]
+norerun:
+  - mm_rf_train
+  - mm_rf_test
+loop:
+  - [mm_rf_train.df_size]
+  - [spark_cluster.num_nodes]
+repeat: 1
+output: "$SHARED_DIR/output_multi"
