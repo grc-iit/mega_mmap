@@ -298,8 +298,9 @@ class VectorMegaMpi : public Vector {
     if (page_idx > size_ / elmts_per_page_) {
       int rank;
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-      HELOG(kFatal, "{}: Cannot seek past size of {}: {} / {} ",
+      HELOG(kError, "{}: Cannot seek past size of {}: {} / {} ",
             rank, path_, page_idx, size_ / elmts_per_page_);
+      return nullptr;
     }
     if (data_.find(page_idx) != data_.end()) {
       return &data_[page_idx];
