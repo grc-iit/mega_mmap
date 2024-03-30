@@ -23,6 +23,12 @@ config:
     - pkg_type: spark_cluster
       pkg_name: spark_cluster
       num_nodes: 1
+    - pkg_type: pymonitor
+      pkg_name: pymonitor
+      frequency: 1
+      dir: "$ITER_DIR"
+      num_nodes: 1
+      sleep: 1
     - pkg_type: mm_random_forest
       pkg_name: mm_random_forest
       train_path: ${HOME}/mm_data/train_parquet/*
@@ -36,11 +42,14 @@ config:
 vars:
   mm_rf_train.df_size: [16m, 64m, 128m, 1g, 2g, 4g]
   spark_cluster.num_nodes: [1]
+  pymonitor.num_nodes: [1]
+  pymonitor.dir: ["$ITER_DIR"]
 norerun:
   - mm_rf_train
   - mm_rf_test
 loop:
   - [mm_rf_train.df_size]
-  - [spark_cluster.num_nodes]
+  - [spark_cluster.num_nodes, pymonitor.num_nodes]
+  - [pymonitor.dir]
 repeat: 1
 output: "$SHARED_DIR/output_multi"
