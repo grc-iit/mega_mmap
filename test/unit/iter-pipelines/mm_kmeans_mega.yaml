@@ -2,9 +2,18 @@ config:
   name: mm_kmeans_mega
   env: mega_mmap
   pkgs:
+    - pkg_type: mm_kmeans_df
+      pkg_name: mm_kmeans_df
+      path: ${HOME}/mm_data/kmeans.bin
+      window_size: 256m
+      df_size: 4g
+      nprocs: 1
+      ppn: 16
+      type: parquet
+      k: 1000
     - pkg_type: hermes_run
       pkg_name: hermes_run
-      sleep: 3
+      sleep: 5
       pqdepth: 8
       ram: 24g
       do_dbg: false
@@ -22,12 +31,12 @@ config:
       do_dbg: false
       dbg_port: 4001
 vars:
-  # mm_kmeans_df.df_size: [1g]
+  mm_kmeans_df.df_size: [1g]
   mm_kmeans.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
   hermes_run.num_nodes: [1]
 loop:
+  - [mm_kmeans_df.df_size]
   - [mm_kmeans.window_size]
-  - [mm_kmeans.df_size]
   - [hermes_run.num_nodes]
 repeat: 1
 output: "$shared_dir/output_multi"
