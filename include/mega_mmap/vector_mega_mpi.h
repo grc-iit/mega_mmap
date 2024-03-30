@@ -78,6 +78,11 @@ class VectorMegaMpi : public Vector {
   /** Explicit initializer */
   void Init(const std::string &path, size_t count,
             size_t elmt_size, u32 flags) {
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    HILOG(kInfo, "{}: Mapping the dataset {}",
+          rank, path);
+
     TRANSPARENT_HERMES();
     if (data_.size()) {
       return;
@@ -154,6 +159,11 @@ class VectorMegaMpi : public Vector {
     }
     bkt_ = HERMES->GetBucket(path_, ctx);
     append_data_.reserve(elmts_per_page_);
+
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    HILOG(kInfo, "{}: Allocated the dataset {} of size {}",
+          rank, path_, size_);
   }
 
   /** Create a sequential transaction */

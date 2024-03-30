@@ -123,12 +123,11 @@ class KMeans {
     k_ = k;
     max_iter_ = max_iter;
 
-    HILOG(kInfo, "{}: Beginning data definition", rank_)
+
     data_.Init(path, MM_READ_ONLY | MM_STAGE);
     data_.BoundMemory(window_size);
     data_.EvenPgas(rank_, nprocs_, data_.size());
     data_.Allocate();
-    HILOG(kInfo, "{}: Finished data definition", rank_)
     tol_ = tol;
     min_inertia_ = min_inertia;
   }
