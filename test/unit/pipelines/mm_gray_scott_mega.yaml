@@ -4,7 +4,7 @@ config:
   pkgs:
     - pkg_type: hermes_run
       pkg_name: hermes_run
-      sleep: 2
+      sleep: 8
       include: ${HOME}/mm_data
       pqdepth: 8
       ram: 1g
