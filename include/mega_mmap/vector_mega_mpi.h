@@ -52,6 +52,7 @@ class VectorMegaMpi : public Vector {
   hermes::Bucket bkt_;     /**< The Hermes bucket */
   std::string path_;       /**< The path being mapped into memory */
   std::shared_ptr<Tx> cur_tx_ = nullptr;   /**< The current access pattern transaction */
+  size_t prefetch_gran_;
 
  public:
   VectorMegaMpi() = default;
@@ -103,6 +104,7 @@ class VectorMegaMpi : public Vector {
   void BoundMemory(size_t window_size) {
     window_size_ = window_size;
     elmts_per_window_ = window_size / elmt_size_;
+    prefetch_gran_ = elmts_per_window_ * .5;
   }
 
   /** Set the exact size in bytes of a DSM page */
@@ -339,7 +341,7 @@ class VectorMegaMpi : public Vector {
       }
     }
     if (cur_tx_) {
-      if ((cur_tx_->tail_ % (16 * elmts_per_page_)) == 0) {
+      if ((cur_tx_->tail_ % prefetch_gran_) == 0) {
         cur_tx_->ProcessLog(false);
       }
       ++cur_tx_->tail_;
