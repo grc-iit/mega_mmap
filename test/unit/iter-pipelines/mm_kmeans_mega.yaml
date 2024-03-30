@@ -16,6 +16,6 @@ pkgs:
     ppn: 24
     api: mega
     max_iter: 4
-    k: 50
+    k: 8
     do_dbg: false
     dbg_port: 4001
