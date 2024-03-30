@@ -40,9 +40,9 @@ config:
       dbg_port: 4001
 vars:
   mm_kmeans_df.df_size: [1g]
-  mm_kmeans.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
-  hermes_run.ram: [16m, 64m, 128m, 1g, 2g, 4g]
-  hermes_run.data_shm: [16m, 64m, 128m, 1g, 2g, 4g]
+  mm_kmeans.window_size: [4g, 2g, 1g, 128m, 64m, 16m]
+  hermes_run.ram: [4g, 2g, 1g, 128m, 64m, 16m]
+  hermes_run.data_shm: [4g, 2g, 1g, 128m, 64m, 16m]
   hermes_run.num_nodes: [1]
   pymonitor.dir: ["$ITER_DIR"]
 norerun:
