@@ -651,6 +651,7 @@ class KmeansLlMpi : public KMeans<T> {
     hshm::UniformDistribution dist;
     dist.Seed(SEED);
     dist.Shape(0, data_.size_ - 1);
+    HILOG(kInfo, "The data size: {}", data_.size_)
     size_t first_k = dist.GetSize();
     data_.SeqTxBegin(first_k, 1, MM_READ_ONLY);
     T first = data_[first_k];
