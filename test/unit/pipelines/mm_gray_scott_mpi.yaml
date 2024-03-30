@@ -6,22 +6,24 @@ config:
       pkg_name: pymonitor
       frequency: 1
       dir: "$ITER_DIR"
+      num_nodes: 1
       sleep: 1
     - pkg_type: mm_gray_scott
       pkg_name: mm_gray_scott
       api: mpi
       L: 512
       steps: 1
-      nprocs: 16
-      ppn: 16
+      nprocs: 24
+      ppn: 24
       do_dbg: false
       dbg_port: 4001
 vars:
   mm_gray_scott.nprocs: [24, 48, 96]
   mm_gray_scott.L: [1024, 1536, 2048]
   pymonitor.dir: ["$ITER_DIR"]
+  pymonitor.num_nodes: [1, 2, 4]
 loop:
-  - [mm_gray_scott.nprocs, mm_gray_scott.L]
+  - [mm_gray_scott.nprocs, mm_gray_scott.L, pymonitor.num_nodes]
   - [pymonitor.dir]
 repeat: 1
 output: "$SHARED_DIR/output"
