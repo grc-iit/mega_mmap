@@ -7,6 +7,13 @@ config:
       sleep: 2
       include: ${HOME}/mm_data
       pqdepth: 8
+      ram: 1g
+    - pkg_type: pymonitor
+      pkg_name: pymonitor
+      frequency: 1
+      dir: "$ITER_DIR"
+      num_nodes: 1
+      sleep: 1
     - pkg_type: mm_gray_scott
       pkg_name: mm_gray_scott
       api: mm
