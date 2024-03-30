@@ -19,7 +19,7 @@ config:
       dbg_port: 4001
 vars:
   mm_gray_scott.nprocs: [24, 48, 96]
-  mm_gray_scott.L: [1024, 1536, 2048]
+  mm_gray_scott.L: [1024, 1280, 1536]
   pymonitor.dir: ["$ITER_DIR"]
   pymonitor.num_nodes: [1, 2, 4]
 loop:
