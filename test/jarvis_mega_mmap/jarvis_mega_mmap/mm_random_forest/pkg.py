@@ -120,6 +120,8 @@ class MmRandomForest(Application):
             ]
             cmd = ' '.join(cmd)
             SparkExec(cmd, master_host, master_port,
+                      driver_mem=self.config['window_size'],
+                      executor_mem=self.config['window_size'],
                       exec_info=LocalExecInfo(env=self.env))
         elif self.config['api'] == 'pandas':
             cmd = [
