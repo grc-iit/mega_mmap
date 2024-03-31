@@ -22,8 +22,7 @@ max_depth = int(sys.argv[4])
 # Initialize Spark
 spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
 def make_parquet_rdd(path):
-    parquet_path = f"{path}*"
-    rdd = spark.read.parquet(parquet_path)
+    rdd = spark.read.parquet(path)
     # feature_cols = ["x", "y", "class"]
     # assembler = VectorAssembler(
     #     inputCols=feature_cols, outputCol="features")
