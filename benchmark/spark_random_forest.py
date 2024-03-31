@@ -11,6 +11,7 @@ import pandas as pd
 import sys
 
 # Get cmd
+print(sys.argv)
 train_path = sys.argv[1]
 test_path = sys.argv[2]
 num_trees = int(sys.argv[3])
