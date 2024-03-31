@@ -8,7 +8,6 @@ from pyspark.mllib.tree import RandomForest
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import VectorAssembler
 from pyspark.mllib.regression import LabeledPoint
-from pyspark.mllib.linalg import Vectors
 import struct
 import pandas as pd
 import sys
@@ -25,9 +24,12 @@ spark = SparkSession.builder.appName("LargeFileProcessing").getOrCreate()
 def make_parquet_rdd(path):
     parquet_path = f"{path}*"
     rdd = spark.read.parquet(parquet_path)
-    feature_cols = ["x", "y", "class"]
-    hermes_rdd = (
-        rdd.map(lambda x: LabeledPoint(x[-1], Vectors.dense(x[0:-1]))))
+    # feature_cols = ["x", "y", "class"]
+    # assembler = VectorAssembler(
+    #     inputCols=feature_cols, outputCol="features")
+    # hermes_rdd = assembler.transform(rdd)
+    hermes_rdd = rdd.rdd.map(
+        lambda row: LabeledPoint(row[-1], row[0:-1]))
     return hermes_rdd
 
 # Read training data and fit
@@ -36,17 +38,22 @@ print(f'Beginning Random forest on {train_path} and {test_path} '
 train_rdd = make_parquet_rdd(train_path)
 model = RandomForest.trainClassifier(
     train_rdd,
-    numClasses=2,
+    numClasses=1000,
     categoricalFeaturesInfo={},
     numTrees=num_trees, maxDepth=max_depth, seed=1)
 
 # Read testing data and predict
 test_rdd = make_parquet_rdd(test_path)
-preds = model.transform(test_rdd)
-evaluator = MulticlassClassificationEvaluator(
-    labelCol="indexedLabel", predictionCol="prediction", metricName="accuracy")
-accuracy = evaluator.evaluate(preds)
+preds = model.predict(test_rdd)
+predictions_rdd = model.predict(test_rdd.map(lambda x: x.features))
+labels_and_predictions = test_rdd.map(lambda lp: lp.label).zip(predictions_rdd)
+accuracy = labels_and_predictions.filter(
+    lambda lp: lp[0] == lp[1]).count() / float(test_rdd.count())
 print(f'Accuracy: {accuracy}')
+
+first_10_entries = labels_and_predictions.take(10)
+for entry in first_10_entries:
+    print(entry)
 
 # Stop Spark
 spark.stop()

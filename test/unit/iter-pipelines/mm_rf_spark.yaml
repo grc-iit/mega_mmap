@@ -36,11 +36,12 @@ config:
       window_size: 30g
       api: spark
       num_trees: 1
-      max_depth: 4
+      max_depth: 10
       do_dbg: False
       dbg_port: 4001
 vars:
-  mm_rf_train.df_size: [16m, 64m, 128m]
+  mm_rf_train.df_size: [16m]
+  # mm_rf_train.df_size: [16m, 64m, 128m]
   spark_cluster.num_nodes: [1]
   pymonitor.num_nodes: [1]
   pymonitor.dir: ["$ITER_DIR"]
