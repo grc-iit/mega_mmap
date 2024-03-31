@@ -113,8 +113,8 @@ class MmRandomForest(Application):
             master_port = self.env['SPARK_MASTER_PORT']
             cmd = [
                 f'{self.env["MM_PATH"]}/scripts/spark_random_forest.py',
-                self.config['train_path'],
-                self.config['test_path'],
+                f'\"{self.config["train_path"]}\"',
+                f'\"{self.config["test_path"]}\"',
                 str(self.config['num_trees']),
                 str(self.config['max_depth']),
             ]

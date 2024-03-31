@@ -101,7 +101,7 @@ class MmKmeans(Application):
             master_port = self.env['SPARK_MASTER_PORT']
             cmd = [
                 f'{self.env["MM_PATH"]}/scripts/spark_kmeans.py',
-                self.config['path'],
+                f'\"{self.config["path"]}\"',
                 self.config['k'],
                 self.config['max_iter']
             ]
