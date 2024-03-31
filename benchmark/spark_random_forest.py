@@ -7,6 +7,8 @@ from pyspark import SparkConf, SparkContext
 from pyspark.mllib.tree import RandomForest
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import VectorAssembler
+from pyspark.mllib.regression import LabeledPoint
+from pyspark.mllib.linalg import Vectors
 import struct
 import pandas as pd
 import sys
@@ -24,8 +26,8 @@ def make_parquet_rdd(path):
     parquet_path = f"{path}*"
     rdd = spark.read.parquet(parquet_path)
     feature_cols = ["x", "y", "class"]
-    assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
-    hermes_rdd = assembler.transform(rdd)
+    hermes_rdd = (
+        rdd.map(lambda x: LabeledPoint(x[-1], Vectors.dense(x[0:-1]))))
     return hermes_rdd
 
 # Read training data and fit
