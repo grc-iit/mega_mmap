@@ -33,7 +33,10 @@ print(f'Beginning Random forest on {train_path} and {test_path} '
       f'with {num_trees} trees and max depth of {max_depth}')
 train_rdd = make_parquet_rdd(train_path)
 model = RandomForest.trainClassifier(
-    train_rdd, numTrees=num_trees, maxDepth=max_depth, seed=1)
+    train_rdd,
+    numClasses=2,
+    categoricalFeaturesInfo={},
+    numTrees=num_trees, maxDepth=max_depth, seed=1)
 
 # Read testing data and predict
 test_rdd = make_parquet_rdd(test_path)
