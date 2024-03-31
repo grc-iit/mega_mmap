@@ -4,7 +4,7 @@ USAGE: spark-submit spark_random_forest.py <train_path> <test_path> <num_trees> 
 
 from pyspark.sql import SparkSession
 from pyspark import SparkConf, SparkContext
-from pyspark.mllib.tree import RandomForestClassifier
+from pyspark.mllib.tree import RandomForest
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import VectorAssembler
 import struct
@@ -32,9 +32,8 @@ def make_parquet_rdd(path):
 print(f'Beginning Random forest on {train_path} and {test_path} '
       f'with {num_trees} trees and max depth of {max_depth}')
 train_rdd = make_parquet_rdd(train_path)
-rf = RandomForestClassifier(
-    numTrees=num_trees, maxDepth=max_depth, seed=1)
-model = rf.fit(train_rdd)
+model = RandomForest.trainClassifier(
+    train_rdd, numTrees=num_trees, maxDepth=max_depth, seed=1)
 
 # Read testing data and predict
 test_rdd = make_parquet_rdd(test_path)
