@@ -119,7 +119,6 @@ class MmRandomForest(Application):
                 str(self.config['max_depth']),
             ]
             cmd = ' '.join(cmd)
-            self.log(f'Running: {cmd}', color=Color.BRIGHT_BLUE)
             SparkExec(cmd, master_host, master_port,
                       driver_mem=self.config['window_size'],
                       executor_mem=self.config['window_size'],
