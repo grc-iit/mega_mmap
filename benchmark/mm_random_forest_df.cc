@@ -185,7 +185,8 @@ int main(int argc, char **argv) {
   HILOG(kInfo, "(rank {}) Will create {} bytes of data", rank, rep * window_size);
   RandomForestDf kmeans_df(rank, data_path, k, window_count, rep);
 
-  HILOG(kInfo, "Creating dataset {} of size {} with {} windows of size {} each", data_path, argv[2], rep, window_size);
+  HILOG(kInfo, "Creating dataset {} of size {} with {} windows of size {} each",
+        data_path, df_size, rep, window_size);
 
   // Each process creates a dataset which contains k clusters
   if (type == "parquet") {
