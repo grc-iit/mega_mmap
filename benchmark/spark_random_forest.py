@@ -4,7 +4,7 @@ USAGE: spark-submit spark_random_forest.py <train_path> <test_path> <num_trees> 
 
 from pyspark.sql import SparkSession
 from pyspark import SparkConf, SparkContext
-from pyspark.ml.tree import RandomForestClassifier
+from pyspark.mllib.tree import RandomForestClassifier
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.feature import VectorAssembler
 import struct
