@@ -27,7 +27,8 @@ def make_parquet_rdd(path):
     return hermes_rdd
 
 # Read training data and fit
-print("Beginning Random forest")
+print(f'Beginning Random forest on {train_path} and {test_path} '
+      f'with {num_trees} trees and max depth of {max_depth}')
 train_rdd = make_parquet_rdd(train_path)
 rf = RandomForestClassifier(
     numTrees=num_trees, maxDepth=max_depth, seed=1)
