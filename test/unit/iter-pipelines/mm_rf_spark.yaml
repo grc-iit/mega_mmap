@@ -40,7 +40,7 @@ config:
       do_dbg: False
       dbg_port: 4001
 vars:
-  mm_rf_train.df_size: [16m, 64m, 128m, 1g]
+  mm_rf_train.df_size: [16m, 64m, 128m]
   spark_cluster.num_nodes: [1]
   pymonitor.num_nodes: [1]
   pymonitor.dir: ["$ITER_DIR"]
