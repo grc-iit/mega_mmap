@@ -120,6 +120,6 @@ class MmRandomForestDf(Application):
 
         :return: None
         """
-        self.path = os.path.expandvars(self.config['path'])
+        self.path = os.path.expandvars(self.config['path']) + "*"
         self.log(f'Removing {self.path}', Color.YELLOW)
         Rm(self.path, LocalExecInfo(env=self.env))
