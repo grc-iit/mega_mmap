@@ -25,5 +25,5 @@ vars:
 loop:
   - [mm_gray_scott.nprocs, mm_gray_scott.L, pymonitor.num_nodes]
   - [pymonitor.dir]
-repeat: 1
+repeat: 3
 output: "$SHARED_DIR/output"
