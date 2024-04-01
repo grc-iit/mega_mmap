@@ -120,4 +120,5 @@ class MmRandomForestDf(Application):
 
         :return: None
         """
-        pass
+        self.path = os.path.expandvars(self.config['path'])
+        Rm(self.path, LocalExecInfo(env=self.env))
