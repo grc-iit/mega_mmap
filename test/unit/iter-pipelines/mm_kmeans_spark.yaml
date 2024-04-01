@@ -5,8 +5,8 @@ config:
     - pkg_type: mm_kmeans_df
       pkg_name: mm_kmeans_df
       path: ${HOME}/mm_data/parquet/kmeans.parquet
-      window_size: 4g
-      df_size: 4g
+      window_size: 256m
+      df_size: 1g
       nprocs: 1
       ppn: 16
       type: parquet
@@ -30,12 +30,11 @@ config:
       do_dbg: False
       dbg_port: 4001
 vars:
-  mm_kmeans_df.window_size: [256m]
   mm_kmeans_df.df_size: [1g, 2g, 4g, 8g, 16g]
   spark_cluster.num_nodes: [1, 2, 4, 8, 15]
   pymonitor.num_nodes: [1, 2, 4, 8, 15]
 loop:
-  - [mm_kmeans_df.window_size, mm_kmeans_df.df_size]
+  - [mm_kmeans_df.df_size]
   - [spark_cluster.num_nodes, pymonitor.num_nodes]
 norerun:
   - mm_kmeans_df
