@@ -36,7 +36,7 @@ config:
       window_size: 30g
       api: spark
       num_trees: 1
-      max_depth: 10
+      max_depth: 4
       do_dbg: False
       dbg_port: 4001
 vars:
