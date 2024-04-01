@@ -42,4 +42,4 @@ loop:
 norerun:
   - mm_kmeans_df
 repeat: 1
-output: "$SHARED_DIR/output_multi"
+output: "$SHARED_DIR/output"

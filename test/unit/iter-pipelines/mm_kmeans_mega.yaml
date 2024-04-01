@@ -52,4 +52,4 @@ loop:
   - [mm_kmeans.window_size, hermes_run.ram, hermes_run.data_shm]
   - [hermes_run.num_nodes]
 repeat: 1
-output: "$SHARED_DIR/output_multi"
+output: "$SHARED_DIR/output"
