@@ -41,5 +41,5 @@ loop:
   - [mm_kmeans_df.df_size, spark_cluster.num_nodes, pymonitor.num_nodes]
 norerun:
   - mm_kmeans_df
-repeat: 3
+repeat: 1
 output: "$SHARED_DIR/output_multi"
