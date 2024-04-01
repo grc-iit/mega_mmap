@@ -48,8 +48,7 @@ norerun:
   - mm_rf_train
   - mm_rf_test
 loop:
-  - [mm_rf_train.df_size]
-  - [spark_cluster.num_nodes, pymonitor.num_nodes]
+  - [mm_rf_train.df_size, spark_cluster.num_nodes, pymonitor.num_nodes]
   - [pymonitor.dir]
 repeat: 3
 output: "$SHARED_DIR/output_multi"
