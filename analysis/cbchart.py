@@ -1,46 +1,32 @@
-import plotly.graph_objs as go
+from bokeh.plotting import figure, show
+from bokeh.layouts import gridplot
+import numpy as np
 
 # Sample data
 categories = ['Category A', 'Category B', 'Category C']
 values1 = [20, 35, 30]
 values2 = [25, 32, 34]
+line_data = [10, 20, 15]  # Example line data
 
-# Creating traces for bar charts
-trace1 = go.Bar(
-    x=categories,
-    y=values1,
-    name='Group 1'
-)
-trace2 = go.Bar(
-    x=categories,
-    y=values2,
-    name='Group 2'
-)
+# Create figures for each subplot
+subplots = []
+for i in range(4):
+    p = figure(title=f'Subplot {i+1}', x_range=categories, height=250, width=300)
 
-# Creating trace for line graph
-line_trace = go.Scatter(
-    x=categories,
-    y=[10, 20, 15],  # Example line data
-    mode='lines+markers',
-    name='Line Data',
-    yaxis='y2'  # Secondary y-axis
-)
+    # Clustered bar chart
+    p.vbar(x=np.arange(len(categories)) + 0.1, top=values1, width=0.2, color="blue", legend_label='Group 1')
+    p.vbar(x=np.arange(len(categories)) - 0.1, top=values2, width=0.2, color="orange", legend_label='Group 2')
 
-# Define layout
-layout = go.Layout(
-    title='Combination Bar Chart and Line Graph',
-    xaxis=dict(title='Categories'),
-    yaxis=dict(title='Values'),
-    yaxis2=dict(
-        title='Line Data',
-        overlaying='y',
-        side='right'
-    ),
-    barmode='group'
-)
+    # Line graph
+    p.line(categories, line_data, line_color="green", line_width=2, y_range_name="line")
 
-# Create figure
-fig = go.Figure(data=[trace1, trace2, line_trace], layout=layout)
+    p.y_range.start = 0
+    p.legend.location = "top_left"
+    p.legend.click_policy="hide"
+    subplots.append(p)
 
-# Show plot
-fig.show()
+# Arrange subplots in a 2x2 grid
+grid = gridplot([[subplots[0], subplots[1]], [subplots[2], subplots[3]]])
+
+# Show the grid
+show(grid)
