@@ -21,7 +21,7 @@ vars:
   mm_gray_scott.nprocs: [24, 48, 96, 192, 384]
   mm_gray_scott.L: [1024, 1280, 1536, 1792, 2048]
   pymonitor.dir: ["$ITER_DIR"]
-  pymonitor.num_nodes: [1, 2, 4, 8, 16]
+  pymonitor.num_nodes: [1, 2, 4, 8, 15]
 loop:
   - [mm_gray_scott.nprocs, mm_gray_scott.L, pymonitor.num_nodes]
   - [pymonitor.dir]

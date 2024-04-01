@@ -32,8 +32,8 @@ config:
 vars:
   mm_kmeans_df.window_size: [256m]
   mm_kmeans_df.df_size: [1g, 2g, 4g, 8g, 16g]
-  spark_cluster.num_nodes: [1, 2, 4, 8, 16]
-  pymonitor.num_nodes: [1, 2, 4, 8, 16]
+  spark_cluster.num_nodes: [1, 2, 4, 8, 15]
+  pymonitor.num_nodes: [1, 2, 4, 8, 15]
 loop:
   - [mm_kmeans_df.window_size, mm_kmeans_df.df_size]
   - [spark_cluster.num_nodes, pymonitor.num_nodes]
