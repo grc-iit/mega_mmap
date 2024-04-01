@@ -5,7 +5,7 @@ config:
     - pkg_type: mm_random_forest_df
       pkg_name: mm_rf_train
       path: ${HOME}/mm_data/train_parquet/rf_train.parquet
-      window_size: 16m
+      window_size: 256m
       df_size: 16m
       nprocs: 1
       ppn: 16
@@ -40,7 +40,7 @@ config:
       do_dbg: False
       dbg_port: 4001
 vars:
-  mm_rf_train.df_size: [64m, 128m, 256m, 512m, 1024m]
+  mm_rf_train.df_size: [128m, 256m, 512m, 1g, 2g]
   spark_cluster.num_nodes: [1, 2, 4, 8, 15]
   pymonitor.num_nodes: [1, 2, 4, 8, 15]
   pymonitor.dir: ["$ITER_DIR"]

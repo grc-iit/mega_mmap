@@ -1,28 +1,46 @@
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pandas as pd
+import plotly.graph_objs as go
 
 # Sample data
-data = {
-    'Category': ['Category A', 'Category B', 'Category C'],
-    'Group 1': [20, 35, 30],
-    'Group 2': [25, 32, 34]
-}
+categories = ['Category A', 'Category B', 'Category C']
+values1 = [20, 35, 30]
+values2 = [25, 32, 34]
 
-# Convert data to a DataFrame
-df = pd.DataFrame(data)
+# Creating traces for bar charts
+trace1 = go.Bar(
+    x=categories,
+    y=values1,
+    name='Group 1'
+)
+trace2 = go.Bar(
+    x=categories,
+    y=values2,
+    name='Group 2'
+)
 
-# Melt the DataFrame to long format
-df_melted = pd.melt(df, id_vars='Category', var_name='Group', value_name='Value')
-print(df_melted)
+# Creating trace for line graph
+line_trace = go.Scatter(
+    x=categories,
+    y=[10, 20, 15],  # Example line data
+    mode='lines+markers',
+    name='Line Data',
+    yaxis='y2'  # Secondary y-axis
+)
 
-# Plotting
-sns.barplot(data=df_melted, x='Category', y='Value', hue='Group')
+# Define layout
+layout = go.Layout(
+    title='Combination Bar Chart and Line Graph',
+    xaxis=dict(title='Categories'),
+    yaxis=dict(title='Values'),
+    yaxis2=dict(
+        title='Line Data',
+        overlaying='y',
+        side='right'
+    ),
+    barmode='group'
+)
 
-# Adding labels and title
-plt.xlabel('Categories')
-plt.ylabel('Values')
-plt.title('Clustered Bar Chart')
+# Create figure
+fig = go.Figure(data=[trace1, trace2, line_trace], layout=layout)
 
 # Show plot
-plt.show()
+fig.show()
