@@ -30,14 +30,14 @@ config:
       do_dbg: False
       dbg_port: 4001
 vars:
-  mm_kmeans_df.window_size: [16m, 64m, 128m, 1g, 2g, 4g]
-  mm_kmeans_df.df_size: [16m, 64m, 128m, 1g, 2g, 4g]
-  spark_cluster.num_nodes: [4]
-  pymonitor.num_nodes: [4]
+  mm_kmeans_df.window_size: [256m]
+  mm_kmeans_df.df_size: [1g, 2g, 4g, 8g, 16g]
+  spark_cluster.num_nodes: [1, 2, 4, 8, 16]
+  pymonitor.num_nodes: [1, 2, 4, 8, 16]
 loop:
   - [mm_kmeans_df.window_size, mm_kmeans_df.df_size]
   - [spark_cluster.num_nodes, pymonitor.num_nodes]
 norerun:
   - mm_kmeans_df
-repeat: 1
+repeat: 3
 output: "$SHARED_DIR/output_multi"

@@ -1,5 +1,5 @@
 config:
-  name: mm_kmeans_spark
+  name: mm_rf_spark
   env: mega_mmap
   pkgs:
     - pkg_type: mm_random_forest_df
@@ -40,9 +40,9 @@ config:
       do_dbg: False
       dbg_port: 4001
 vars:
-  mm_rf_train.df_size: [16m, 64m, 128m, 1g]
-  spark_cluster.num_nodes: [1]
-  pymonitor.num_nodes: [1]
+  mm_rf_train.df_size: [128m, 256m, 512m, 1g, 2g, 4g]
+  spark_cluster.num_nodes: [1, 2, 4, 8, 16]
+  pymonitor.num_nodes: [1, 2, 4, 8, 16]
   pymonitor.dir: ["$ITER_DIR"]
 norerun:
   - mm_rf_train
@@ -51,5 +51,5 @@ loop:
   - [mm_rf_train.df_size]
   - [spark_cluster.num_nodes, pymonitor.num_nodes]
   - [pymonitor.dir]
-repeat: 1
+repeat: 3
 output: "$SHARED_DIR/output_multi"

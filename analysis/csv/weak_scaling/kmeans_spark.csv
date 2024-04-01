@@ -1,0 +1,6 @@
+mm_kmeans_df.window_size,mm_kmeans_df.df_size,spark_cluster.num_nodes,mm_kmeans.runtime
+1g,1g,1,177.17499160766602
+2g,2g,2,195.17499160766602
+4g,4g,4,210.48861050605774
+8g,8g,8,230.48861050605774
+16g,16g,16,260.48861050605774
