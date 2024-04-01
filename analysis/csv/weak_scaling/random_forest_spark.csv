@@ -1,4 +1,4 @@
-mm_rf_train.df_size,spark_cluster.num_nodes,pymonitor.num_nodes,pymonitor.dir,mm_random_forest.runtime,mm_random_forest.avg_mem,mm_random_forest.peak_mem,mm_random_forest.avg_cpu1g,1g,1,177.17499160766602
+mm_rf_train.df_size,spark_cluster.num_nodes,pymonitor.num_nodes,pymonitor.dir,mm_random_forest.runtime,mm_random_forest.avg_mem,mm_random_forest.peak_mem,mm_random_forest.avg_cpu
 128m,1,1,$ITER_DIR,122.94135117530823,24.55806451612904,44.2,26.84516129032259
 256m,2,2,$ITER_DIR,150.94135117530823,24.55806451612904,44.2,26.84516129032259
 512m,4,4,$ITER_DIR,180.94135117530823,24.55806451612904,44.2,26.84516129032259
