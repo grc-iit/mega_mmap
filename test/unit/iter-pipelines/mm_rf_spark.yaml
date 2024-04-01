@@ -5,7 +5,7 @@ config:
     - pkg_type: mm_random_forest_df
       pkg_name: mm_rf_train
       path: ${HOME}/mm_data/train_parquet/rf_train.parquet
-      window_size: 1m
+      window_size: 128m
       df_size: 16m
       nprocs: 1
       ppn: 16
