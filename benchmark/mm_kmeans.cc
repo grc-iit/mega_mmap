@@ -215,8 +215,9 @@ class KMeans {
                         assign.local_size(),
                         MM_WRITE_ONLY);
       size_t off = data_.local_off();
+      size_t printer = (data_.local_last() - off) / 16;
       for (size_t i = off; i < data_.local_last(); ++i) {
-        if ((i - off) % (16 * MM_PAGE_SIZE) == 0) {
+        if ((i - off) % printer == 0) {
           HILOG(kInfo, "{}: We are {}% done", rank_,
                 (i - off) * 100.0 / data_.local_size())
         }
@@ -406,8 +407,9 @@ class KMeansPpMpi : public KMeans<T> {
     size_t off = data_.local_off();
     size_t last = data_.local_last();
     data_.SeqTxBegin(off, last - off, MM_READ_ONLY);
+    size_t printer = (last - off) / 16;
     for (size_t i = off; i < last; ++i) {
-      if ((i - off) % (256 * MM_PAGE_SIZE) == 0) {
+      if ((i - off) % printer == 0) {
         HILOG(kInfo, "{}: We are {}% done", rank_,
               (i - off) * 100.0 / (last - off))
       }
@@ -624,8 +626,9 @@ class KmeansLlMpi : public KMeans<T> {
   DataStat LocalStatPointsNoTx(size_t subsample) {
     DataStat stat;
     HILOG(kInfo, "Collecting local statistics of chunk")
+    size_t printer = subsample / 16;
     for (size_t i = 0; i < subsample; ++i) {
-      if (i % (data_.elmts_per_page_) == 0) {
+      if (i % printer == 0) {
         HILOG(kInfo, "{}: We are {}% done", rank_,
               i * 100.0 / subsample)
       }

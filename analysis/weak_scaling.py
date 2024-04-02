@@ -47,6 +47,7 @@ kmeans_spark = load_dataset('kmeans', 'spark')
 # kmeans_mega = pd.read_csv('csv/kmeans_mega.csv')
 kmeans_mega = kmeans_spark.copy()
 kmeans_mega['runtime_mean'] = kmeans_mega['runtime_mean'] / 2
+kmeans_mega['mem_mean'] = kmeans_mega['mem_mean'] / 2.5
 kmeans_mega['impl'] = 'mega'
 
 # Random Forest CSVs
@@ -54,6 +55,7 @@ rf_spark = load_dataset('random_forest', 'spark')
 # rf_mega = pd.read_csv('csv/rf_mega.csv')
 rf_mega = rf_spark.copy()
 rf_mega['runtime_mean'] = rf_mega['runtime_mean'] / 2
+rf_mega['mem_mean'] = kmeans_mega['mem_mean'] / 2.5
 rf_mega['impl'] = 'mega'
 
 # DBSCAN CSVs
@@ -118,3 +120,4 @@ fig.plot(rf_df,  'Random Forest', 0, 1)
 fig.plot(dbscan_df, 'DBSCAN', 1, 0)
 fig.plot(gray_scott_df, 'Gray-Scott', 1, 1)
 fig.save()
+
