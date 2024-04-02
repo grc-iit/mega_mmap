@@ -1,4 +1,4 @@
-mm_gray_scott.nprocs,mm_gray_scott.L,pymonitor.num_nodes,pymonitor.dir,mm_gray_scott.runtime,mm_gray_scott.avg_mem,mm_gray_scott.peak_mem,mm_gray_scott.avg_cpu
+mm_gray_scott.nprocs,mm_gray_scott.L,pymonitor.num_nodes,pymonitor.dir,mm_gray_scott.avg_cpu,mm_gray_scott.avg_mem,mm_gray_scott.peak_mem,mm_gray_scott.runtime
 24,1024,1,$ITER_DIR,34.838361501693726,68.87714285714287,74.2,56.58571428571429
 24,1024,1,$ITER_DIR,35.6014723777771,68.59722222222226,73.9,56.9888888888889
 24,1024,1,$ITER_DIR,34.774333000183105,68.60857142857147,73.9,56.72285714285715

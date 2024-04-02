@@ -3,14 +3,13 @@ This evaluation produces 4 line graphs comparing mega_mmap to alternative
 implementations of KMeans, RandomForst, DBSCAN, and Gray Scott.
 """
 
+import seaborn as sns
 import matplotlib.pyplot as plt
-import plotly.graph_objs as go
-import plotly.io as pio
-from plotly.subplots import make_subplots
 import numpy as np
 from jarvis_cd.basic.jarvis_manager import JarvisManager
 from jarvis_cd.basic.pkg import Pipeline
 import pandas as pd
+from matplotlib.patches import Patch
 
 # Load data for spark + mega for kmeans
 # kmeans_spark = Pipeline().load(
@@ -24,14 +23,21 @@ def load_dataset(app_name, impl):
     df = pd.read_csv(f'csv/weak_scaling/{app_name}_{impl}.csv')
     new_df = pd.DataFrame()
     # Get mean and std of runtime, memory, and cpu usage for each nproc
-    grp = df.groupby('pymonitor.num_nodes')
-    new_df['nprocs'] = grp['pymonitor.num_nodes'].mean() * 48
-    new_df['runtime_mean'] = grp[f'mm_{app_name}.runtime'].mean()
-    new_df['runtime_std'] = grp[f'mm_{app_name}.runtime'].std()
-    new_df['mem_mean'] = grp[f'mm_{app_name}.peak_mem'].mean()
-    new_df['mem_std'] = grp[f'mm_{app_name}.peak_mem'].std()
-    new_df['cpu_std'] = grp[f'mm_{app_name}.avg_cpu'].mean()
-    new_df['cpu_std'] = grp[f'mm_{app_name}.avg_cpu'].std()
+    # grp = df.groupby('pymonitor.num_nodes')
+    # new_df['nprocs'] = grp['pymonitor.num_nodes'].mean().astype(int) * 48
+    # new_df['runtime_mean'] = grp[f'mm_{app_name}.runtime'].mean()
+    # new_df['runtime_std'] = grp[f'mm_{app_name}.runtime'].std()
+    # new_df['mem_mean'] = grp[f'mm_{app_name}.peak_mem'].mean()
+    # new_df['mem_std'] = grp[f'mm_{app_name}.peak_mem'].std()
+    # new_df['cpu_std'] = grp[f'mm_{app_name}.avg_cpu'].mean()
+    # new_df['cpu_std'] = grp[f'mm_{app_name}.avg_cpu'].std()
+    new_df['nprocs'] = df['pymonitor.num_nodes'] * 48
+    new_df['runtime_mean'] = df[f'mm_{app_name}.runtime']
+    new_df['runtime_std'] = 0
+    new_df['mem_mean'] = df[f'mm_{app_name}.peak_mem']
+    new_df['mem_std'] = 0
+    new_df['cpu_mean'] = df[f'mm_{app_name}.avg_cpu']
+    new_df['cpu_std'] = 0
     new_df['algo'] = app_name
     new_df['impl'] = impl
     return new_df
@@ -71,7 +77,44 @@ dbscan_df = pd.concat([udbscan_mpi, dbscan_mega]).fillna(0)
 gray_scott_df = pd.concat([gray_scott_mpi, gray_scott_mega]).fillna(0)
 
 # Save combined DFs
-kmeans_df.to_csv('csv/weak_scaling_r/kmeans.csv', index=False)
-rf_df.to_csv('csv/weak_scaling_r/rf.csv', index=False)
-dbscan_df.to_csv('csv/weak_scaling_r/dbscan.csv', index=False)
-gray_scott_df.to_csv('csv/weak_scaling_r/gray_scott.csv', index=False)
+# kmeans_df.to_csv('csv/weak_scaling_r/kmeans.csv', index=False)
+# rf_df.to_csv('csv/weak_scaling_r/rf.csv', index=False)
+# dbscan_df.to_csv('csv/weak_scaling_r/dbscan.csv', index=False)
+# gray_scott_df.to_csv('csv/weak_scaling_r/gray_scott.csv', index=False)
+
+class WeakScaling:
+    def __init__(self):
+        self.fig, self.axes = plt.subplots(
+            2, 2, figsize=(7, 5))
+        sns.set(style="whitegrid", color_codes=True)
+
+    def plot(self, df, title, row, col):
+        ax = self.axes[row, col]
+        groups = df['impl'].unique()
+        sns.barplot(data=df, x='nprocs', y='runtime_mean', hue='impl', ax=ax,
+                    errorbar='sd', hatch='impl', err_kws={'color': 'darkred'})
+        hatches = ["//", 'o', "\\\\", "|"]
+        patches = []
+        for group, bars, hatch in zip(groups, ax.containers, hatches):
+            for bar in bars:
+                bar.set_hatch(hatch)
+            patches.append(Patch(facecolor=bar.get_facecolor(), hatch=hatch, label=group))
+        ax.set_title(title)
+        if row == 1:
+            ax.set_xlabel('# Processes')
+        else:
+            ax.set_xlabel('')
+        ax.set_ylabel('Runtime (s)')
+        ax.legend(handles=patches, title='', fancybox=True, loc='upper left')
+
+    def save(self):
+        self.fig.tight_layout()
+        self.fig.savefig('output/weak_scaling.pdf')
+
+
+fig = WeakScaling()
+fig.plot(kmeans_df, 'KMeans', 0, 0)
+fig.plot(rf_df,  'Random Forest', 0, 1)
+fig.plot(dbscan_df, 'DBSCAN', 1, 0)
+fig.plot(gray_scott_df, 'Gray-Scott', 1, 1)
+fig.save()
