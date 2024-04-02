@@ -41,27 +41,6 @@ def make_dataset(app_name, impl):
             })
     return pd.DataFrame(df)
 
-def make_dataset2(app_name, impl):
-    df = []
-    num_nodes = [16]
-    runtime = [600, 400, 345, 300]
-    tiering = ['48D-48H', '48D-16N-32S', '48D-32N-16S', '48D-48N']
-    for runtime, tiering in zip(runtime, tiering):
-        for i in range(3):
-            df.append({
-                'nprocs': num_nodes[0] * 48,
-                'runtime_mean': runtime + random.randint(-30, 30),
-                'runtime_std': 0,
-                'mem_mean': 0,
-                'mem_std': 0,
-                'cpu_mean': 0,
-                'cpu_std': 0,
-                'tiering': tiering,
-                'algo': app_name,
-                'impl': impl
-            })
-    return pd.DataFrame(df)
-
 def load_dataset(app_name, impl):
     df = pd.read_csv(f'csv/tiering/{app_name}_{impl}.csv')
     new_df = pd.DataFrame()
