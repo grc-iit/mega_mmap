@@ -234,6 +234,7 @@ class KMeans {
       sum.TxEnd();
       assign.TxEnd();
     }
+    HILOG(kInfo, "{}: We are 100% done", rank_)
     sum.Barrier(MM_READ_ONLY, world_);
     // Calculate global statistics from each local assignment
     double inertia = 0;
@@ -420,6 +421,7 @@ class KMeansPpMpi : public KMeans<T> {
         local_max.idx_ = i;
       }
     }
+    HILOG(kInfo, "{}: We are 100% done", rank_)
     data_.TxEnd();
     return local_max;
   }
@@ -475,7 +477,7 @@ class KmeansLlMpi : public KMeans<T> {
 
  public:
   void Run() {
-    HILOG(kInfo, "Running KMeansLL")
+    HILOG(kInfo, "Running KMeans||")
     T first_k = SelectFirstCenter();
     ks_.emplace_back(first_k);
     DataStat stat = LocalStatPointsWithTx();
@@ -642,7 +644,7 @@ class KmeansLlMpi : public KMeans<T> {
         stat.max_ = dist;
       }
     }
-    HILOG(kInfo, "Finished collecting local statistics of chunk")
+    HILOG(kInfo, "{}: We are 100% done", rank_)
     return stat;
   }
 
@@ -653,7 +655,6 @@ class KmeansLlMpi : public KMeans<T> {
     hshm::UniformDistribution dist;
     dist.Seed(SEED);
     dist.Shape(0, data_.size_ - 1);
-    HILOG(kInfo, "The data size: {}", data_.size_)
     size_t first_k = dist.GetSize();
     data_.SeqTxBegin(first_k, 1, MM_READ_ONLY);
     T first = data_[first_k];

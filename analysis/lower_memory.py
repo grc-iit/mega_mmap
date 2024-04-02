@@ -98,6 +98,7 @@ class LowerMemory:
     def plot(self, df, title, row, col):
         df.sort_values('mem_mean', inplace=True, ascending=False)
         ax = self.axes[row, col]
+        # custom_palette = ['#D02F47']
         sns.barplot(data=df, x='mem_mean', y='runtime_mean', ax=ax,
                     errorbar='sd', hatch=self.hatches[row][col], hue='algo', err_kws={'color': 'darkred'},
                     order=df['mem_mean'])
