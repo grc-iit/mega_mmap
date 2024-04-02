@@ -35,6 +35,7 @@ vars:
   pymonitor.num_nodes: [1, 2, 4, 8, 15]
 loop:
   - [mm_kmeans_df.df_size, spark_cluster.num_nodes, pymonitor.num_nodes]
+  - [pymonitor.dir]
 norerun:
   - mm_kmeans_df
 repeat: 3

@@ -51,5 +51,6 @@ loop:
   - [mm_kmeans_df.df_size]
   - [mm_kmeans.window_size, hermes_run.ram, hermes_run.data_shm]
   - [hermes_run.num_nodes]
+  - [pymonitor.dir]
 repeat: 1
 output: "$SHARED_DIR/output"
