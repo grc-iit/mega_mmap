@@ -455,6 +455,7 @@ class VectorMegaMpi : public Vector {
     }
     std::string page_name =
         hermes::adapter::BlobPlacement::CreateBlobName(page_idx).str();
+    return;
 
     // Reorganize the blob
     bkt_.ReorganizeBlob(page_name, score, ctx);
