@@ -20,15 +20,8 @@ class RandIterTx : public Tx {
   size_t rand_left_;
   size_t rand_size_;
   size_t num_elmts_;
-  size_t first_page_idx_;
-  size_t first_page_shift_;
-  size_t first_page_base_;
-  size_t first_page_size_;
-  size_t last_page_idx_;
-  size_t last_page_size_;
   size_t num_pages_;
   size_t net_num_pages_;
-  size_t last_prefetch_;
 
  public:
   RandIterTx(Vector *vec, size_t seed, size_t rand_left, size_t rand_size,
@@ -42,13 +35,6 @@ class RandIterTx : public Tx {
     flags_.SetBits(flags);
     log_gen_ = gen_;
     prefetch_gen_ = gen_;
-    first_page_idx_ = rand_left_ / vec_->elmts_per_page_;
-    first_page_shift_ = rand_left_ % vec_->elmts_per_page_;
-    first_page_base_ =
-        first_page_idx_ * vec_->elmts_per_page_ + first_page_shift_;
-    first_page_size_ = vec_->elmts_per_page_ - first_page_shift_;
-    last_page_idx_ = (rand_left_ + rand_size_) / vec_->elmts_per_page_;
-    last_page_size_ = (rand_left_ + rand_size_) % vec_->elmts_per_page_;
     num_elmts_ = vec_->elmts_per_page_;
     num_pages_ = 0;
     net_num_pages_ = 0;
@@ -57,6 +43,9 @@ class RandIterTx : public Tx {
   virtual ~RandIterTx() = default;
 
   void _ProcessLog(bool end) override {
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    HILOG(kInfo, "{}: Processing log: {} {}", rank, head_, tail_);
     // Get number of pages iterated over
     size_t num_pages = num_pages_;
     if (!end && num_pages <= 1) {
@@ -67,72 +56,38 @@ class RandIterTx : public Tx {
     }
 
     // Evict processed pages
+    HILOG(kInfo, "{}: Evicting {} pages",
+          rank, num_pages)
     for (size_t i = 0; i < num_pages; ++i) {
       size_t page_idx = log_gen_.GetSize() / vec_->elmts_per_page_;
-      if (page_idx == first_page_idx_) {
-        vec_->Rescore(page_idx,
-                      first_page_shift_,
-                      first_page_size_,
-                      0, flags_);
-      } else if (page_idx == last_page_idx_) {
-        vec_->Rescore(page_idx,
-                      0,
-                      last_page_size_,
-                      0, flags_);
-      } else {
-        vec_->Rescore(page_idx,
-                      0,
-                      vec_->elmts_per_page_,
-                      0, flags_);
-      }
+      vec_->Rescore(page_idx,
+                    0,
+                    vec_->elmts_per_page_,
+                    0, flags_);
     }
     num_pages_ = 0;
 
     // Prefetch future pages
-    if (vec_->window_size_ >= vec_->cur_memory_ || end) {
+    if (vec_->cur_memory_ >= vec_->window_size_ || end) {
       return;
     }
-    for (size_t i = last_prefetch_; i <= net_num_pages_; ++i) {
-      prefetch_gen_.GetSize();
-      ++last_prefetch_;
-    }
+    prefetch_gen_ = log_gen_;
     size_t count = NumPrefetchPages(size_);
     for (size_t i = 0; i < count; ++i) {
       size_t page_idx = prefetch_gen_.GetSize() / vec_->elmts_per_page_;
-      if (page_idx == first_page_idx_) {
-        vec_->Rescore(page_idx,
-                      first_page_shift_,
-                      first_page_size_,
-                      1.0, flags_);
-      } else if (page_idx == last_page_idx_) {
-        vec_->Rescore(page_idx,
-                      0,
-                      last_page_size_,
-                      1.0, flags_);
-      } else {
-        vec_->Rescore(page_idx,
-                      0,
-                      vec_->elmts_per_page_,
-                      1.0, flags_);
-      }
+      vec_->Rescore(page_idx,
+                    0,
+                    vec_->elmts_per_page_,
+                    1.0, flags_);
     }
-    last_prefetch_ += count;
   }
 
   size_t Get() {
     size_t off = tail_ % num_elmts_;
     if (off == 0) {
       size_t page_idx = (gen_.GetSize() / vec_->elmts_per_page_);
-      if (page_idx == first_page_idx_) {
-        num_elmts_ = first_page_size_;
-        base_ = first_page_base_;
-      } else if (page_idx == last_page_idx_) {
-        num_elmts_ = last_page_size_;
-        base_ = last_page_idx_ * vec_->elmts_per_page_;
-      } else {
-        num_elmts_ = vec_->elmts_per_page_;
-        base_ = page_idx * vec_->elmts_per_page_;
-      }
+      num_elmts_ = vec_->elmts_per_page_;
+      base_ = page_idx * vec_->elmts_per_page_;
       num_pages_ += 1;
       net_num_pages_ += 1;
     }
