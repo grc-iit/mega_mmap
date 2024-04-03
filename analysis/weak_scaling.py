@@ -79,45 +79,45 @@ dbscan_df = pd.concat([udbscan_mpi, dbscan_mega]).fillna(0)
 gray_scott_df = pd.concat([gray_scott_mpi, gray_scott_mega]).fillna(0)
 
 # Save combined DFs
-# kmeans_df.to_csv('csv/weak_scaling_r/kmeans.csv', index=False)
-# rf_df.to_csv('csv/weak_scaling_r/rf.csv', index=False)
-# dbscan_df.to_csv('csv/weak_scaling_r/dbscan.csv', index=False)
-# gray_scott_df.to_csv('csv/weak_scaling_r/gray_scott.csv', index=False)
-
-class WeakScaling:
-    def __init__(self):
-        self.fig, self.axes = plt.subplots(
-            2, 2, figsize=(7, 5))
-        sns.set(style="whitegrid", color_codes=True)
-
-    def plot(self, df, title, row, col):
-        ax = self.axes[row, col]
-        groups = df['impl'].unique()
-        sns.barplot(data=df, x='nprocs', y='runtime_mean', hue='impl', ax=ax,
-                    errorbar='sd', hatch='impl', err_kws={'color': 'darkred'})
-        hatches = ["//", 'o', "\\\\", "|"]
-        patches = []
-        for group, bars, hatch in zip(groups, ax.containers, hatches):
-            for bar in bars:
-                bar.set_hatch(hatch)
-            patches.append(Patch(facecolor=bar.get_facecolor(), hatch=hatch, label=group))
-        ax.set_title(title)
-        if row == 1:
-            ax.set_xlabel('# Processes')
-        else:
-            ax.set_xlabel('')
-        ax.set_ylabel('Runtime (s)')
-        ax.legend(handles=patches, title='', fancybox=True, loc='upper left')
-
-    def save(self):
-        self.fig.tight_layout()
-        self.fig.savefig('output/weak_scaling.pdf')
-
-
-fig = WeakScaling()
-fig.plot(kmeans_df, 'KMeans', 0, 0)
-fig.plot(rf_df,  'Random Forest', 0, 1)
-fig.plot(dbscan_df, 'DBSCAN', 1, 0)
-fig.plot(gray_scott_df, 'Gray-Scott', 1, 1)
-fig.save()
-
+kmeans_df.to_csv('csv/weak_scaling_r/kmeans.csv', index=False)
+rf_df.to_csv('csv/weak_scaling_r/rf.csv', index=False)
+dbscan_df.to_csv('csv/weak_scaling_r/dbscan.csv', index=False)
+gray_scott_df.to_csv('csv/weak_scaling_r/gray_scott.csv', index=False)
+#
+# class WeakScaling:
+#     def __init__(self):
+#         self.fig, self.axes = plt.subplots(
+#             2, 2, figsize=(7, 5))
+#         sns.set(style="whitegrid", color_codes=True)
+#
+#     def plot(self, df, title, row, col):
+#         ax = self.axes[row, col]
+#         groups = df['impl'].unique()
+#         sns.barplot(data=df, x='nprocs', y='runtime_mean', hue='impl', ax=ax,
+#                     errorbar='sd', hatch='impl', err_kws={'color': 'darkred'})
+#         hatches = ["//", 'o', "\\\\", "|"]
+#         patches = []
+#         for group, bars, hatch in zip(groups, ax.containers, hatches):
+#             for bar in bars:
+#                 bar.set_hatch(hatch)
+#             patches.append(Patch(facecolor=bar.get_facecolor(), hatch=hatch, label=group))
+#         ax.set_title(title)
+#         if row == 1:
+#             ax.set_xlabel('# Processes')
+#         else:
+#             ax.set_xlabel('')
+#         ax.set_ylabel('Runtime (s)')
+#         ax.legend(handles=patches, title='', fancybox=True, loc='upper left')
+#
+#     def save(self):
+#         self.fig.tight_layout()
+#         self.fig.savefig('output/weak_scaling.pdf')
+#
+#
+# fig = WeakScaling()
+# fig.plot(kmeans_df, 'KMeans', 0, 0)
+# fig.plot(rf_df,  'Random Forest', 0, 1)
+# fig.plot(dbscan_df, 'DBSCAN', 1, 0)
+# fig.plot(gray_scott_df, 'Gray-Scott', 1, 1)
+# fig.save()
+#

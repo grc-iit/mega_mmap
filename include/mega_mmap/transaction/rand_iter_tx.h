@@ -66,6 +66,8 @@ class RandIterTx : public Tx {
     }
     prefetch_gen_ = log_gen_;
     size_t count = NumPrefetchPages(size_);
+    HILOG(kInfo, "{}: Prefetching {} pages",
+          rank, count)
     for (size_t i = 0; i < count; ++i) {
       size_t page_idx = prefetch_gen_.GetSize() / vec_->elmts_per_page_;
       vec_->Rescore(page_idx,
