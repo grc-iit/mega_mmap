@@ -628,7 +628,10 @@ class KmeansLlMpi : public KMeans<T> {
   DataStat LocalStatPointsNoTx(size_t subsample) {
     DataStat stat;
     HILOG(kInfo, "Collecting local statistics of chunk")
-    size_t printer = subsample / 16;
+    size_t printer = subsample / 1024;
+    if (printer == 0) {
+      printer = 1;
+    }
     for (size_t i = 0; i < subsample; ++i) {
       if (i % printer == 0) {
         HILOG(kInfo, "{}: We are {}% done", rank_,
