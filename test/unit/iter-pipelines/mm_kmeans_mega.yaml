@@ -41,8 +41,8 @@ config:
 vars:
   mm_kmeans_df.df_size: [1g]
   mm_kmeans.window_size: [32m, 16m, 8m, 4m, 1m]
-  hermes_run.ram: [512m, 512m]
-  hermes_run.data_shm: [128m, 128m]
+  hermes_run.ram: [512m, 512m, 512m, 512m, 512m]
+  hermes_run.data_shm: [128m, 128m, 128m, 128m, 128m]
   hermes_run.num_nodes: [1]
   pymonitor.dir: ["$ITER_DIR"]
 norerun:
