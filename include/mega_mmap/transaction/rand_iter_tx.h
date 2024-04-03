@@ -50,7 +50,9 @@ class RandIterTx : public Tx {
     if (num_pages == 1 && !end) {
       return;
     }
-    num_pages -= 1;
+    if (!end) {
+      num_pages -= 1;
+    }
 
     // Evict processed pages
     HILOG(kInfo, "{}: Evicting {} pages",
