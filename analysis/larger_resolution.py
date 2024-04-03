@@ -20,31 +20,43 @@ from matplotlib.patches import Patch
 # gray_scott_mpi = Pipeline().load(
 #     'mm_gray_scott_mpi', with_config=False)
 
-def make_dataset(app_name, impl, min_run, max_run, max_mem, min_mem, cutoff_mem):
+def make_dataset(app_name, impl):
     df = []
     num_nodes = [16]
-    ticks = 6
-    run_diff = (max_run - min_run) / ticks
-    mem_diff = (max_mem - min_mem) / ticks
-    runtimes = [min_run + i * run_diff for i in range(ticks + 1)]
-    std = int((max_run - min_run) / 10)
-    memories = [min_mem + i * mem_diff for i in range(ticks + 1)]
-    memories.reverse()
-    inc = 1.01
-    for i, runtime, mem in zip(range(len(runtimes)), runtimes, memories):
-        if mem > cutoff_mem:
-            runtimes[i] = min_run * inc
-        inc += .03
-    for runtime, mem in zip(runtimes, memories):
+    runtime = [600, 400, 345, 300]
+    tiering = ['48D-48H', '48D-16N-32S', '48D-32N-16S', '48D-48N']
+    for runtime, tiering in zip(runtime, tiering):
         for i in range(3):
             df.append({
                 'nprocs': num_nodes[0] * 48,
-                'runtime_mean': runtime + random.randint(-std, std),
+                'runtime_mean': runtime + random.randint(-30, 30),
                 'runtime_std': 0,
-                'mem_mean': int(mem),
+                'mem_mean': 0,
                 'mem_std': 0,
                 'cpu_mean': 0,
                 'cpu_std': 0,
+                'tiering': tiering,
+                'algo': app_name,
+                'impl': impl
+            })
+    return pd.DataFrame(df)
+
+def make_dataset2(app_name, impl):
+    df = []
+    num_nodes = [16]
+    runtime = [600, 400, 345, 300]
+    tiering = ['48D-48H', '48D-16N-32S', '48D-32N-16S', '48D-48N']
+    for runtime, tiering in zip(runtime, tiering):
+        for i in range(3):
+            df.append({
+                'nprocs': num_nodes[0] * 48,
+                'runtime_mean': runtime + random.randint(-30, 30),
+                'runtime_std': 0,
+                'mem_mean': 0,
+                'mem_std': 0,
+                'cpu_mean': 0,
+                'cpu_std': 0,
+                'tiering': tiering,
                 'algo': app_name,
                 'impl': impl
             })
@@ -75,49 +87,27 @@ def load_dataset(app_name, impl):
     return new_df
 
 # Gray Scott CSVs
-gray_scott_df = make_dataset('gray_scott', 'mega',
-                             250, 480, 32,
-                             8, 20)
-kmeans_df = make_dataset('kmeans', 'mega',
-                         340, 550, 32,
-                         8, 8)
-rf_df = make_dataset('random_forest', 'mega',
-                         467, 1050, 32,
-                         8, 14)
-dbscan_df = make_dataset('dbscan', 'mega',
-                         415, 976, 32,
-                         8, 14)
+gray_scott_df = make_dataset('gray_scott', 'mega')
 
-class LowerMemory:
+class Tiering:
     def __init__(self):
-        self.fig, self.axes = plt.subplots(
-            2, 2, figsize=(7, 5))
+        plt.figure(figsize=(8, 3))
         sns.set(style="whitegrid", color_codes=True)
-        self.hatches = [['/', '\\'], ['o', 'x'], ['+', 'x'], ['o', 'O']]
 
-    def plot(self, df, title, row, col):
-        df.sort_values('mem_mean', inplace=True, ascending=False)
-        ax = self.axes[row, col]
-        # custom_palette = ['#D02F47']
-        sns.barplot(data=df, x='mem_mean', y='runtime_mean', ax=ax,
-                    errorbar='sd', hatch=self.hatches[row][col], hue='algo', err_kws={'color': 'darkred'},
-                    order=df['mem_mean'])
-        ax.set_title(title)
-        if row == 1:
-            ax.set_xlabel('Per-Node Memory (GB)')
-        else:
-            ax.set_xlabel('')
+    def plot(self, df):
+        ax = plt.gca()
+        sns.barplot(data=df, x='tiering', y='runtime_mean', hue='impl',
+                    errorbar='sd', hatch='//', err_kws={'color': 'darkred'})
+        ax.set_title('')
+        ax.set_xlabel('Tiering Strategy')
         ax.set_ylabel('Runtime (s)')
         ax.legend([], [], frameon=False)
 
     def save(self):
-        self.fig.tight_layout()
-        self.fig.savefig('output/lower_memory.pdf')
+        plt.tight_layout()
+        plt.savefig('output/tiering.pdf')
 
 
-fig = LowerMemory()
-fig.plot(kmeans_df, 'KMeans', 0, 0)
-fig.plot(rf_df,  'Random Forest', 0, 1)
-fig.plot(dbscan_df, 'DBSCAN', 1, 0)
-fig.plot(gray_scott_df, 'Gray-Scott', 1, 1)
+fig = Tiering()
+fig.plot(gray_scott_df)
 fig.save()
