@@ -21,7 +21,6 @@ class RandIterTx : public Tx {
   size_t rand_size_;
   size_t num_elmts_;
   size_t num_pages_;
-  size_t net_num_pages_;
 
  public:
   RandIterTx(Vector *vec, size_t seed, size_t rand_left, size_t rand_size,
@@ -37,7 +36,6 @@ class RandIterTx : public Tx {
     prefetch_gen_ = gen_;
     num_elmts_ = vec_->elmts_per_page_;
     num_pages_ = 0;
-    net_num_pages_ = 0;
   }
 
   virtual ~RandIterTx() = default;
@@ -45,15 +43,10 @@ class RandIterTx : public Tx {
   void _ProcessLog(bool end) override {
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    HILOG(kInfo, "{}: Processing log: {} {}", rank, head_, tail_);
+    HILOG(kInfo, "{}: Processing log: {} {}",
+          rank, head_, tail_);
     // Get number of pages iterated over
     size_t num_pages = num_pages_;
-    if (!end && num_pages <= 1) {
-      return;
-    }
-    if (!end) {
-      num_pages -= 1;
-    }
 
     // Evict processed pages
     HILOG(kInfo, "{}: Evicting {} pages",
@@ -89,7 +82,6 @@ class RandIterTx : public Tx {
       num_elmts_ = vec_->elmts_per_page_;
       base_ = page_idx * vec_->elmts_per_page_;
       num_pages_ += 1;
-      net_num_pages_ += 1;
     }
     return base_ + off;
   }
