@@ -54,7 +54,7 @@ class SeqIterTx : public Tx {
       vec_->Rescore(i, 0, vec_->elmts_per_page_,
                     0, flags_);
     }
-    HILOG(kInfo, "{}: Finished evicting pages",
+    HILOG(kInfo, "{}: Finished evicting pages: {} (off={} size={}) to {}",
           rank, first_page, first_mod, first_rem, last_page)
 
     // Prefetch future pages
