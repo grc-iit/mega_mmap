@@ -26,5 +26,5 @@ loop:
   - [mm_gray_scott.L]
   - [mm_gray_scott.nprocs, pymonitor.num_nodes]
   - [pymonitor.dir]
-repeat: 3
+repeat: 1
 output: "$SHARED_DIR/output"
