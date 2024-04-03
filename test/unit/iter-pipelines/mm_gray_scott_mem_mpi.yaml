@@ -23,7 +23,8 @@ vars:
   pymonitor.dir: ["$ITER_DIR"]
   pymonitor.num_nodes: [1]
 loop:
-  - [mm_gray_scott.nprocs, mm_gray_scott.L, pymonitor.num_nodes]
+  - [mm_gray_scott.L]
+  - [mm_gray_scott.nprocs, pymonitor.num_nodes]
   - [pymonitor.dir]
 repeat: 3
 output: "$SHARED_DIR/output"
