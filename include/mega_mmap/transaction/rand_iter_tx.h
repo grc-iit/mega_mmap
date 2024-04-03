@@ -47,6 +47,10 @@ class RandIterTx : public Tx {
           rank, head_, tail_);
     // Get number of pages iterated over
     size_t num_pages = num_pages_;
+    if (num_pages == 1 && !end) {
+      return;
+    }
+    num_pages -= 1;
 
     // Evict processed pages
     HILOG(kInfo, "{}: Evicting {} pages",
