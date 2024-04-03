@@ -1,5 +1,5 @@
 config:
-  name: mm_gray_scott_mpi
+  name: mm_gray_scott_mem_mpi
   env: mega_mmap
   pkgs:
     - pkg_type: pymonitor
