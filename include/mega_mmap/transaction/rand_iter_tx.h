@@ -36,6 +36,12 @@ class RandIterTx : public Tx {
     prefetch_gen_ = gen_;
     num_elmts_ = vec_->elmts_per_page_;
     num_pages_ = 0;
+
+    for (int i = 0; i < 10; ++i) {
+      HILOG(kInfo, "Gen1: {}, Gen2: {}, Gen3: {}",
+            gen_.GetDouble(), log_gen_.GetDouble(), prefetch_gen_.GetDouble());
+    }
+    exit(1);
   }
 
   virtual ~RandIterTx() = default;
