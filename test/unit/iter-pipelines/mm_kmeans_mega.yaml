@@ -40,7 +40,7 @@ config:
       dbg_port: 4001
 vars:
   mm_kmeans_df.df_size: [1g]
-  mm_kmeans.window_size: [8m, 4m]
+  mm_kmeans.window_size: [16m, 8m, 4m]
   hermes_run.ram: [512m, 512m]
   hermes_run.data_shm: [128m, 128m]
   hermes_run.num_nodes: [1]

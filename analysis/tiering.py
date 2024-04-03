@@ -91,7 +91,7 @@ gray_scott_df = make_dataset('gray_scott', 'mega')
 
 class Tiering:
     def __init__(self):
-        plt.figure(figsize=(8, 3))
+        plt.figure(figsize=(8, 2))
         sns.set(style="whitegrid", color_codes=True)
 
     def plot(self, df):
