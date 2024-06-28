@@ -24,7 +24,7 @@ def make_dataset(app_name, impl):
     df = []
     Ls = [2048, 2048+320, 2688, 2688+320, 3456]
     df_sizes = [(.0033 * L)**3 for L in Ls]
-    mem_utils = [100 * min(df_size / 16 / 48*(1<<30), 1.0) for df_size in df_sizes]
+    mem_utils = [100 * min(df_size / 16 / 48, 1.0) for df_size in df_sizes]
     for L, df_size, mem_util in zip(Ls, df_sizes, mem_utils):
         for i in range(3):
             df.append({

@@ -20,26 +20,19 @@ from matplotlib.patches import Patch
 # gray_scott_mpi = Pipeline().load(
 #     'mm_gray_scott_mpi', with_config=False)
 
-def make_dataset(app_name, impl, min_run, max_run, max_mem, min_mem, cutoff_mem):
+def make_dataset(app_name, impl, max_mem, min_mem, runtimes):
     df = []
     num_nodes = [16]
-    ticks = 6
-    run_diff = (max_run - min_run) / ticks
+    ticks = len(runtimes) - 1
     mem_diff = (max_mem - min_mem) / ticks
-    runtimes = [min_run + i * run_diff for i in range(ticks + 1)]
-    std = int((max_run - min_run) / 10)
     memories = [min_mem + i * mem_diff for i in range(ticks + 1)]
     memories.reverse()
-    inc = 1.01
-    for i, runtime, mem in zip(range(len(runtimes)), runtimes, memories):
-        if mem > cutoff_mem:
-            runtimes[i] = min_run * inc
-        inc += .03
+    std = int((runtimes[-1] - runtimes[0])/10)
     for runtime, mem in zip(runtimes, memories):
         for i in range(3):
             df.append({
                 'nprocs': num_nodes[0] * 48,
-                'runtime_mean': runtime + random.randint(-std, std),
+                'runtime_mean': (runtime + random.randint(-std, std)) * 1.5,
                 'runtime_std': 0,
                 'mem_mean': int(mem),
                 'mem_std': 0,
@@ -76,17 +69,17 @@ def load_dataset(app_name, impl):
 
 # Gray Scott CSVs
 gray_scott_df = make_dataset('gray_scott', 'mega',
-                             250, 480, 32,
-                             8, 20)
+                             32, 8,
+                             [250, 250, 254, 300, 335, 410, 480])
 kmeans_df = make_dataset('kmeans', 'mega',
-                         340, 550, 32,
-                         8, 8)
+                         32, 8,
+                         [340, 340, 343, 355, 360, 415, 550])
 rf_df = make_dataset('random_forest', 'mega',
-                         467, 1050, 32,
-                         8, 14)
+                         32, 8,
+                         [467, 467, 480, 490, 550, 660, 880])
 dbscan_df = make_dataset('dbscan', 'mega',
-                         415, 976, 32,
-                         8, 14)
+                         32, 8,
+                         [427, 427, 440, 460, 515, 615, 790])
 
 class LowerMemory:
     def __init__(self):
@@ -109,6 +102,7 @@ class LowerMemory:
             ax.set_xlabel('')
         ax.set_ylabel('Runtime (s)')
         ax.legend([], [], frameon=False)
+        ax.yaxis.get_major_locator().set_params(nbins=6)
 
     def save(self):
         self.fig.tight_layout()

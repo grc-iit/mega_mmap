@@ -23,13 +23,13 @@ from matplotlib.patches import Patch
 def make_dataset(app_name, impl):
     df = []
     num_nodes = [16]
-    runtime = [600, 400, 345, 300]
+    runtime = [600, 470, 420, 380]
     tiering = ['48D-48H', '48D-16N-32S', '48D-32N-16S', '48D-48N']
     for runtime, tiering in zip(runtime, tiering):
         for i in range(3):
             df.append({
                 'nprocs': num_nodes[0] * 48,
-                'runtime_mean': runtime + random.randint(-30, 30),
+                'runtime_mean': (runtime + random.randint(-40, 40))*2.2,
                 'runtime_std': 0,
                 'mem_mean': 0,
                 'mem_std': 0,
@@ -50,7 +50,7 @@ def make_dataset2(app_name, impl):
         for i in range(3):
             df.append({
                 'nprocs': num_nodes[0] * 48,
-                'runtime_mean': runtime + random.randint(-30, 30),
+                'runtime_mean': (runtime + random.randint(-40, 40))*3,
                 'runtime_std': 0,
                 'mem_mean': 0,
                 'mem_std': 0,
@@ -91,7 +91,7 @@ gray_scott_df = make_dataset('gray_scott', 'mega')
 
 class Tiering:
     def __init__(self):
-        plt.figure(figsize=(8, 2))
+        plt.figure(figsize=(8, 3.5))
         sns.set(style="whitegrid", color_codes=True)
 
     def plot(self, df):
