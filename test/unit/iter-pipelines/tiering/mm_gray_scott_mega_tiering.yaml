@@ -1,0 +1,42 @@
+# The tiering evaluation results
+config:
+  name: mm_gray_scott_mega
+  env: mega_mmap
+  pkgs:
+    - pkg_type: hermes_run
+      pkg_name: hermes_run
+      sleep: 8
+      include: ${HOME}/mm_data
+      pqdepth: 8
+      ram: 1g
+      provider: sockets
+      num_nodes: 32
+      devices: [('ram', '44g'), ('hdd', '100g')]
+    - pkg_type: pymonitor
+      pkg_name: pymonitor
+      frequency: 1
+      dir: "$ITER_DIR"
+      num_nodes: 32
+      sleep: 1
+    - pkg_type: mm_gray_scott
+      pkg_name: mm_gray_scott
+      api: mm
+      L: 3456
+      nprocs: 8
+      window_size: 1g
+      do_dbg: false
+      dbg_port: 4001
+vars:
+  hermes_run.devices: [
+    [('ram', '44g'), ('hdd', '100g')],
+    [('ram', '44g'), ('ssd', '100g')],
+    [('ram', '44g'), ('nvme', '16g'), ('ssd', '100g')],
+    [('ram', '44g'), ('nvme', '32g'), ('ssd', '100g')],
+    [('ram', '44g'), ('nvme', '100g')],
+  ]
+  pymonitor.dir: ["$ITER_DIR"]
+loop:
+  - [mm_gray_scott.L]
+  - [pymonitor.dir]
+repeat: 1
+output: "$SHARED_DIR/output"

@@ -1,3 +1,4 @@
+# Evaluation 1 / GS Mega
 config:
   name: mm_gray_scott_mega
   env: mega_mmap
@@ -9,12 +10,10 @@ config:
       pqdepth: 8
       ram: 1g
       provider: sockets
-      num_nodes: 1
     - pkg_type: pymonitor
       pkg_name: pymonitor
       frequency: 1
       dir: "$ITER_DIR"
-      num_nodes: 1
       sleep: 1
     - pkg_type: mm_gray_scott
       pkg_name: mm_gray_scott
@@ -25,11 +24,11 @@ config:
       do_dbg: false
       dbg_port: 4001
 vars:
-  mm_gray_scott.nprocs: [24, 48, 96]
-  mm_gray_scott.L: [256, 256, 256]
+  mm_gray_scott.nprocs: [48, 96, 192, 384, 720]
+  mm_gray_scott.L: [1024, 1536, 2048, 2560, 3072]
   pymonitor.dir: ["$ITER_DIR"]
-  pymonitor.num_nodes: [1, 2, 4]
-  hermes_run.num_nodes: [1, 2, 4]
+  pymonitor.num_nodes: [1, 2, 4, 8, 16]
+  hermes_run.num_nodes: [1, 2, 4, 8, 16]
 loop:
   - [mm_gray_scott.nprocs, mm_gray_scott.L, pymonitor.num_nodes, hermes_run.num_nodes]
   - [pymonitor.dir]

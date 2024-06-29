@@ -6,7 +6,6 @@ config:
       pkg_name: mm_kmeans_df
       path: ${HOME}/mm_data/parquet/kmeans.parquet
       window_size: 256m
-      df_size: 1g
       nprocs: 1
       ppn: 16
       type: parquet

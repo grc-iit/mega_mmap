@@ -6,14 +6,12 @@ config:
       pkg_name: pymonitor
       frequency: 1
       dir: "$ITER_DIR"
-      num_nodes: 1
       sleep: 1
     - pkg_type: mm_gray_scott
       pkg_name: mm_gray_scott
       api: mpi
       L: 512
       steps: 1
-      nprocs: 24
       ppn: 24
       do_dbg: false
       dbg_port: 4001

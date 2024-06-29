@@ -1,0 +1,56 @@
+config:
+  name: mm_kmeans_mega
+  env: mega_mmap
+  pkgs:
+    - pkg_type: mm_kmeans_df
+      pkg_name: mm_kmeans_df
+      path: ${HOME}/mm_data/kmeans.bin
+      window_size: 256m
+      df_size: 4g
+      nprocs: 1
+      ppn: 16
+      type: shared
+      k: 1000
+    - pkg_type: hermes_run
+      pkg_name: hermes_run
+      sleep: 5
+      pqdepth: 8
+      do_dbg: false
+      dbg_port: 4000
+      num_nodes: 1
+      domain: enp47s0np0
+      ram: 1g
+      data_shm: 1g
+    - pkg_type: pymonitor
+      pkg_name: pymonitor
+      frequency: 1
+      dir: "$ITER_DIR"
+      num_nodes: 1
+      sleep: 1
+    - pkg_type: mm_kmeans
+      pkg_name: mm_kmeans
+      path: ${HOME}/mm_data/kmeans.bin
+      window_size: 256m
+      nprocs: 32
+      ppn: 32
+      api: mega
+      max_iter: 4
+      k: 8
+      do_dbg: false
+      dbg_port: 4001
+vars:
+  mm_kmeans_df.df_size: [1g]
+  mm_kmeans.window_size: [32m, 16m, 8m, 4m, 1m]
+  hermes_run.ram: [1g, 512m, 512m, 256m, 128m, 64m]
+  hermes_run.data_shm: [32m, 16m, 8m, 4m, 1m]
+  hermes_run.num_nodes: [1]
+  pymonitor.dir: ["$ITER_DIR"]
+norerun:
+  - mm_kmeans_df
+loop:
+  - [mm_kmeans_df.df_size]
+  - [mm_kmeans.window_size, hermes_run.ram, hermes_run.data_shm]
+  - [hermes_run.num_nodes]
+  - [pymonitor.dir]
+repeat: 1
+output: "$SHARED_DIR/output"

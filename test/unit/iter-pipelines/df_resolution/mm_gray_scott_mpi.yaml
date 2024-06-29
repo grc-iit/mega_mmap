@@ -1,0 +1,36 @@
+# Evaluation 1 / GS Mega
+config:
+  name: mm_gray_scott_mega
+  env: mega_mmap
+  pkgs:
+    - pkg_type: hermes_run
+      pkg_name: hermes_run
+      sleep: 8
+      include: ${HOME}/mm_data
+      pqdepth: 8
+      ram: 1g
+      provider: sockets
+      num_nodes: 16
+    - pkg_type: pymonitor
+      pkg_name: pymonitor
+      frequency: 1
+      dir: "$ITER_DIR"
+      num_nodes: 16
+      sleep: 1
+    - pkg_type: mm_gray_scott
+      pkg_name: mm_gray_scott
+      api: mm
+      L: 3072
+      nprocs: 720
+      ppn: 44
+      window_size: 1g
+      do_dbg: false
+      dbg_port: 4001
+vars:
+  pymonitor.dir: ["$ITER_DIR"]
+  mm_gray_scott.L: [2048, 2368, 2688, 3008, 3456]
+loop:
+  - [mm_gray_scott.L]
+  - [pymonitor.dir]
+repeat: 1
+output: "$SHARED_DIR/output"
