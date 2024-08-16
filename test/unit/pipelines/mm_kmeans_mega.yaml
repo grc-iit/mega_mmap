@@ -1,6 +1,15 @@
 name: mm_kmeans_mega
 env: mega_mmap
 pkgs:
+  - pkg_type: mm_kmeans_df
+    pkg_name: mm_kmeans_df
+    path: ${HOME}/mm_data/kmeans.bin
+    window_size: 1m
+    df_size: 1g
+    nprocs: 1
+    ppn: 16
+    type: shared
+    k: 1000
   - pkg_type: hermes_run
     pkg_name: hermes_run
     sleep: 3

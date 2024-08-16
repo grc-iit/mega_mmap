@@ -3,48 +3,55 @@
 MegaMmap is a software distributed shared memory which can abstract over both memory
 and storage.
 
+For anyone interested in our code and experiments, feel free to email:
+llogan@hawk.iit.edu
+lukemartinlogan@gmail.com
+
+We are happy to help with any questions regarding the code or experiments.
+We are currently working on the documentation for experiments and 
+installation.
+
+# Dockerfile
+
+We have a dockerfile to install MegaMmap and its dependencies. This is more
+of a unit test of the installation process and deps.sh.
+
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+docker build -t lukemartinlogan/mega_mmap . -f docker/deps.Dockerfile
+docker run -it --mount src=${PWD},target=/mega_mmap,type=bind \
+--name mega_mmap_c \
+--network host \
+--memory=8G \
+--shm-size=8G \
+-p 4000:4000 \
+-p 4001:4001 \
+lukemartinlogan/mega_mmap
+```
+
+NOTE: Hermes uses shared memory. Shared memory goes against docker's security
+philosophy. To get around this, we add shm-size. You may need to change
+this parameter depending on your system.
+
 # Dependencies
 
-```
-scspkg create arrow
-cd $(scspkg pkg src arrow)
-git clone https://github.com/apache/arrow.git -b apache-arrow-15.0.1
-cd arrow/cpp
-mkdir build
-cd build
-cmake ../ -DARROW_PARQUET=ON -DCMAKE_INSTALL_PREFIX=$(scspkg pkg root arrow)
-make -j32 install
-```
+* scs-repo
+* Hermes
+* Apache arrow (check deps.sh)
+* Apache spark (only for evaluation)
 
-## Spark
-```
-spack install openjdk@11
-spack load openjdk@11
-scspkg create spark
-cd `scspkg pkg src spark`
-wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1.tgz
-tar -xzf spark-3.5.1.tgz
-cd spark-3.5.1
-./build/mvn -T 16 -DskipTests clean package
-scspkg env set spark SPARK_SCRIPTS=${PWD}
-scspkg env prepend spark PATH "${PWD}/bin"
-module load spark
-```
-
-## Hermes
-
-```
-spack install hermes@master
-```
+deps.sh installs these dependencies. However, Hermes is a complex pacakge.
+One should change the parameters for libfabric in particular. Currently,
+Hermes only installs with TCP/sockets. To get verbs, you will have to know
+your machine's architecture. For example, a mellanox network may need to
+do ``spack install hermes^libfabric fabrics=tcp,sockets,verbs,mlx``.
 
 # Install
 
 ```
-module load hermes_run mega_mmap arrow
-spack load hermes_shm
-```
-
-```
+spack load hermes arrow
 scspkg create mega_mmap
 cd $(scspkg pkg src mega_mmap)
 git clone https://github.com/lukemartinlogan/mega_mmap.git
@@ -59,10 +66,9 @@ cmake ../ \
 make -j8
 ```
 
-# Build environment
+# Final environment
 
 ```
-module load hermes_run mega_mmap spark arrow
-spack load hermes_shm  
-jarvis env build mega_mmap +MM_PATH +SPARK_SCRIPTS
+spack load hermes arrow
+module load mega_mmap spark
 ```
