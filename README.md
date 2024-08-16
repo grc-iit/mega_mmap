@@ -52,8 +52,6 @@ do ``spack install hermes^libfabric fabrics=tcp,sockets,verbs,mlx``.
 
 ```
 spack load hermes arrow
-module load spark
-
 scspkg create mega_mmap
 cd $(scspkg pkg src mega_mmap)
 git clone https://github.com/lukemartinlogan/mega_mmap.git

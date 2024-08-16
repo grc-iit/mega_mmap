@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/jarvis-cd" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/scs-repo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/scspkg" vcs="Git" />
   </component>
 </project>

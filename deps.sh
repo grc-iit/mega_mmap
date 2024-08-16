@@ -51,7 +51,7 @@ spack install openjdk@11
 spack load openjdk@11
 scspkg create spark
 pushd $(scspkg pkg src spark)
-wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1.tgz
+wget https://archive.apache.org/dist/spark/spark-3.5.1/spark-3.5.1.tgz
 tar -xzf spark-3.5.1.tgz
 pushd spark-3.5.1
 ./build/mvn -T 16 -DskipTests clean package

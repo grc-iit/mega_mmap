@@ -5,7 +5,7 @@
 FROM ubuntu:22.04
 LABEL maintainer="llogan@hawk.iit.edu"
 LABEL version="0.0"
-LABEL description="Hermes Docker image with CI"
+LABEL description="MegaMmap Docker image"
 
 # Disable Prompt During Packages Installation
 ARG DEBIAN_FRONTEND=noninteractive
