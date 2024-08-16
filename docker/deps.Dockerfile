@@ -36,19 +36,17 @@ ENV USER="root"
 ENV HOME="/root"
 ENV SPACK_DIR="${HOME}/spack"
 ENV SPACK_VERSION="v0.20.2"
-ENV HERMES_DEPS_DIR="${HOME}/hermes_deps"
-ENV HERMES_DIR="${HOME}/hermes"
 COPY ci/module_load.sh module_load.sh
 
 # Install Spack
 RUN . /module_load.sh && \
     git clone -b ${SPACK_VERSION} https://github.com/spack/spack ${SPACK_DIR} && \
     . "${SPACK_DIR}/share/spack/setup-env.sh" && \
-    mkdir -p ${HERMES_DIR} && \
     spack external find
 
 # Git clone mega_mmap \
 RUN git clone https://github.com/lukemartinlogan/mega_mmap && \
     cd mega_mmap && \
     . /module_load.sh && \
+    . "${SPACK_DIR}/share/spack/setup-env.sh" && \
     . deps.sh

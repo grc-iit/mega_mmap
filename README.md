@@ -6,15 +6,15 @@ and storage.
 # Dockerfile
 
 We have a dockerfile to install MegaMmap and its dependencies. This is more
-of a unit test of the installation process.
+of a unit test of the installation process and deps.sh.
 
 ```
 sudo groupadd docker
 sudo usermod -aG docker $USER
 newgrp docker
 docker build -t lukemartinlogan/mega_mmap . -f docker/deps.Dockerfile
-docker run -it --mount src=${PWD},target=/hermes,type=bind \
---name hermes_deps_c \
+docker run -it --mount src=${PWD},target=/mega_mmap,type=bind \
+--name mega_mmap_c \
 --network host \
 --memory=8G \
 --shm-size=8G \
@@ -23,6 +23,10 @@ docker run -it --mount src=${PWD},target=/hermes,type=bind \
 lukemartinlogan/mega_mmap
 ```
 
+NOTE: Hermes uses shared memory. Shared memory goes against docker's security
+philosophy. To get around this, we add shm-size. You may need to change
+this parameter depending on your system.
+
 # Dependencies
 
 * scs-repo
@@ -30,24 +34,18 @@ lukemartinlogan/mega_mmap
 * Apache arrow (check deps.sh)
 * Apache spark (only for evaluation)
 
-deps.sh installs these dependencies. However, we find that the
-installation of Apache Arrow is not very reliable. Reviewers should
-install Apache Arrow manually.
-
-## Hermes
-
-```
-spack install hermes@master
-```
+deps.sh installs these dependencies. However, Hermes is a complex pacakge.
+One should change the parameters for libfabric in particular. Currently,
+Hermes only installs with TCP/sockets. To get verbs, you will have to know
+your machine's architecture. For example, a mellanox network may need to
+do ``spack install hermes^libfabric fabrics=tcp,sockets,verbs,mlx``.
 
 # Install
 
 ```
-module load hermes_run mega_mmap arrow
-spack load hermes_shm
-```
+spack load hermes arrow
+module load spark
 
-```
 scspkg create mega_mmap
 cd $(scspkg pkg src mega_mmap)
 git clone https://github.com/lukemartinlogan/mega_mmap.git
@@ -62,10 +60,9 @@ cmake ../ \
 make -j8
 ```
 
-# Build environment
+# Final environment
 
 ```
-module load hermes_run mega_mmap spark arrow
-spack load hermes_shm  
-jarvis env build mega_mmap +MM_PATH +SPARK_SCRIPTS
+spack load hermes arrow
+module load mega_mmap spark
 ```
