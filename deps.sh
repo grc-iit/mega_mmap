@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Install SCSPKG
 git clone https://github.com/grc-iit/scspkg.git
 pushd scspkg
