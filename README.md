@@ -25,31 +25,14 @@ lukemartinlogan/mega_mmap
 
 # Dependencies
 
-```
-scspkg create arrow
-cd $(scspkg pkg src arrow)
-git clone https://github.com/apache/arrow.git -b apache-arrow-15.0.1
-cd arrow/cpp
-mkdir build
-cd build
-cmake ../ -DARROW_PARQUET=ON -DCMAKE_INSTALL_PREFIX=$(scspkg pkg root arrow)
-make -j32 install
-```
+* scs-repo
+* Hermes
+* Apache arrow (check deps.sh)
+* Apache spark (only for evaluation)
 
-## Spark
-```
-spack install openjdk@11
-spack load openjdk@11
-scspkg create spark
-cd `scspkg pkg src spark`
-wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1.tgz
-tar -xzf spark-3.5.1.tgz
-cd spark-3.5.1
-./build/mvn -T 16 -DskipTests clean package
-scspkg env set spark SPARK_SCRIPTS=${PWD}
-scspkg env prepend spark PATH "${PWD}/bin"
-module load spark
-```
+deps.sh installs these dependencies. However, we find that the
+installation of Apache Arrow is not very reliable. Reviewers should
+install Apache Arrow manually.
 
 ## Hermes
 

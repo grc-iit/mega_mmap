@@ -49,6 +49,6 @@ RUN . /module_load.sh && \
 
 # Git clone mega_mmap \
 RUN git clone https://github.com/lukemartinlogan/mega_mmap && \
-    cd mega_mmap \
+    cd mega_mmap && \
     bash deps.sh
 
