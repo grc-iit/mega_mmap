@@ -7,9 +7,9 @@ For anyone interested in our code and experiments, feel free to email:
 llogan@hawk.iit.edu
 lukemartinlogan@gmail.com
 
-We are happy to help with any questions regarding the code or experiments.
-We are currently working on the documentation for experiments and 
-installation.
+We are happy to help with any questions (or issues) 
+regarding the code or experiments. We also keep a lookout for
+github issues.
 
 # Dockerfile
 
