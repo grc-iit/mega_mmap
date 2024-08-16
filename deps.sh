@@ -44,6 +44,7 @@ popd
 
 # Install arrow
 spack install arrow +parquet^thrift -python
+spack load arrow
 
 # Install spark
 spack install openjdk@11

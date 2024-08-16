@@ -3,6 +3,14 @@
 MegaMmap is a software distributed shared memory which can abstract over both memory
 and storage.
 
+For anyone interested in our code and experiments, feel free to email:
+llogan@hawk.iit.edu
+lukemartinlogan@gmail.com
+
+We are happy to help with any questions regarding the code or experiments.
+We are currently working on the documentation for experiments and 
+installation.
+
 # Dockerfile
 
 We have a dockerfile to install MegaMmap and its dependencies. This is more
