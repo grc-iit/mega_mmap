@@ -15,27 +15,45 @@ popd
 
 # Install apache arrow
 scspkg create arrow
-cd $(scspkg pkg src arrow)
+pushd $(scspkg pkg src arrow)
 git clone https://github.com/apache/arrow.git -b apache-arrow-15.0.1
-cd arrow/cpp
+pushd arrow/cpp
 mkdir build
-cd build
+pushd build
 cmake ../ -DARROW_PARQUET=ON -DCMAKE_INSTALL_PREFIX=$(scspkg pkg root arrow)
 make -j32 install
+module load arrow
+popd
+popd
+popd
 
 # Install spark
 spack install openjdk@11
 spack load openjdk@11
 scspkg create spark
-cd `scspkg pkg src spark`
+pushd `scspkg pkg src spark`
 wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1.tgz
 tar -xzf spark-3.5.1.tgz
-cd spark-3.5.1
+pushd spark-3.5.1
 ./build/mvn -T 16 -DskipTests clean package
 scspkg env set spark SPARK_SCRIPTS=${PWD}
 scspkg env prepend spark PATH "${PWD}/bin"
 module load spark
+popd
+popd
 
-# Install megammap
-spack install mega_mmap
+# Download SCSREPO
+git clone https://github.com/lukemartinlogan/scs-repo.git
+spack repo add scs-repo
 
+# Install hermes
+spack install hermes@master
+spack load hermes@master
+
+# Install mega_mmap
+scspkg create mega_mmap
+pushd build
+cmake ../ -DCMAKE_INSTALL_PREFIX=$(scspkg pkg root mega_mmap)
+make -j8 install
+module load mega_mmap
+popd

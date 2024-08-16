@@ -3,6 +3,26 @@
 MegaMmap is a software distributed shared memory which can abstract over both memory
 and storage.
 
+# Dockerfile
+
+We have a dockerfile to install MegaMmap and its dependencies. This is more
+of a unit test of the installation process.
+
+```
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+docker build -t lukemartinlogan/mega_mmap . -f docker/deps.Dockerfile
+docker run -it --mount src=${PWD},target=/hermes,type=bind \
+--name hermes_deps_c \
+--network host \
+--memory=8G \
+--shm-size=8G \
+-p 4000:4000 \
+-p 4001:4001 \
+lukemartinlogan/mega_mmap
+```
+
 # Dependencies
 
 ```
