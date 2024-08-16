@@ -72,6 +72,7 @@ spack load hermes@master
 scspkg create mega_mmap
 export MM_PATH=$(scspkg pkg root mega_mmap)
 scspkg env set mega_mmap MM_PATH=${MM_PATH}
+mkdir build
 pushd build
 cmake ../ \
 -DCMAKE_BUILD_TYPE=Release \
