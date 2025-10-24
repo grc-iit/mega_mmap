@@ -1,6 +1,37 @@
-//
-// Created by lukemartinlogan on 1/1/24.
-//
+/*
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Copyright (c) 2024-2025 Illinois Institute of Technology.
+ * Gnosis Research Center.
+ * All rights reserved.
+ *
+ * This file is part of MegaMmap.
+ * Project website: https://github.com/grc-iit/megammap
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the conditions in the
+ * LICENSE file are met. See the LICENSE file at the root of this
+ * repository for details.
+ *
+ * Developed by: Gnosis Research Center
+ *               Illinois Institute of Technology
+ *               https://grc.iit.edu
+ *
+ * Contact: grc@iit.edu
+ */
+
+/**
+ * @file vector_mmap_mpi.h
+ * @brief Distributed memory-mapped vector wrapper using MPI.
+ *
+ * Provides mmap-based vector implementation for comparison with MegaMmap.
+ * Uses standard memory-mapped files with MPI for distributed coordination,
+ * serving as a baseline implementation for performance evaluation.
+ *
+ * @author Luke Martin Logan <llogan@iit.edu>
+ * @date 2025-10-24
+ * @version 1.0
+ */
 
 #ifndef MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MMAP_MPI_H_
 #define MEGAMMAP_INCLUDE_MEGA_MMAP_VECTOR_MMAP_MPI_H_

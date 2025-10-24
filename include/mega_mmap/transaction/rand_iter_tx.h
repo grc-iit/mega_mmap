@@ -1,6 +1,37 @@
-//
-// Created by llogan on 3/11/24.
-//
+/*
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Copyright (c) 2024-2025 Illinois Institute of Technology.
+ * Gnosis Research Center.
+ * All rights reserved.
+ *
+ * This file is part of MegaMmap.
+ * Project website: https://github.com/grc-iit/megammap
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the conditions in the
+ * LICENSE file are met. See the LICENSE file at the root of this
+ * repository for details.
+ *
+ * Developed by: Gnosis Research Center
+ *               Illinois Institute of Technology
+ *               https://grc.iit.edu
+ *
+ * Contact: grc@iit.edu
+ */
+
+/**
+ * @file rand_iter_tx.h
+ * @brief Random iteration transaction for MegaMmap.
+ *
+ * Optimizes for random access patterns with locality-aware prefetching.
+ * This transaction type uses probabilistic prediction to anticipate future
+ * accesses and efficiently manage memory for irregular access patterns.
+ *
+ * @author Luke Martin Logan <llogan@iit.edu>
+ * @date 2025-10-24
+ * @version 1.0
+ */
 
 #ifndef MEGAMMAP_INCLUDE_MEGA_MMAP_TRANSACTION_RAND_TX_H_
 #define MEGAMMAP_INCLUDE_MEGA_MMAP_TRANSACTION_RAND_TX_H_

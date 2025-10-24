@@ -1,0 +1,93 @@
+cff-version: 1.2.0
+type: software
+title: "MegaMmap: Blurring the Boundary Between Memory and Storage for Data-Intensive Workloads"
+version: 1.0.0
+date-released: 2024-11-17
+url: https://github.com/grc-iit/megammap
+repository-code: https://github.com/grc-iit/megammap
+repository-artifact: https://github.com/grc-iit/megammap/releases
+license: BSD-3-Clause
+
+authors:
+  - family-names: Logan
+    given-names: Luke
+    affiliation: "Illinois Institute of Technology, Gnosis Research Center"
+    orcid: "https://orcid.org/"
+  - family-names: Kougkas
+    given-names: Anthony
+    affiliation: "Illinois Institute of Technology, Gnosis Research Center"
+    orcid: "https://orcid.org/"
+  - family-names: Sun
+    given-names: Xian-He
+    affiliation: "Illinois Institute of Technology, Gnosis Research Center"
+    orcid: "https://orcid.org/"
+
+contact:
+  - name: Gnosis Research Center
+    affiliation: Illinois Institute of Technology
+    email: grc@iit.edu
+    website: https://grc.iit.edu
+
+description: |
+  MegaMmap is a software distributed shared memory (DSM) system that enables
+  efficient processing of data-intensive workloads exceeding main memory capacity.
+  It intelligently tiers data across DRAM, NVMe, SSD, and HDD storage to provide
+  high-speed access to critical data while minimizing memory consumption.
+
+  The system features workload-aware data organization, adaptive eviction policies,
+  and intelligent prefetching to reduce DRAM consumption while maintaining competitive
+  performance for various HPC applications including KMeans clustering, DBSCAN,
+  random forests, and scientific simulations.
+
+keywords:
+  - HPC
+  - memory tiering
+  - storage tiering
+  - distributed shared memory
+  - out-of-core computing
+  - data management
+  - prefetching
+
+topics:
+  - systems-software
+  - high-performance-computing
+  - memory-hierarchy
+  - data-intensive-computing
+
+references:
+  - type: conference-paper
+    scope: Cite this reference when referring to the scientific methodology, algorithms, and evaluation results
+    title: "MegaMmap: Blurring the Boundary Between Memory and Storage for Data-Intensive Workloads"
+    authors:
+      - family-names: Logan
+        given-names: Luke
+      - family-names: Kougkas
+        given-names: Anthony
+      - family-names: Sun
+        given-names: Xian-He
+    booktitle: "Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis (SC)"
+    conference:
+      name: SC24
+      date: 2024-11-17
+    pages: "1725-1742"
+    year: 2024
+    month: 11
+    publisher:
+      name: IEEE Computer Society
+    doi: 10.1109/SC41406.2024.00114
+    url: https://dl.acm.org/doi/abs/10.1109/SC41406.2024.00114
+    keywords:
+      - memory tiering
+      - storage tiering
+      - distributed shared memory
+      - HPC systems
+      - out-of-core algorithms
+
+message: |
+  If you use MegaMmap in your research, please cite it using the information below.
+
+  For the software itself, cite:
+  Logan, L., Kougkas, A., & Sun, X.H. (2024). MegaMmap: Blurring the Boundary
+  Between Memory and Storage for Data-Intensive Workloads. In Proceedings of the
+  International Conference for High Performance Computing, Networking, Storage and
+  Analysis (SC), 1725-1742. https://doi.org/10.1109/SC41406.2024.00114

@@ -1,6 +1,37 @@
-//
-// Created by llogan on 3/11/24.
-//
+/*
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Copyright (c) 2024-2025 Illinois Institute of Technology.
+ * Gnosis Research Center.
+ * All rights reserved.
+ *
+ * This file is part of MegaMmap.
+ * Project website: https://github.com/grc-iit/megammap
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the conditions in the
+ * LICENSE file are met. See the LICENSE file at the root of this
+ * repository for details.
+ *
+ * Developed by: Gnosis Research Center
+ *               Illinois Institute of Technology
+ *               https://grc.iit.edu
+ *
+ * Contact: grc@iit.edu
+ */
+
+/**
+ * @file transaction.h
+ * @brief Abstract transaction base class for MegaMmap data access patterns.
+ *
+ * Defines the interface for prefetching and memory tiering coordination.
+ * Transactions enable automatic data movement and optimization based on
+ * access patterns across different memory tiers in the MegaMmap system.
+ *
+ * @author Luke Martin Logan <llogan@iit.edu>
+ * @date 2025-10-24
+ * @version 1.0
+ */
 
 #ifndef MEGAMMAP_INCLUDE_MEGA_MMAP_TRANSACTION_TRANSACTION_H_
 #define MEGAMMAP_INCLUDE_MEGA_MMAP_TRANSACTION_TRANSACTION_H_

@@ -1,6 +1,37 @@
-//
-// Created by lukemartinlogan on 1/15/24.
-//
+/*
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Copyright (c) 2024-2025 Illinois Institute of Technology.
+ * Gnosis Research Center.
+ * All rights reserved.
+ *
+ * This file is part of MegaMmap.
+ * Project website: https://github.com/grc-iit/megammap
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the conditions in the
+ * LICENSE file are met. See the LICENSE file at the root of this
+ * repository for details.
+ *
+ * Developed by: Gnosis Research Center
+ *               Illinois Institute of Technology
+ *               https://grc.iit.edu
+ *
+ * Contact: grc@iit.edu
+ */
+
+/**
+ * @file mm_gadget2conv.cc
+ * @brief Utility for converting Gadget2 simulation data formats.
+ *
+ * This file provides functionality to convert Gadget2 simulation data formats, utilizing HDF5 for data reading and processing.
+ *
+ * This project is part of the IoWarp project, a collaborative NSF-funded effort. It is also part of the production code in the github.com/iowarp codebase.
+ *
+ * @author Anthony Kougkas <akougkas@iit.edu>
+ * @date 2025-10-24
+ * @version 1.0
+ */
 
 #include <string>
 #include <mpi.h>

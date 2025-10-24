@@ -1,4 +1,37 @@
-/** Create a dataset of 2D particles. Particles are in 6 clusters. */
+/*
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Copyright (c) 2024-2025 Illinois Institute of Technology.
+ * Gnosis Research Center.
+ * All rights reserved.
+ *
+ * This file is part of MegaMmap.
+ * Project website: https://github.com/grc-iit/megammap
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the conditions in the
+ * LICENSE file are met. See the LICENSE file at the root of this
+ * repository for details.
+ *
+ * Developed by: Gnosis Research Center
+ *               Illinois Institute of Technology
+ *               https://grc.iit.edu
+ *
+ * Contact: grc@iit.edu
+ */
+
+/**
+ * @file mm_kmeans_df.cc
+ * @brief KMeans dataset generation utility
+ *
+ * Creates 2D particle datasets with 6 clusters stored in Arrow/Parquet
+ * columnar format for distributed benchmarking. Supports both shared file
+ * and Parquet output formats for parallel data generation across MPI processes.
+ *
+ * @author Luke Martin Logan <llogan@iit.edu>
+ * @date 2025-10-24
+ * @version 1.0
+ */
 
 #include <string>
 #include <mpi.h>
