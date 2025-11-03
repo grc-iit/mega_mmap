@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![HPC](https://img.shields.io/badge/Domain-HPC-green.svg)](https://en.wikipedia.org/wiki/High-performance_computing)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.1109/SC41406.2024.00114)
 
 **MegaMmap** is a software distributed shared memory (DSM) system that eliminates the traditional boundary between memory and storage for data-intensive HPC workloads. By providing a unified, byte-addressable interface that spans DRAM, NVMe, SSD, and HDD tiers, MegaMmap enables applications to work with datasets larger than memory capacity while maintaining competitive performance.
 
